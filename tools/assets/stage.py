@@ -1,0 +1,232 @@
+"""Precursor Isle: sky, sea, distant islands, the floating arena and its platforms."""
+from __future__ import annotations
+
+import math
+import random
+
+import palette
+from pixel import Canvas, Color, Ramp, mix_colors
+
+WIDTH, HEIGHT = 480, 270
+HORIZON_Y = 168
+ISLAND_SIZE = (320, 100)
+ISLAND_SURFACE_Y = 6
+PLATFORM_SIZE = (64, 14)
+PLATFORM_SURFACE_Y = 2
+
+
+def render_sky() -> Canvas:
+    canvas = Canvas(WIDTH, HEIGHT)
+    canvas.fill_vertical_gradient((0, 0, WIDTH - 1, HORIZON_Y + 10), palette.SKY_BANDS)
+    sun_x, sun_y = 368, 64
+    for radius, alpha in ((34, 40), (27, 70), (21, 110)):
+        halo = Canvas(WIDTH, HEIGHT)
+        halo.fill_ellipse((sun_x - radius, sun_y - radius, sun_x + radius, sun_y + radius), (255, 244, 200, alpha))
+        canvas.paste(halo.image, (0, 0))
+    canvas.fill_ellipse((sun_x - 15, sun_y - 15, sun_x + 15, sun_y + 15), (255, 246, 210))
+    canvas.fill_ellipse((sun_x - 12, sun_y - 13, sun_x + 10, sun_y + 9), (255, 252, 236))
+    return canvas
+
+
+def render_clouds() -> Canvas:
+    """Horizontally tileable cloud band, scrolled slowly in game."""
+    canvas = Canvas(WIDTH, 110)
+    rng = random.Random(7)
+    for _ in range(9):
+        x = rng.randrange(0, WIDTH)
+        y = rng.randrange(28, 92)
+        size = rng.randrange(14, 30)
+        for shift in (-WIDTH, 0, WIDTH):
+            _paint_cloud(canvas, x + shift, y, size)
+    return canvas
+
+
+def _paint_cloud(canvas: Canvas, x: int, y: int, size: int) -> None:
+    shade: Color = (210, 224, 240)
+    light: Color = (255, 255, 255)
+    puffs = [(-size, 0, size // 2), (-size // 3, -size // 3, size // 2 + 3), (size // 3, -size // 5, size // 2), (size, 2, size // 3)]
+    for dx, dy, r in puffs:
+        canvas.fill_ellipse((x + dx - r, y + dy - r + 2, x + dx + r, y + dy + r + 2), shade)
+    for dx, dy, r in puffs:
+        canvas.fill_ellipse((x + dx - r, y + dy - r, x + dx + r, y + dy + r - 2), light)
+    canvas.fill_rect((x - size - size // 2, y + size // 3, x + size + size // 3, y + size // 2 + 2), (0, 0, 0, 0))
+
+
+def render_far() -> Canvas:
+    canvas = Canvas(WIDTH, HEIGHT)
+    haze: Color = (150, 186, 214)
+    haze_dark: Color = (122, 160, 196)
+    _paint_hills(canvas, HORIZON_Y, [(30, 26, 70), (150, 14, 50), (420, 30, 90)], haze)
+    _paint_precursor_tower(canvas, 64, HORIZON_Y - 24, haze_dark)
+    _paint_volcano(canvas, 430, HORIZON_Y - 6, haze_dark)
+    sea = [(56, 176, 196), (40, 150, 186), (28, 120, 168), (22, 96, 150)]
+    canvas.fill_vertical_gradient((0, HORIZON_Y, WIDTH - 1, HEIGHT - 1), sea)
+    rng = random.Random(3)
+    for _ in range(70):
+        x, y = rng.randrange(0, WIDTH), rng.randrange(HORIZON_Y + 3, HEIGHT)
+        length = 2 + (y - HORIZON_Y) // 20
+        canvas.draw_line((x, y), (x + length, y), (190, 240, 245))
+    return canvas
+
+
+def _paint_hills(canvas: Canvas, base_y: int, hills: list[tuple[int, int, int]], color: Color) -> None:
+    for center, height, half_width in hills:
+        canvas.fill_ellipse((center - half_width, base_y - height, center + half_width, base_y + height), color)
+
+
+def _paint_precursor_tower(canvas: Canvas, x: int, base_y: int, color: Color) -> None:
+    canvas.fill_polygon([(x - 9, base_y + 24), (x - 4, base_y - 70), (x + 4, base_y - 70), (x + 9, base_y + 24)], color)
+    canvas.fill_rect((x - 12, base_y - 40, x + 12, base_y - 36), color)
+    canvas.fill_polygon([(x - 6, base_y - 70), (x, base_y - 84), (x + 6, base_y - 70)], color)
+    glow = palette.PRECURSOR_GLOW
+    canvas.fill_ellipse((x - 2, base_y - 80, x + 2, base_y - 76), glow.base)
+    for y in range(base_y - 60, base_y + 20, 14):
+        canvas.put_pixel(x, y, glow.light)
+
+
+def _paint_volcano(canvas: Canvas, x: int, base_y: int, color: Color) -> None:
+    canvas.fill_polygon([(x - 50, base_y + 6), (x - 10, base_y - 46), (x + 8, base_y - 46), (x + 50, base_y + 6)], color)
+    canvas.fill_ellipse((x - 14, base_y - 64, x + 4, base_y - 50), (196, 214, 228))
+    canvas.fill_ellipse((x - 4, base_y - 76, x + 14, base_y - 60), (206, 222, 234))
+
+
+def render_mid() -> Canvas:
+    """Closer islets on both edges. The centre stays empty so fighters read clearly."""
+    canvas = Canvas(WIDTH, HEIGHT)
+    _paint_islet(canvas, 34, 214, 72, with_hut=True)
+    _paint_islet(canvas, 452, 224, 64, with_hut=False)
+    _paint_waterfall(canvas, 20, 150, 214)
+    return canvas
+
+
+def _paint_islet(canvas: Canvas, x: int, y: int, half_width: int, with_hut: bool) -> None:
+    rock = Ramp(shade=(96, 92, 120), base=(124, 118, 146), light=(150, 146, 170))
+    canvas.fill_polygon([(x - half_width, y), (x + half_width, y), (x + half_width // 3, y + 50), (x - half_width // 2, y + 46)], rock.base)
+    canvas.fill_polygon([(x, y), (x + half_width, y), (x + half_width // 3, y + 50)], rock.shade)
+    canvas.fill_ellipse((x - half_width - 4, y - 10, x + half_width + 4, y + 8), (70, 140, 92))
+    canvas.fill_ellipse((x - half_width, y - 12, x + half_width, y + 2), (92, 166, 100))
+    for palm_x in (x - half_width // 2, x + half_width // 3):
+        _paint_palm(canvas, palm_x, y - 8, 30 + (palm_x % 9))
+    if with_hut:
+        _paint_hut(canvas, x + 6, y - 10)
+
+
+def _paint_palm(canvas: Canvas, x: int, base_y: int, height: int) -> None:
+    trunk: Color = (150, 116, 90)
+    leaf: Color = (64, 140, 90)
+    leaf_light: Color = (100, 176, 110)
+    top_x, top_y = x + 5, base_y - height
+    canvas.draw_line((x, base_y), (top_x, top_y), trunk, 2)
+    for angle in (200, 235, 270, 305, 340, 20):
+        rad = math.radians(angle)
+        end = (round(top_x + math.cos(rad) * 14), round(top_y + math.sin(rad) * 6 + 6))
+        canvas.draw_line((top_x, top_y), end, leaf, 3)
+        canvas.draw_line((top_x, top_y - 1), end, leaf_light, 1)
+
+
+def _paint_hut(canvas: Canvas, x: int, base_y: int) -> None:
+    wood = Ramp(shade=(120, 96, 90), base=(156, 124, 108), light=(184, 156, 130))
+    thatch: Color = (196, 170, 110)
+    canvas.fill_rect((x - 10, base_y - 14, x + 10, base_y), wood.base)
+    canvas.fill_rect((x - 3, base_y - 8, x + 2, base_y), wood.shade)
+    canvas.fill_polygon([(x - 15, base_y - 13), (x, base_y - 27), (x + 15, base_y - 13)], thatch)
+    canvas.fill_ellipse((x - 2, base_y - 12, x + 1, base_y - 10), palette.PRECURSOR_GLOW.base)
+
+
+def _paint_waterfall(canvas: Canvas, x: int, top_y: int, bottom_y: int) -> None:
+    for column in range(x - 4, x + 5):
+        shade = (200, 236, 250) if column % 3 else (150, 210, 236)
+        canvas.draw_line((column, top_y), (column, bottom_y), shade)
+    canvas.fill_ellipse((x - 9, bottom_y - 3, x + 9, bottom_y + 4), (230, 248, 255))
+
+
+def render_island() -> Canvas:
+    """Main arena: grass top, warm cliff, a band of Precursor metal with glowing eco lights."""
+    w, h = ISLAND_SIZE
+    canvas = Canvas(w, h)
+    top = ISLAND_SURFACE_Y
+    body = [(0, top + 2), (w - 1, top + 2), (w - 18, top + 38), (w - 70, top + 66), (w // 2 + 6, h - 2), (70, top + 64), (16, top + 36)]
+    canvas.fill_polygon(body, palette.DIRT.base)
+    canvas.fill_polygon([(w // 2, top + 2), (w - 1, top + 2), (w - 18, top + 38), (w - 70, top + 66), (w // 2 + 6, h - 2)], palette.DIRT.shade)
+    rng = random.Random(11)
+    for _ in range(90):
+        x, y = rng.randrange(10, w - 10), rng.randrange(top + 14, h - 10)
+        end_x = x + rng.randrange(3, 9)
+        if canvas.image.getpixel((x, y))[3] and canvas.image.getpixel((min(end_x, w - 1), y))[3]:
+            canvas.draw_line((x, y), (end_x, y), palette.ROCK.shade if rng.random() < 0.6 else palette.DIRT.light)
+    _paint_precursor_band(canvas, top + 16, w)
+    canvas.fill_rect((0, top, w - 1, top + 5), palette.GRASS.base)
+    canvas.fill_rect((0, top + 5, w - 1, top + 7), palette.GRASS.shade)
+    canvas.fill_rect((0, top, w - 1, top), palette.GRASS.light)
+    for x in range(2, w - 2, 3):
+        tuft = rng.randrange(1, 5)
+        canvas.draw_line((x, top), (x + rng.choice((-1, 0, 1)), top - tuft), palette.GRASS.base if tuft > 2 else palette.GRASS.light)
+    for x in range(10, w - 10, 37):
+        canvas.put_pixel(x, top - 2, (255, 120, 150))
+        canvas.put_pixel(x + 17, top - 1, (255, 230, 90))
+    for x in range(30, w - 30, 23):
+        length = rng.randrange(8, 24)
+        canvas.draw_line((x, top + 8), (x + rng.choice((-2, 2)), top + 8 + length), palette.GRASS.shade)
+    canvas.add_outline(palette.OUTLINE)
+    return canvas
+
+
+def _paint_precursor_band(canvas: Canvas, y: int, width: int) -> None:
+    metal, glow = palette.PRECURSOR_METAL, palette.PRECURSOR_GLOW
+    canvas.fill_rect((14, y, width - 15, y + 8), metal.base)
+    canvas.fill_rect((14, y, width - 15, y), metal.light)
+    canvas.fill_rect((14, y + 8, width - 15, y + 8), metal.shade)
+    for x in range(26, width - 20, 24):
+        canvas.fill_ellipse((x - 2, y + 2, x + 2, y + 6), glow.base)
+        canvas.put_pixel(x - 1, y + 3, glow.light)
+        canvas.draw_line((x + 8, y + 2), (x + 8, y + 6), metal.shade)
+
+
+def render_platform() -> Canvas:
+    w, h = PLATFORM_SIZE
+    metal, glow = palette.PRECURSOR_METAL, palette.PRECURSOR_GLOW
+    canvas = Canvas(w, h)
+    top = PLATFORM_SURFACE_Y
+    canvas.fill_polygon([(0, top), (w - 1, top), (w - 6, top + 7), (5, top + 7)], metal.base)
+    canvas.fill_rect((0, top, w - 1, top + 1), metal.light)
+    canvas.fill_polygon([(w // 2, top + 2), (w - 1, top + 2), (w - 6, top + 7), (w // 2, top + 7)], metal.shade)
+    for x in range(8, w - 6, 12):
+        canvas.fill_rect((x, top + 4, x + 3, top + 5), glow.base)
+    canvas.add_outline(palette.OUTLINE)
+    under = Canvas(w, h)
+    for x in range(10, w - 10, 6):
+        under.fill_rect((x, top + 10, x + 2, top + 10), (*glow.light, 160))
+        under.put_pixel(x + 1, top + 11, (*glow.base, 110))
+    canvas.paste(under.image, (0, 0))
+    return canvas
+
+
+def render_hit_spark() -> Canvas:
+    """4 frames, 32px each: an expanding white star with an eco-warm core."""
+    size, frames = 32, 4
+    canvas = Canvas(size * frames, size)
+    for frame in range(frames):
+        cx, cy = frame * size + size // 2, size // 2
+        reach = 5 + frame * 4
+        fade = 255 - frame * 55
+        for index in range(8):
+            angle = math.radians(index * 45 + frame * 10)
+            inner = (round(cx + math.cos(angle) * reach * 0.4), round(cy + math.sin(angle) * reach * 0.4))
+            outer = (round(cx + math.cos(angle) * reach), round(cy + math.sin(angle) * reach))
+            canvas.draw_line(inner, outer, (255, 255, 255, fade), 2 if index % 2 == 0 else 1)
+        core = max(4 - frame, 1)
+        canvas.fill_ellipse((cx - core, cy - core, cx + core, cy + core), mix_colors((255, 236, 120), (255, 140, 60), frame / 3))
+    return canvas
+
+
+def render_eco_bolt(eco: Ramp) -> Canvas:
+    """2 frames, 16px each: pulsing eco orb with a trailing tail (faces right)."""
+    size = 16
+    canvas = Canvas(size * 2, size)
+    for frame in range(2):
+        cx, cy = frame * size + 10, size // 2
+        canvas.fill_ellipse((cx - 9, cy - 2, cx - 1, cy + 2), (*eco.shade, 140))
+        radius = 4 + frame
+        canvas.fill_ellipse((cx - radius, cy - radius, cx + radius, cy + radius), (*eco.base, 200))
+        canvas.fill_ellipse((cx - 2, cy - 2, cx + 2, cy + 2), eco.light)
+    return canvas
