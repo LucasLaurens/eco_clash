@@ -1,0 +1,106 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/stage/stage.gd" id="1_stage"]
+[ext_resource type="Texture2D" path="res://assets/stage/sky.png" id="2_sky"]
+[ext_resource type="Texture2D" path="res://assets/stage/clouds.png" id="3_clouds"]
+[ext_resource type="Texture2D" path="res://assets/stage/far.png" id="4_far"]
+[ext_resource type="Texture2D" path="res://assets/stage/mid.png" id="5_mid"]
+[ext_resource type="Texture2D" path="res://assets/stage/island.png" id="6_island"]
+[ext_resource type="Texture2D" path="res://assets/stage/platform.png" id="7_platform"]
+
+[sub_resource type="RectangleShape2D" id="ground_shape"]
+size = Vector2(312, 40)
+
+[sub_resource type="RectangleShape2D" id="platform_shape"]
+size = Vector2(60, 6)
+
+[node name="Stage" type="Node2D"]
+script = ExtResource("1_stage")
+
+[node name="Sky" type="Sprite2D" parent="."]
+texture = ExtResource("2_sky")
+centered = false
+
+[node name="Clouds" type="Parallax2D" parent="."]
+repeat_size = Vector2(480, 0)
+autoscroll = Vector2(-6, 0)
+
+[node name="Sprite" type="Sprite2D" parent="Clouds"]
+texture = ExtResource("3_clouds")
+centered = false
+
+[node name="Far" type="Sprite2D" parent="."]
+texture = ExtResource("4_far")
+centered = false
+
+[node name="Mid" type="Sprite2D" parent="."]
+texture = ExtResource("5_mid")
+centered = false
+
+[node name="Ground" type="StaticBody2D" parent="."]
+position = Vector2(240, 206)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Ground"]
+shape = SubResource("ground_shape")
+
+[node name="Sprite" type="Sprite2D" parent="Ground"]
+position = Vector2(-160, -26)
+texture = ExtResource("6_island")
+centered = false
+
+[node name="Platforms" type="Node2D" parent="."]
+
+[node name="Left" type="StaticBody2D" parent="Platforms"]
+position = Vector2(150, 140)
+collision_layer = 4
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Platforms/Left"]
+position = Vector2(0, 3)
+shape = SubResource("platform_shape")
+one_way_collision = true
+
+[node name="Sprite" type="Sprite2D" parent="Platforms/Left"]
+position = Vector2(-32, -2)
+texture = ExtResource("7_platform")
+centered = false
+
+[node name="Right" type="StaticBody2D" parent="Platforms"]
+position = Vector2(330, 140)
+collision_layer = 4
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Platforms/Right"]
+position = Vector2(0, 3)
+shape = SubResource("platform_shape")
+one_way_collision = true
+
+[node name="Sprite" type="Sprite2D" parent="Platforms/Right"]
+position = Vector2(-32, -2)
+texture = ExtResource("7_platform")
+centered = false
+
+[node name="Top" type="StaticBody2D" parent="Platforms"]
+position = Vector2(240, 98)
+collision_layer = 4
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Platforms/Top"]
+position = Vector2(0, 3)
+shape = SubResource("platform_shape")
+one_way_collision = true
+
+[node name="Sprite" type="Sprite2D" parent="Platforms/Top"]
+position = Vector2(-32, -2)
+texture = ExtResource("7_platform")
+centered = false
+
+[node name="Spawns" type="Node2D" parent="."]
+
+[node name="Spawn1" type="Marker2D" parent="Spawns"]
+position = Vector2(176, 186)
+
+[node name="Spawn2" type="Marker2D" parent="Spawns"]
+position = Vector2(304, 186)
