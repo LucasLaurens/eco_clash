@@ -1,0 +1,17 @@
+[remap]
+
+importer="font_data_bmfont"
+type="FontFile"
+uid="uid://dfuhvm6ifpltx"
+path="res://.godot/imported/eco_pixel.fnt-a52bcc400d68eff28968f9e2f78f46ce.fontdata"
+
+[deps]
+
+source_file="res://assets/fonts/eco_pixel.fnt"
+dest_files=["res://.godot/imported/eco_pixel.fnt-a52bcc400d68eff28968f9e2f78f46ce.fontdata"]
+
+[params]
+
+fallbacks=[]
+compress=true
+scaling_mode=1
