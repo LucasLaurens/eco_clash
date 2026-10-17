@@ -1,0 +1,66 @@
+[gd_resource type="Resource" script_class="FighterDefinition" format=3]
+
+[ext_resource type="Script" path="res://src/fighters/fighter_definition.gd" id="1_definition"]
+[ext_resource type="Script" path="res://src/fighters/moves/melee_strike.gd" id="2_melee"]
+[ext_resource type="Script" path="res://src/combat/attack_data.gd" id="3_attack"]
+[ext_resource type="Script" path="res://src/fighters/moves/projectile_shot.gd" id="5_projectile"]
+[ext_resource type="Texture2D" path="res://assets/fighters/grondak.png" id="6_sheet"]
+[ext_resource type="Texture2D" path="res://assets/ui/portrait_grondak.png" id="7_portrait"]
+[ext_resource type="Texture2D" path="res://assets/ui/stock_grondak.png" id="8_stock"]
+[ext_resource type="Texture2D" path="res://assets/fx/eco_bolt.png" id="9_bolt"]
+
+[sub_resource type="Resource" id="light_hit"]
+script = ExtResource("3_attack")
+damage = 9.0
+base_knockback = 130.0
+knockback_growth = 3.6
+launch_angle_deg = 30.0
+hitbox_offset = Vector2(18, -18)
+hitbox_size = Vector2(22, 18)
+startup = 0.14
+active = 0.1
+recovery = 0.24
+
+[sub_resource type="Resource" id="light_move"]
+script = ExtResource("2_melee")
+display_name = "MARTEAU-POING"
+description = ""
+animation = &"attack"
+attack = SubResource("light_hit")
+
+[sub_resource type="Resource" id="special_hit"]
+script = ExtResource("3_attack")
+damage = 14.0
+base_knockback = 170.0
+knockback_growth = 4.0
+launch_angle_deg = 60.0
+hitbox_offset = Vector2(0, -6)
+hitbox_size = Vector2(70, 16)
+startup = 0.3
+active = 0.14
+recovery = 0.4
+
+[sub_resource type="Resource" id="special_move"]
+script = ExtResource("2_melee")
+display_name = "SÉISME ROUGE"
+description = "FRAPPE LE SOL DES DEUX CÔTÉS. EN L'AIR : PLONGE D'UN COUP."
+animation = &"special"
+attack = SubResource("special_hit")
+lunge = Vector2(0, 520)
+
+[resource]
+script = ExtResource("1_definition")
+id = &"grondak"
+display_name = "GRONDAK"
+title = "LA BRUTE"
+accent_color = Color(1.0, 0.45, 0.4, 1)
+sprite_sheet = ExtResource("6_sheet")
+portrait = ExtResource("7_portrait")
+stock_icon = ExtResource("8_stock")
+body_size = Vector2(20, 30)
+run_speed = 100.0
+jump_velocity = 310.0
+air_jumps = 1
+weight = 135.0
+light_attack = SubResource("light_move")
+special = SubResource("special_move")
