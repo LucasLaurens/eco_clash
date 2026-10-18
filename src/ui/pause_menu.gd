@@ -1,7 +1,7 @@
 class_name PauseMenu
 extends CanvasLayer
-## Escape toggles a pause overlay. Sets its own process_mode to ALWAYS: it must keep reading input
-## while the rest of the tree is paused, wherever it is instanced.
+## Escape or a pad's Start/Options toggles a pause overlay. Sets its own process_mode to ALWAYS: it must keep
+## reading input while the rest of the tree is paused, wherever it is instanced.
 
 const PAUSE_VEIL_ALPHA := 0.6
 
@@ -24,7 +24,7 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not event.is_action_pressed(&"ui_cancel"):
+	if not event.is_action_pressed(ControlScheme.PAUSE_ACTION):
 		return
 	get_viewport().set_input_as_handled()
 	if _overlay.visible:

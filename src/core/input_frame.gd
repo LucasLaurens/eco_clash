@@ -1,6 +1,6 @@
 class_name InputFrame
 extends RefCounted
-## One physics tick of fighter intent. Same shape whether it comes from a keyboard or a bot.
+## One physics tick of fighter intent. Same shape whether it comes from a keyboard, a pad or a bot.
 
 var move_x := 0.0
 var down := false

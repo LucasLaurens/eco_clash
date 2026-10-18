@@ -20,7 +20,7 @@
 assets/          PNG générés, police EcoPixel (.fnt), thème UI, layout.json, animated_layers.json
 data/fighters/   Les 6 personnages (.tres) : statistiques, coups, sprites
 scenes/          fighter, stage, fight, ui/(main_menu, character_select, results)
-src/core/        Entrées : InputFrame, InputSource (port), clavier, Null Object, schémas de touches
+src/core/        Entrées : InputFrame, InputSource (port), humain (clavier et manette), Null Object, schémas de commandes
 src/bot/         IA : perception, cerveau (pur), source d'entrée bot
 src/combat/      AttackData, formule de knockback, HitVolume, CombatResolver
 src/fighters/    Fighter, définitions, roster, coups (MeleeStrike, ProjectileShot), sprite frames
@@ -67,7 +67,7 @@ Fight (fight.gd)
 
 | Nom | Script | Rôle |
 |---|---|---|
-| `InputBindings` | `src/core/input_bindings.gd` | Enregistre toutes les actions clavier dans l'`InputMap` avant toute lecture. |
+| `InputBindings` | `src/core/input_bindings.gd` | Enregistre toutes les actions (clavier et manette) dans l'`InputMap` avant toute lecture, puis à nouveau à chaque branchement ou débranchement de manette. |
 | `MatchSettings` | `src/match/match_settings.gd` | Porte entre les scènes le mode choisi, la config du prochain match et le dernier résultat. |
 
 ## Couches physiques
@@ -109,7 +109,8 @@ Le code suit quelques règles constantes. Elles expliquent la forme de la plupar
 - **Une responsabilité par classe.** Le `Fighter` ne décide pas qui touche qui : il crée des volumes
   de coup et reçoit des coups ; seul `CombatResolver` croise les deux.
 - **Ports et implémentations.**
-  - `InputSource` est le port entre un combattant et ce qui le pilote. Clavier et bot l'implémentent.
+  - `InputSource` est le port entre un combattant et ce qui le pilote. Humain (clavier et manette)
+    et bot l'implémentent.
   - `NullInputSource` est un Null Object : un combattant sans contrôleur reste immobile, ce qui
     évite tout `null`.
 - **Strategy.** `FighterMove` décide de l'effet d'un coup (`MeleeStrike`, `ProjectileShot`) ;

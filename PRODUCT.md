@@ -6,7 +6,7 @@ brand
 
 ## Users
 
-Deux personnes côte à côte sur un même clavier (1 contre 1), ou une personne seule contre le bot.
+Deux personnes côte à côte (1 contre 1), au clavier, à la manette ou l'un et l'autre, ou une personne seule contre le bot.
 Parties courtes, sur un écran de laptop ou une TV. Elles veulent entrer en combat vite et
 comprendre à chaque instant ce qui se passe à l'écran.
 

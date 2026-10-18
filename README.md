@@ -29,15 +29,17 @@ Spectateur bot contre bot : `godot --path . res://scenes/fight.tscn -- --demo`
 
 ## Commandes
 
-| | Joueur 1 | Joueur 2 |
-|---|---|---|
-| Bouger / sauter | Z Q S D (W A S D en QWERTY) | Flèches |
-| Attaque | F | K |
-| Spécial | G | L |
-| Traverser une plateforme | Bas + Saut | Bas + Saut |
-| Pause | Échap | Échap |
+| | Joueur 1 | Joueur 2 | Manette (chaque joueur) |
+|---|---|---|---|
+| Bouger / sauter | Z Q S D (W A S D en QWERTY) | Flèches | Stick gauche ou croix ; X saute aussi |
+| Attaque | F | K | A (Croix sur DualSense) |
+| Spécial | G | L | B (Rond) |
+| Traverser une plateforme | Bas + Saut | Bas + Saut | Bas + Saut |
+| Pause | Échap | Échap | Start (Options) |
 
-Touches physiques : la disposition s'adapte au clavier AZERTY ou QWERTY.
+Touches physiques : la disposition s'adapte au clavier AZERTY ou QWERTY. Chaque joueur peut jouer au
+clavier ou à la manette : la 1re manette branchée va au joueur 1, la 2e au joueur 2, et une manette
+branchée en cours de partie marche aussitôt. Clavier + manette ou deux manettes, au choix.
 
 ## Personnages
 
@@ -101,7 +103,7 @@ Rôle de chaque dossier et des scènes : [docs/technique/01-architecture.md](doc
 assets/          PNG générés, police EcoPixel (.fnt), thème UI
 data/fighters/   Les 4 personnages (.tres) : stats, attaques, sprites
 scenes/          fighter, stage, fight, ui/(main_menu, character_select, results)
-src/core/        Entrées : InputFrame, InputSource (port), clavier, Null Object
+src/core/        Entrées : InputFrame, InputSource (port), clavier et manette, Null Object
 src/bot/         IA : perception, cerveau (pur), source d'entrée bot
 src/combat/      AttackData, formule de knockback, HitVolume, CombatResolver
 src/fighters/    Fighter, définitions, roster, coups (MeleeStrike, ProjectileShot)

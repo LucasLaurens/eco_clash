@@ -56,7 +56,8 @@ Deux précautions pour les scénarios :
 | `test_knockback_formula` | La projection grandit avec les dégâts, diminue avec le poids, part vers le haut, a pour norme la force ; hitstun proportionnel. |
 | `test_attack_data` | Les phases suivent la timeline. |
 | `test_bot_brain` | Poursuite, attaque à portée, retour vers l'arène, refus de tomber. |
-| `test_keyboard_input_source` | Les touches maintenues deviennent un `InputFrame` ; chaque action a un libellé de touche. |
+| `test_human_input_source` | Les touches maintenues, le stick et les boutons de la manette deviennent un `InputFrame` ; chaque action a un libellé de touche. |
+| `test_control_scheme` | Chaque action a une touche et un bouton de manette ; A, B et X donnent attaque, spécial et saut ; la manette d'un joueur ne pilote pas l'autre ; le stick n'agit qu'au-delà de la zone morte ; un branchement de manette en cours de partie réenregistre les actions sans rien dupliquer ; A valide et Start met en pause depuis n'importe quelle manette ; sans manette, les rappels montrent les touches ; la police dessine chaque libellé de bouton. |
 | `test_selection_cursor` | Le curseur boucle sur le roster et se verrouille une fois validé. |
 | `test_match_config` | Qui est bot dans chaque mode, schéma de touches de chaque slot, aucune touche en double, chaque slot a son curseur et son marqueur. |
 | `test_roster` | Six identifiants distincts, planches conformes à `layout.json`, coups complets, jauges entre 1 et 5. |
@@ -70,7 +71,7 @@ Deux précautions pour les scénarios :
 | Suite | Scénarios |
 |---|---|
 | `test_match_flow` | Un coup au corps à corps ne touche qu'une fois ; un projectile touche une fois puis disparaît ; un KO coûte une vie et le combattant réapparaît dans l'arène à 0 % ; deux bots s'affrontent 2 400 ticks sans erreur. |
-| `test_screens` | Le menu propose trois choix et rappelle les commandes ; la sélection déplace le curseur et valide le joueur 1 ; l'écran de victoire nomme le vainqueur et la durée ; Échap met et retire la pause. |
+| `test_screens` | Le menu propose trois choix et rappelle les commandes ; la sélection déplace le curseur et valide le joueur 1 ; l'écran de victoire nomme le vainqueur et la durée ; en 2 joueurs, la manette du joueur 2 déplace son curseur et le valide sans toucher au joueur 1 ; Échap met et retire la pause ; Start d'une manette aussi. |
 
 ## Tests des outils Python
 

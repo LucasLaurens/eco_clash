@@ -6,8 +6,8 @@
 flowchart LR
     Menu[Menu principal] -->|1 joueur vs bot / 2 joueurs| Select[Sélection]
     Select -->|deux choix validés| Fight[Combat]
-    Select -->|Échap| Menu
-    Fight -->|Échap| Pause[Pause]
+    Select -->|Échap / Start| Menu
+    Fight -->|Échap / Start| Pause[Pause]
     Pause -->|Reprendre| Fight
     Pause -->|Menu principal| Menu
     Fight -->|plus de vies| Results[Victoire]
@@ -24,7 +24,10 @@ le logo, un bouton ou le vainqueur.
 
 Logo, accroche, trois boutons (« 1 JOUEUR VS BOT », « 2 JOUEURS », « QUITTER »). En bas, un
 bandeau sombre rappelle les commandes : une ligne par joueur, puis l'astuce partagée (traverser une
-plateforme, pause) en plus discret.
+plateforme, pause) en plus discret. La ligne d'un joueur qui a une manette montre ses boutons
+(← ↑ ↓ →, A, B) au lieu de ses touches ; elle se met à jour dès qu'une manette est branchée ou
+débranchée. Les boutons se choisissent au clavier (flèches, Entrée) ou à la manette (croix ou stick,
+A).
 
 ## Sélection
 
@@ -33,7 +36,8 @@ plateforme, pause) en plus discret.
 - Un panneau par joueur : aperçu animé du personnage, nom dans sa couleur, titre, trois jauges
   (vitesse, puissance, poids), nom et description du spécial, et l'état (« CHOIX EN COURS »,
   « PRÊT ! », « EN ATTENTE... », « J1 CHOISIT LE BOT »).
-- En bas, les touches utiles pour choisir, valider et annuler.
+- En bas, les touches utiles pour choisir, valider et annuler : les boutons de la manette pour un
+  joueur qui en a une, ses touches sinon. Le rappel se met à jour au branchement d'une manette.
 
 ## Combat
 
@@ -60,12 +64,12 @@ plateforme, pause) en plus discret.
 ## Pause
 
 Voile sombre par-dessus le combat figé, titre « PAUSE », boutons « REPRENDRE » et
-« MENU PRINCIPAL ». Échap ouvre et ferme la pause.
+« MENU PRINCIPAL ». Échap ou Start (Options) ouvre et ferme la pause ; A valide le bouton choisi.
 
 ## Victoire
 
 « VICTOIRE ! », le personnage vainqueur animé, « JOUEUR 1 GAGNE AVEC KAEL », la durée du match,
-puis « REVANCHE », « CHANGER DE PERSO » et « MENU ».
+puis « REVANCHE », « CHANGER DE PERSO » et « MENU », au clavier ou à la manette.
 
 ## Textes
 

@@ -5,6 +5,8 @@ const LOGO := preload("res://assets/ui/logo.png")
 const FOOTER_PADDING := 4
 const FOOTER_VEIL_ALPHA := 0.7
 
+var _player_controls_labels: Array[Label] = []
+
 
 func _ready() -> void:
 	UiKit.add_backdrop(self, 0.35)
@@ -33,14 +35,20 @@ func _add_footer() -> void:
 	var lines := VBoxContainer.new()
 	lines.add_theme_constant_override(&"separation", 0)
 	band.add_child(lines)
-	lines.add_child(
-		UiKit.create_label(UiKit.format_controls(1, UiText.CONTROLS_P1), UiKit.FONT_SMALL, UiKit.TEXT_LIGHT)
-	)
-	lines.add_child(
-		UiKit.create_label(UiKit.format_controls(2, UiText.CONTROLS_P2), UiKit.FONT_SMALL, UiKit.TEXT_LIGHT)
-	)
+	for _prefix: String in UiText.CONTROLS_PLAYERS:
+		var label := UiKit.create_label("", UiKit.FONT_SMALL, UiKit.TEXT_LIGHT)
+		_player_controls_labels.append(label)
+		lines.add_child(label)
 	lines.add_child(UiKit.create_label(UiText.CONTROLS_EXTRA, UiKit.FONT_SMALL, UiKit.TEXT_MUTED))
 	add_child(band)
+	_refresh_controls()
+	Input.joy_connection_changed.connect(_refresh_controls.unbind(2))
+
+
+## Rewritten when a pad comes or goes: each line shows the buttons its player can actually press.
+func _refresh_controls() -> void:
+	for index in _player_controls_labels.size():
+		_player_controls_labels[index].text = UiKit.format_controls(index + 1, UiText.CONTROLS_PLAYERS[index])
 
 
 func _open_character_select(mode: MatchConfig.Mode) -> void:

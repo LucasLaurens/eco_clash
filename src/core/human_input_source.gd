@@ -1,5 +1,6 @@
-class_name KeyboardInputSource
+class_name HumanInputSource
 extends InputSource
+## A human player: keyboard and pad both feed the actions of his ControlScheme, so this source reads only actions.
 
 var _scheme: ControlScheme
 

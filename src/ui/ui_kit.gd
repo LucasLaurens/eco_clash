@@ -69,17 +69,18 @@ static func create_centered_column(parent: Control, separation: int) -> VBoxCont
 	return column
 
 
+## Pad buttons for a player who has a pad, keys otherwise.
 static func format_controls(player_number: int, prefix: String) -> String:
 	var scheme := ControlScheme.new(player_number)
 	return (
 		UiText.CONTROLS_LINE
 		% [
 			prefix,
-			scheme.format_key_label(ControlScheme.Action.LEFT),
-			scheme.format_key_label(ControlScheme.Action.UP),
-			scheme.format_key_label(ControlScheme.Action.DOWN),
-			scheme.format_key_label(ControlScheme.Action.RIGHT),
-			scheme.format_key_label(ControlScheme.Action.ATTACK),
-			scheme.format_key_label(ControlScheme.Action.SPECIAL),
+			scheme.format_control_label(ControlScheme.Action.LEFT),
+			scheme.format_control_label(ControlScheme.Action.UP),
+			scheme.format_control_label(ControlScheme.Action.DOWN),
+			scheme.format_control_label(ControlScheme.Action.RIGHT),
+			scheme.format_control_label(ControlScheme.Action.ATTACK),
+			scheme.format_control_label(ControlScheme.Action.SPECIAL),
 		]
 	)

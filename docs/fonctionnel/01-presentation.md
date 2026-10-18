@@ -17,7 +17,7 @@ simples. L'univers, ses termes et ses six combattants sont originaux.
 
 ## Public et contexte
 
-- Deux personnes côte à côte sur un même clavier, ou une personne seule contre le bot.
+- Deux personnes côte à côte, au clavier (une moitié chacune) ou à la manette, ou une personne seule contre le bot.
 - Parties courtes, sur un écran de laptop ou une TV.
 - On veut entrer en combat vite et comprendre à chaque instant ce qui se passe.
 
