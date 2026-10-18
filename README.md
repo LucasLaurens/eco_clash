@@ -3,6 +3,19 @@
 Jeu de combat 1 contre 1 en pixel art, façon Smash Bros, dans l'univers Precursor
 de Jak II et Jak 3 : une arène de tech ancienne qui flotte au crépuscule au-dessus des nuages. Godot 4.7, GDScript, rendu 480x270 agrandi x3.
 
+## Documentation
+
+La documentation complète est dans [`docs/`](docs/README.md) :
+
+- **Fonctionnel** : [présentation](docs/fonctionnel/01-presentation.md),
+  [règles et commandes](docs/fonctionnel/02-regles-et-commandes.md),
+  [personnages](docs/fonctionnel/03-personnages.md), [écrans](docs/fonctionnel/04-ecrans.md).
+- **Technique** : [architecture](docs/technique/01-architecture.md),
+  [le combattant](docs/technique/02-combattant.md), [combat](docs/technique/03-combat.md),
+  [IA](docs/technique/04-ia.md), [arène et effets](docs/technique/05-arene-et-effets.md),
+  [interface](docs/technique/06-interface.md), [pipeline d'assets](docs/technique/07-assets.md),
+  [tests](docs/technique/08-tests.md), [ajouter un personnage](docs/technique/09-ajouter-un-personnage.md).
+
 ## Lancer le jeu (Mac)
 
 ```bash
@@ -27,6 +40,8 @@ Touches physiques : la disposition s'adapte au clavier AZERTY ou QWERTY.
 
 ## Personnages
 
+Fiches complètes et statistiques : [docs/fonctionnel/03-personnages.md](docs/fonctionnel/03-personnages.md).
+
 | | Rôle | Spécial |
 |---|---|---|
 | Kael | Équilibré | Uppercut Eco (vertical, sert aussi à revenir) |
@@ -40,6 +55,8 @@ Règles : 3 vies. Plus le pourcentage monte, plus on vole loin. Sortir de l'écr
 
 ## Tests
 
+Suites et conventions : [docs/technique/08-tests.md](docs/technique/08-tests.md).
+
 ```bash
 godot --headless --path . --fixed-fps 60 res://tests/test_runner.tscn
 ```
@@ -47,6 +64,8 @@ godot --headless --path . --fixed-fps 60 res://tests/test_runner.tscn
 Code de sortie 1 en cas d'échec. Chaque test est listé par son nom.
 
 ## Assets
+
+Pipeline détaillé : [docs/technique/07-assets.md](docs/technique/07-assets.md).
 
 Tous les sprites, le décor, l'UI et la police pixel sont générés une seule fois par
 `tools/assets/generate_assets.py` (Python + Pillow), puis versionnés en PNG.
@@ -66,6 +85,8 @@ dans `PRODUCT.md`.
 
 ## Arborescence
 
+Rôle de chaque dossier et des scènes : [docs/technique/01-architecture.md](docs/technique/01-architecture.md).
+
 ```
 assets/          PNG générés, police EcoPixel (.fnt), thème UI
 data/fighters/   Les 4 personnages (.tres) : stats, attaques, sprites
@@ -81,4 +102,5 @@ src/ui/          Textes, kit UI, menus, HUD, pause, résultats
 tests/           Runner headless + suites unitaires et scénarios
 tools/assets/    Générateur d'assets (one-shot)
 PRODUCT.md       Public, personnalité et principes visuels du jeu
+docs/            Documentation fonctionnelle et technique
 ```
