@@ -20,7 +20,8 @@ Dans `tools/assets/fighters.py` :
    - son flux (une couleur de `palette.py`, distincte des autres pour le HUD) ;
    - si besoin, ses `special_poses` (3 poses : préparation, déclenchement, suite).
 3. Si son spécial est un projectile d'une nouvelle couleur, ajouter la planche dans
-   `generate_stage()` : `stage.render_flux_bolt(palette.FLUX_...)`.
+   `generate_stage()` : `stage.render_flux_bolt(palette.FLUX_...)` (ou un rendu propre, comme
+   `render_poison_vial`).
 
 Générer, puis importer :
 
@@ -41,8 +42,17 @@ Copier une ressource proche dans `data/fighters/zara.tres` et adapter :
 - **identité** : `id = &"zara"`, `display_name`, `title`, `accent_color` (la couleur de son flux) ;
 - **corps** : `body_size`, à mesurer sur la silhouette dessinée, pieds en bas ;
 - **déplacement** : `run_speed`, `jump_velocity`, `air_jumps`, `weight` ;
-- **coups** : `light_attack` et `special`, chacun un `MeleeStrike` (avec `lunge`) ou un
-  `ProjectileShot` (avec `speed`, `lifetime`, `sprite_sheet`), chacun avec son `AttackData`.
+- **coups** : `light_attack` et `special`, chacun avec son `AttackData`. Types disponibles :
+  - `MeleeStrike` (`lunge`) ;
+  - `ProjectileShot` (`speed`, `lifetime`, `sprite_sheet`, et `lift` + `gravity` pour un tir en
+    cloche) ;
+  - `DarkSurge` (`empowered_strike`, un autre coup, et `window`) ;
+  - `HasteRush` (`duration`, `speed_multiplier`, l'`AttackData` frappe au contact) ;
+  - `Mend` (`heal_ratio`, `max_heal`).
+- **recharge** : `cooldown` du spécial, en secondes, plus long que le coup lui-même (un test le
+  vérifie). Un spécial sûr ou fort se recharge longtemps.
+- **états** : un `AttackData` peut empoisonner (`poison_damage`, `poison_duration`) ou paralyser
+  (`paralysis`).
 
 Les noms et descriptions s'écrivent en majuscules, avec les caractères de la police EcoPixel.
 

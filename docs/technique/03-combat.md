@@ -18,6 +18,8 @@
 | `launch_angle_deg` | 0 = droit devant, 90 = droit vers le haut. |
 | `hitbox_offset`, `hitbox_size` | Rectangle du coup, relatif aux pieds (x inversé selon l'orientation). |
 | `startup`, `active`, `recovery` | Durées en secondes. |
+| `poison_damage`, `poison_duration` | Dégâts ajoutés après le coup, par paliers de 0,5 s, répartis sur la durée. |
+| `paralysis` | Secondes pendant lesquelles la cible ne peut pas agir, même une fois la projection finie. |
 
 L'effet du coup (`FighterMove.trigger_effect`) part à la fin de `startup`. Le volume de coup vit
 `active` secondes (ou `lifetime` pour un projectile).
@@ -27,7 +29,8 @@ L'effet du coup (`FighterMove.trigger_effect`) part à la fin de `startup`. Le v
 `src/combat/hit_volume.gd`. Un rectangle vivant qui fait mal :
 
 - au corps à corps, enfant du combattant (il suit ses mouvements) ;
-- en projectile, enfant du monde, avec une vitesse et une animation.
+- en projectile, enfant du monde, avec une vitesse, une gravité éventuelle (tir en cloche) et une
+  animation. Un projectile en cloche ignore le sol et tombe jusqu'à la fin de sa durée de vie.
 
 Un volume touche chaque cible **une seule fois**. Un projectile disparaît au premier coup porté.
 Tous les volumes rejoignent le groupe `hit_volumes`.
@@ -71,11 +74,13 @@ Ces trois propriétés sont vérifiées par des tests.
 `Fighter.receive_hit` :
 
 1. ajoute les dégâts au pourcentage ;
-2. calcule la force avec le nouveau pourcentage, puis la vitesse de projection et le hitstun ;
-3. passe en `HITSTUN`, se tourne vers l'attaquant ;
-4. lance le flash d'impact (0,08 s) ;
-5. supprime ses propres volumes de coup en cours ;
-6. émet `damage_changed`.
+2. calcule la force avec le nouveau pourcentage, puis la vitesse de projection et le hitstun
+   (au moins `paralysis`) ;
+3. transmet le coup à son `FighterStatus` (poison, paralysie) ;
+4. passe en `HITSTUN`, se tourne vers l'attaquant ;
+5. lance le flash d'impact (0,08 s) ;
+6. supprime ses propres volumes de coup en cours ;
+7. émet `damage_changed`.
 
 ## Sensation d'impact
 
@@ -84,6 +89,7 @@ Gérée par `fight.gd` à chaque `hit_landed` :
 | Effet | Réglage |
 |---|---|
 | Étincelle | Effet ponctuel au centre de la zone de contact. |
+| Détonation | Si le coup paralyse, éclat de KO violet en plus, au même point. |
 | Tremblement | Trauma ajouté = dégâts x 0,03. Amplitude = trauma² x 6 px ; le trauma décroît de 2,5 par seconde. |
 | Hit-stop | `Engine.time_scale = 0,05` pendant 0,03 + dégâts x 0,004 secondes (temps réel). |
 

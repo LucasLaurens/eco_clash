@@ -30,6 +30,8 @@ note = clamp(1 + arrondi(ratio * 4), 1, 5)
 ratio = position de la valeur dans son intervalle
   vitesse   : run_speed dans [90, 170]
   puissance : dégâts attaque + dégâts spécial dans [10, 24]
+              (FighterMove.compute_rated_damage : poison compris, coup sombre pour DarkSurge,
+               0 pour un soin)
   poids     : weight dans [70, 140]
 ```
 
@@ -111,12 +113,14 @@ Ordre dans `Fighter._physics_process` :
 
 1. Si `OUT`, rien.
 2. Lire l'`InputFrame` de la source.
-3. Décompter les minuteurs (invulnérabilité, flash d'impact, traversée de plateforme).
+3. Décompter les minuteurs (invulnérabilité, flash d'impact, traversée de plateforme) et ceux de
+   `FighterStatus` ; un palier de poison ajoute ses dégâts.
 4. Mettre à jour l'état courant.
 5. Appliquer la gravité, puis `move_and_slide()`.
 6. Si le combattant vient de toucher le sol : recharger sauts et spécial aérien, poussière si la
    chute était rapide.
-7. Mettre à jour le visuel (animation, retournement, clignotement, flash) et l'ombre.
+7. Mettre à jour le visuel (animation, retournement, teinte d'état, clignotement, flash) et
+   l'ombre.
 
 ## Constantes de mouvement
 
@@ -142,9 +146,26 @@ décide que de son effet, dans `trigger_effect(user)`, appelé à la fin du dém
 | Classe | Effet |
 |---|---|
 | `MeleeStrike` | Applique un élan (`lunge`, x relatif à l'orientation) puis crée un volume de coup attaché au combattant. |
-| `ProjectileShot` | Crée un volume de coup qui voyage (`speed`, `lifetime`) avec sa propre animation. |
+| `ProjectileShot` | Crée un volume de coup qui voyage (`speed`, `lifetime`) avec sa propre animation ; en cloche avec `lift` (vitesse initiale vers le haut) et `gravity`. |
+| `DarkSurge` | Rend le combattant sombre : sa prochaine attaque, dans `window` secondes, est remplacée par `empowered_strike`. |
+| `HasteRush` | Multiplie la vitesse de course (`speed_multiplier`) pendant `duration` et attache au corps, pour la même durée, un volume qui frappe au premier contact. |
+| `Mend` | Retire `heal_ratio` des dégâts, `max_heal` au plus. |
 
-Chaque coup porte un `AttackData` (dégâts, projection, hitbox, timeline) : voir [Combat](03-combat.md).
+Chaque coup porte un `AttackData` (dégâts, projection, hitbox, timeline, poison, paralysie) : voir
+[Combat](03-combat.md). Le spécial a aussi un `cooldown`.
+
+## États : `FighterStatus`
+
+`src/fighters/fighter_status.gd`, données et minuteurs purs (testés sans scène). Le `Fighter` en a
+un, remplacé par un neuf à chaque réapparition.
+
+| État | Règle |
+|---|---|
+| Recharge du spécial | Démarre au lancement du spécial (`cooldown` du coup). Tant qu'elle court, l'appui spécial est ignoré. `compute_special_readiness()` va de 0 à 1 pour le HUD. |
+| Emprise sombre | `select_light_attack` rend le coup sombre au lieu de l'attaque normale ; une fois lancé, l'emprise est dépensée mais l'aura sombre dure jusqu'à la fin du coup. |
+| Sprint | `compute_speed_multiplier()` multiplie `run_speed`, au sol comme en l'air. |
+| Poison | Réparti en paliers de 0,5 s (`POISON_TICK`) sur `poison_duration`. |
+| Paralysie | Le hitstun dure au moins `paralysis` ; chaque coup reçu remplace la paralysie, donc un coup sans paralysie libère la cible. |
 
 ## Sprites
 

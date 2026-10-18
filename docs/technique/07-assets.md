@@ -36,7 +36,7 @@ python3 tools/assets/preview.py assets/fighters/kael.png /tmp/kael_x6.png 6
 | `pixel.py` | Primitives sur pixels entiers : `Canvas`, rectangles, ellipses, polygones, dégradé tramé, contour, voile (`tint_toward`). |
 | `palette.py` | Toutes les couleurs : flux (vert, bleu, rouge, jaune, sombre, orange), métal ancien, ciel, mer de nuages, couleurs de joueur. |
 | `fighters.py` | Planches des 6 personnages et `layout.json`. |
-| `stage.py` | Couches du décor, couches animées et `animated_layers.json`, effets (étincelle, orbes, ombre, poussière, éclat de KO). |
+| `stage.py` | Couches du décor, couches animées et `animated_layers.json`, effets (étincelle, orbes, fiole de poison, ombre, poussière, éclat de KO). |
 | `ui.py` | Logo, panneaux, portraits, têtes de HUD, curseurs, marqueurs de joueur. |
 | `font.py` | Police EcoPixel (atlas PNG + descripteur AngelCode `.fnt`). |
 | `generate_assets.py` | Point d'entrée : appelle tout et écrit dans `assets/`. |
@@ -47,7 +47,7 @@ python3 tools/assets/preview.py assets/fighters/kael.png /tmp/kael_x6.png 6
 |---|---|
 | `assets/fighters/` | `<id>.png` (une planche par personnage, images de 64 px), `layout.json`. |
 | `assets/stage/` | `sky`, `clouds`, `far`, `mid`, `island`, `platform`, `pylon_glow`, `flux_motes`, `animated_layers.json`. |
-| `assets/fx/` | `hit_spark`, `flux_bolt` (jaune), `flux_bolt_dark` (sombre), `shadow`, `dust`, `ko_burst`. |
+| `assets/fx/` | `hit_spark`, `flux_bolt` (jaune), `flux_bolt_dark` (violet, Détonation), `flux_bolt_red` (rouge, Orbe de Rage), `poison_vial` (fiole de poison, 2 images), `shadow`, `dust`, `ko_burst`. |
 | `assets/ui/` | `logo`, `panel`, `button*`, `portrait_<id>`, `stock_<id>`, `selector_<slot>`, `marker_<slot>`. |
 | `assets/fonts/` | `eco_pixel.png`, `eco_pixel.fnt`. |
 | `icon.png` | Portrait de Kael agrandi. |

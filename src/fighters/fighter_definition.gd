@@ -28,7 +28,7 @@ func compute_speed_rating() -> int:
 
 
 func compute_power_rating() -> int:
-	return _compute_rating(light_attack.attack.damage + special.attack.damage, POWER_RANGE)
+	return _compute_rating(light_attack.compute_rated_damage() + special.compute_rated_damage(), POWER_RANGE)
 
 
 func compute_weight_rating() -> int:

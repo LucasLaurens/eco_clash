@@ -1,6 +1,6 @@
 class_name AttackData
 extends Resource
-## Numbers of one hit: damage, launch and timeline (startup -> active -> recovery).
+## Numbers of one hit: damage, launch, lingering conditions and timeline (startup -> active -> recovery).
 
 enum Phase { STARTUP, ACTIVE, RECOVERY }
 
@@ -14,10 +14,19 @@ enum Phase { STARTUP, ACTIVE, RECOVERY }
 @export var startup := 0.08
 @export var active := 0.1
 @export var recovery := 0.16
+## Extra damage dealt in ticks after the hit, spread over poison_duration seconds.
+@export var poison_damage := 0.0
+@export var poison_duration := 0.0
+## Seconds the target cannot act, even once the knockback is over. The next hit ends it.
+@export var paralysis := 0.0
 
 
 func compute_total_duration() -> float:
 	return startup + active + recovery
+
+
+func compute_total_damage() -> float:
+	return damage + poison_damage
 
 
 func compute_phase(elapsed: float) -> Phase:

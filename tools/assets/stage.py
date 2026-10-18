@@ -309,6 +309,24 @@ def render_flux_bolt(flux: Ramp) -> Canvas:
     return canvas
 
 
+def render_poison_vial() -> Canvas:
+    """2 frames, 16px each: a tumbling glass vial of poison, cork up then cork forward."""
+    size = 16
+    canvas = Canvas(size * 2, size)
+    poison = palette.POISON
+    for frame, (neck_x, neck_y) in enumerate(((0, -1), (1, 0))):
+        center_x, center_y = frame * size + size // 2 - neck_x, size // 2 + 1 - neck_y
+        neck_start = (center_x + neck_x * 3, center_y + neck_y * 3)
+        neck_end = (center_x + neck_x * 5, center_y + neck_y * 5)
+        canvas.draw_line(neck_start, neck_end, (*poison.light, 220), 3)
+        canvas.draw_line(neck_end, (center_x + neck_x * 6, center_y + neck_y * 6), palette.CORK, 3)
+        canvas.fill_ellipse((center_x - 4, center_y - 4, center_x + 4, center_y + 4), poison.shade)
+        canvas.fill_ellipse((center_x - 3, center_y - 2, center_x + 3, center_y + 3), poison.base)
+        canvas.fill_rect((center_x - 2, center_y - 3, center_x - 1, center_y - 2), poison.light)
+    canvas.add_outline(palette.OUTLINE)
+    return canvas
+
+
 def render_shadow() -> Canvas:
     """3 frames, 18px each: contact shadow shrinking as the fighter rises. Outline-tinted, never pure black.
 

@@ -23,7 +23,8 @@ scenes/          fighter, stage, fight, ui/(main_menu, character_select, results
 src/core/        Entrées : InputFrame, InputSource (port), humain (clavier et manette), Null Object, schémas de commandes
 src/bot/         IA : perception, cerveau (pur), source d'entrée bot
 src/combat/      AttackData, formule de knockback, HitVolume, CombatResolver
-src/fighters/    Fighter, définitions, roster, coups (MeleeStrike, ProjectileShot), sprite frames
+src/fighters/    Fighter, état (FighterStatus), définitions, roster, coups (MeleeStrike, ProjectileShot,
+                 DarkSurge, HasteRush, Mend), sprite frames
 src/match/       MatchConfig, MatchResult, autoload MatchSettings, fabrique d'entrées, scène de combat
 src/stage/       Arène : sol, plateformes, spawns, zone d'éjection, couches animées
 src/fx/          Effets ponctuels, flash d'impact (shader), caméra qui tremble, découpe de strips
@@ -113,7 +114,8 @@ Le code suit quelques règles constantes. Elles expliquent la forme de la plupar
     et bot l'implémentent.
   - `NullInputSource` est un Null Object : un combattant sans contrôleur reste immobile, ce qui
     évite tout `null`.
-- **Strategy.** `FighterMove` décide de l'effet d'un coup (`MeleeStrike`, `ProjectileShot`) ;
+- **Strategy.** `FighterMove` décide de l'effet d'un coup (`MeleeStrike`, `ProjectileShot`,
+  `DarkSurge`, `HasteRush`, `Mend`) ;
   ajouter un type de coup, c'est ajouter une classe.
 - **Une seule source par information.**
   - Les indices d'animation viennent de `layout.json`, la place des couches animées de

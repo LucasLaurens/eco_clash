@@ -16,6 +16,8 @@ FLUX_RED = Ramp(shade=(170, 30, 40), base=(255, 90, 70), light=(255, 210, 180))
 FLUX_YELLOW = Ramp(shade=(210, 140, 20), base=(255, 226, 70), light=(255, 252, 200))
 FLUX_DARK = Ramp(shade=(90, 40, 140), base=(160, 90, 230), light=(226, 190, 255))
 FLUX_ORANGE = Ramp(shade=(200, 90, 20), base=(255, 150, 40), light=(255, 220, 150))
+POISON = Ramp(shade=(70, 120, 30), base=(150, 214, 60), light=(226, 252, 160))
+CORK: Color = (150, 96, 56)
 
 ANCIENT_METAL = Ramp(shade=(56, 72, 96), base=(104, 130, 158), light=(170, 196, 214))
 ANCIENT_GLOW = Ramp(shade=(40, 150, 200), base=(110, 230, 255), light=(230, 255, 255))

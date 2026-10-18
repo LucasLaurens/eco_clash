@@ -49,12 +49,27 @@ seule fois par planche et mises en cache.
 | `HIT_SPARK` | Chaque coup qui touche. | Blanche. |
 | `DUST` | Saut au sol, saut en l'air, atterrissage rapide. | Sable. |
 | `KO_BURST` | Sortie de la zone d'éjection, au bord de l'écran. | Couleur du personnage. |
+| `KO_BURST` | Coup qui paralyse (Détonation), au point d'impact. | Violet (`DETONATION_TINT`). |
+| `HIT_SPARK` | Soin (Sève de Vie), au-dessus du soigneur. | Vert (`HEAL_TINT`). |
 
 ## Flash d'impact
 
 `src/fx/hit_flash.gdshader`, un shader `canvas_item` posé sur le sprite de chaque combattant.
 `flash_amount` passe à 1 pendant 0,08 s après un coup reçu : le sprite vire au blanc chaud
-`(1.0, 0.97, 0.9)` en gardant sa transparence et son clignotement.
+`(1.0, 0.97, 0.9)` en gardant sa transparence et son clignotement. Un palier de poison relance ce
+flash.
+
+## Teintes d'état
+
+`FighterStatus.resolve_tint()` donne la `modulate` du sprite à chaque tick. Un seul état se voit à la
+fois, le plus fort l'emporte :
+
+| État | Teinte |
+|---|---|
+| Paralysé | `PARALYSIS_TINT` (0.78, 0.56, 1.0), violet. |
+| Empoisonné | `POISON_TINT` (0.62, 1.0, 0.42), vert. |
+| Emprise Sombre (et pendant le coup sombre) | `DARK_TINT` (0.42, 0.28, 0.58), sombre. |
+| Sprint | `HASTE_TINT` (0.7, 0.95, 1.0), bleuté. |
 
 ## Ombre au sol
 

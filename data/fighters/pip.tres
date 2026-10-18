@@ -3,11 +3,10 @@
 [ext_resource type="Script" path="res://src/fighters/fighter_definition.gd" id="1_definition"]
 [ext_resource type="Script" path="res://src/fighters/moves/melee_strike.gd" id="2_melee"]
 [ext_resource type="Script" path="res://src/combat/attack_data.gd" id="3_attack"]
-[ext_resource type="Script" path="res://src/fighters/moves/projectile_shot.gd" id="5_projectile"]
+[ext_resource type="Script" path="res://src/fighters/moves/haste_rush.gd" id="10_haste"]
 [ext_resource type="Texture2D" path="res://assets/fighters/pip.png" id="6_sheet"]
 [ext_resource type="Texture2D" path="res://assets/ui/portrait_pip.png" id="7_portrait"]
 [ext_resource type="Texture2D" path="res://assets/ui/stock_pip.png" id="8_stock"]
-[ext_resource type="Texture2D" path="res://assets/fx/flux_bolt.png" id="9_bolt"]
 
 [sub_resource type="Resource" id="light_hit"]
 script = ExtResource("3_attack")
@@ -30,23 +29,25 @@ attack = SubResource("light_hit")
 
 [sub_resource type="Resource" id="special_hit"]
 script = ExtResource("3_attack")
-damage = 8.0
-base_knockback = 130.0
-knockback_growth = 3.0
-launch_angle_deg = 25.0
-hitbox_offset = Vector2(15, -15)
-hitbox_size = Vector2(33, 24)
-startup = 0.1
-active = 0.22
-recovery = 0.25
+damage = 6.0
+base_knockback = 110.0
+knockback_growth = 2.8
+launch_angle_deg = 35.0
+hitbox_offset = Vector2(0, -15)
+hitbox_size = Vector2(24, 30)
+startup = 0.05
+active = 0.05
+recovery = 0.1
 
 [sub_resource type="Resource" id="special_move"]
-script = ExtResource("2_melee")
-display_name = "RUÉE BLEUE"
-description = "CHARGE HORIZONTALE ÉCLAIR. TRIPLE SAUT, MAIS TRÈS LÉGER."
+script = ExtResource("10_haste")
+display_name = "SPRINT ÉCLAIR"
+description = "COURT BIEN PLUS VITE PENDANT 2 S. LE PREMIER CONTACT FRAPPE L'ADVERSAIRE."
 animation = &"special"
 attack = SubResource("special_hit")
-lunge = Vector2(420, -40)
+cooldown = 6.0
+duration = 2.0
+speed_multiplier = 1.6
 
 [resource]
 script = ExtResource("1_definition")

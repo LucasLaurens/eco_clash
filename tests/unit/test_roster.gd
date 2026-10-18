@@ -33,6 +33,16 @@ func test_every_move_is_complete() -> void:
 			)
 
 
+func test_every_special_has_a_cooldown_longer_than_itself() -> void:
+	# Act & Assert
+	for definition in FighterRoster.list_all():
+		var special := definition.special
+		assert_true(
+			special.cooldown > special.attack.compute_total_duration(),
+			"%s special cooldown %.1f s outlasts the move" % [definition.id, special.cooldown]
+		)
+
+
 func test_ratings_stay_on_the_five_pip_scale() -> void:
 	# Act & Assert
 	for definition in FighterRoster.list_all():

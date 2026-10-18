@@ -10,12 +10,34 @@ const OUTSIDE_BLAST_ZONE := Vector2(-500, 0)
 const PROJECTILE_FLIGHT_TICKS := 40
 const FLOOR_LAYER := 2
 const FLOOR_SIZE := Vector2(400, 20)
+const COOLDOWN_PROBE_TICKS := 75
+const PARALYSIS_PROBE_TICKS := 60
+const POISON_PROBE_TICKS := 100
+const STRIKE_TICKS := 30
+const HASTE_RAMP_TICKS := 30
+const HASTE_RUN_TICKS := 60
 const SCENARIOS: Array[String] = [
 	"melee_hit_lands_exactly_once",
 	"projectile_hits_once_and_vanishes",
 	"knock_out_costs_a_stock_and_respawns",
 	"two_bots_fight_without_errors",
+	"special_waits_for_its_cooldown",
+	"dark_surge_empowers_the_next_attack",
+	"haste_speeds_up_and_hits_on_contact_once",
+	"mend_heals_a_share_of_the_damage",
+	"poison_keeps_hurting_after_the_hit",
+	"detonation_paralyzes_until_the_next_hit",
 ]
+
+
+## Holds the same intent every tick: a stand-in pad for scenarios.
+class HeldInputSource:
+	extends InputSource
+
+	var frame := InputFrame.new()
+
+	func read_frame() -> InputFrame:
+		return frame
 
 
 func run_scenarios(host: Node) -> void:
@@ -24,6 +46,12 @@ func run_scenarios(host: Node) -> void:
 	await _test_projectile_hits_once_and_vanishes(host)
 	await _test_knock_out_costs_a_stock_and_respawns(host)
 	await _test_two_bots_fight_without_errors(host)
+	await _test_special_waits_for_its_cooldown(host)
+	await _test_dark_surge_empowers_the_next_attack(host)
+	await _test_haste_speeds_up_and_hits_on_contact_once(host)
+	await _test_mend_heals_a_share_of_the_damage(host)
+	await _test_poison_keeps_hurting_after_the_hit(host)
+	await _test_detonation_paralyzes_until_the_next_hit(host)
 
 
 func _test_melee_hit_lands_exactly_once(host: Node) -> void:
@@ -37,7 +65,7 @@ func _test_melee_hit_lands_exactly_once(host: Node) -> void:
 	var target := _spawn_fighter(world, resolver, FighterRoster.find_at(2), Vector2(114, 100))
 	var attack: AttackData = FighterRoster.find_at(0).light_attack.attack
 	# Act
-	attacker.spawn_melee_volume(attack)
+	attacker.spawn_melee_volume(attack, attack.active)
 	for _tick in 4:
 		await host.get_tree().physics_frame
 	# Assert
@@ -57,7 +85,9 @@ func _test_projectile_hits_once_and_vanishes(host: Node) -> void:
 	var resolver := CombatResolver.new()
 	world.add_child(resolver)
 	world.add_child(_create_floor(Vector2(150, 100)))
-	var shooter_definition := _find_projectile_user()
+	var shooter_definition := _find_definition(
+		func(definition: FighterDefinition) -> bool: return definition.special is ProjectileShot
+	)
 	var shooter := _spawn_fighter(world, resolver, shooter_definition, Vector2(80, 100))
 	var target := _spawn_fighter(world, resolver, FighterRoster.find_at(2), Vector2(170, 100))
 	var shot := shooter_definition.special as ProjectileShot
@@ -129,6 +159,172 @@ func _test_two_bots_fight_without_errors(host: Node) -> void:
 	Engine.time_scale = 1.0
 
 
+func _test_special_waits_for_its_cooldown(host: Node) -> void:
+	var scenario_name := "special_waits_for_its_cooldown"
+	# Arrange
+	var world := _create_world(host)
+	var shooter_definition := _find_definition(
+		func(definition: FighterDefinition) -> bool:
+			var special := definition.special
+			return special is ProjectileShot and special.attack.compute_total_duration() < special.cooldown
+	)
+	var shooter := _spawn_fighter(world, world.get_node("Resolver"), shooter_definition, Vector2(100, 100))
+	var input := HeldInputSource.new()
+	input.frame.special_pressed = true
+	shooter.attach_input(input)
+	# Act
+	for _tick in COOLDOWN_PROBE_TICKS:
+		await host.get_tree().physics_frame
+	# Assert
+	assert_equal(
+		host.get_tree().get_nodes_in_group(HitVolume.GROUP).size(),
+		1,
+		"%s: one shot despite the held button" % scenario_name
+	)
+	assert_true(shooter.compute_special_readiness() < 1.0, "%s: gauge still refilling" % scenario_name)
+	_dispose(host, world)
+
+
+func _test_dark_surge_empowers_the_next_attack(host: Node) -> void:
+	var scenario_name := "dark_surge_empowers_the_next_attack"
+	# Arrange
+	var world := _create_world(host)
+	var resolver: CombatResolver = world.get_node("Resolver")
+	var definition := _find_definition(
+		func(candidate: FighterDefinition) -> bool: return candidate.special is DarkSurge
+	)
+	var surge := definition.special as DarkSurge
+	var user := _spawn_fighter(world, resolver, definition, Vector2(100, 100))
+	var target := _spawn_fighter(world, resolver, FighterRoster.find_at(2), Vector2(118, 100))
+	var input := HeldInputSource.new()
+	user.attach_input(input)
+	surge.trigger_effect(user)
+	# Act
+	input.frame.attack_pressed = true
+	await host.get_tree().physics_frame
+	input.frame.attack_pressed = false
+	for _tick in STRIKE_TICKS:
+		await host.get_tree().physics_frame
+	# Assert
+	assert_true(
+		is_equal_approx(target.damage_percent, surge.empowered_strike.attack.damage),
+		"%s: dark strike damage %.1f" % [scenario_name, target.damage_percent]
+	)
+	_dispose(host, world)
+
+
+func _test_haste_speeds_up_and_hits_on_contact_once(host: Node) -> void:
+	var scenario_name := "haste_speeds_up_and_hits_on_contact_once"
+	# Arrange
+	var world := _create_world(host)
+	var resolver: CombatResolver = world.get_node("Resolver")
+	var definition := _find_definition(
+		func(candidate: FighterDefinition) -> bool: return candidate.special is HasteRush
+	)
+	var runner := _spawn_fighter(world, resolver, definition, Vector2(40, 100))
+	var target := _spawn_fighter(world, resolver, FighterRoster.find_at(2), Vector2(130, 100))
+	var input := HeldInputSource.new()
+	input.frame.move_x = 1.0
+	runner.attach_input(input)
+	# Act
+	definition.special.trigger_effect(runner)
+	for _tick in HASTE_RAMP_TICKS:
+		await host.get_tree().physics_frame
+	var hasted_speed := runner.velocity.x
+	for _tick in HASTE_RUN_TICKS:
+		await host.get_tree().physics_frame
+	# Assert
+	assert_true(hasted_speed > definition.run_speed, "%s: faster than the normal run" % scenario_name)
+	assert_true(
+		is_equal_approx(target.damage_percent, definition.special.attack.damage),
+		"%s: contact damage %.1f once" % [scenario_name, target.damage_percent]
+	)
+	_dispose(host, world)
+
+
+func _test_mend_heals_a_share_of_the_damage(host: Node) -> void:
+	var scenario_name := "mend_heals_a_share_of_the_damage"
+	# Arrange
+	var world := _create_world(host)
+	var definition := _find_definition(func(candidate: FighterDefinition) -> bool: return candidate.special is Mend)
+	var mend := definition.special as Mend
+	var healer := _spawn_fighter(world, world.get_node("Resolver"), definition, Vector2(100, 100))
+	var damage_before := RandomNumberGenerator.new().randf_range(10.0, 120.0)
+	healer.damage_percent = damage_before
+	# Act
+	mend.trigger_effect(healer)
+	# Assert
+	var expected := damage_before - minf(damage_before * mend.heal_ratio, mend.max_heal)
+	assert_true(
+		is_equal_approx(healer.damage_percent, expected),
+		"%s: %.1f -> %.1f, expected %.1f" % [scenario_name, damage_before, healer.damage_percent, expected]
+	)
+	_dispose(host, world)
+
+
+func _test_poison_keeps_hurting_after_the_hit(host: Node) -> void:
+	var scenario_name := "poison_keeps_hurting_after_the_hit"
+	# Arrange
+	var world := _create_world(host)
+	var definition := _find_definition(
+		func(candidate: FighterDefinition) -> bool: return candidate.special.attack.poison_damage > 0.0
+	)
+	var attack := definition.special.attack
+	var target := _spawn_fighter(world, world.get_node("Resolver"), FighterRoster.find_at(2), Vector2(100, 100))
+	# Act
+	target.receive_hit(attack, 1)
+	var damage_on_impact := target.damage_percent
+	for _tick in POISON_PROBE_TICKS:
+		await host.get_tree().physics_frame
+	# Assert
+	assert_true(is_equal_approx(damage_on_impact, attack.damage), "%s: impact damage first" % scenario_name)
+	assert_true(
+		is_equal_approx(target.damage_percent, attack.compute_total_damage()),
+		"%s: poison added %.1f" % [scenario_name, target.damage_percent - damage_on_impact]
+	)
+	_dispose(host, world)
+
+
+func _test_detonation_paralyzes_until_the_next_hit(host: Node) -> void:
+	var scenario_name := "detonation_paralyzes_until_the_next_hit"
+	# Arrange
+	var world := _create_world(host)
+	var definition := _find_definition(
+		func(candidate: FighterDefinition) -> bool: return candidate.special.attack.paralysis > 0.0
+	)
+	var target := _spawn_fighter(world, world.get_node("Resolver"), FighterRoster.find_at(0), Vector2(100, 100))
+	var input := HeldInputSource.new()
+	input.frame.attack_pressed = true
+	target.attach_input(input)
+	var target_volumes := target.get_node("Volumes")
+	# Act
+	target.receive_hit(definition.special.attack, 1)
+	var attacked_while_paralyzed := false
+	for _tick in PARALYSIS_PROBE_TICKS:
+		await host.get_tree().physics_frame
+		attacked_while_paralyzed = attacked_while_paralyzed or target_volumes.get_child_count() > 0
+	target.receive_hit(FighterRoster.find_at(1).light_attack.attack, 1)
+	var attacked_after_wake_up := false
+	for _tick in PARALYSIS_PROBE_TICKS:
+		await host.get_tree().physics_frame
+		attacked_after_wake_up = attacked_after_wake_up or target_volumes.get_child_count() > 0
+	# Assert
+	assert_true(not attacked_while_paralyzed, "%s: no attack while paralysed" % scenario_name)
+	assert_true(attacked_after_wake_up, "%s: a plain hit wakes the target up" % scenario_name)
+	_dispose(host, world)
+
+
+## A bare arena: resolver and floor, no stage, no blast zone.
+func _create_world(host: Node) -> Node2D:
+	var world := Node2D.new()
+	host.add_child(world)
+	var resolver := CombatResolver.new()
+	resolver.name = "Resolver"
+	world.add_child(resolver)
+	world.add_child(_create_floor(Vector2(150, 100)))
+	return world
+
+
 ## Detach first: a queued node stays in the tree until the frame ends, and its resolver would still
 ## read the global hit_volumes group and let the next scenario's projectile strike a stale fighter.
 func _dispose(host: Node, scene: Node) -> void:
@@ -161,11 +357,11 @@ func _create_floor(surface_center: Vector2) -> StaticBody2D:
 	return floor_body
 
 
-func _find_projectile_user() -> FighterDefinition:
+func _find_definition(predicate: Callable) -> FighterDefinition:
 	for definition in FighterRoster.list_all():
-		if definition.special is ProjectileShot:
+		if predicate.call(definition):
 			return definition
-	assert(false, "No fighter has a projectile special")
+	assert(false, "No fighter matches the scenario")
 	return FighterRoster.find_at(0)
 
 
