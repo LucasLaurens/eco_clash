@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bef6s3bm3qtnk"
-path="res://.godot/imported/portrait_nyra.png-a908df5a90a0a033943382aa75d10c8e.ctex"
+uid="uid://rlch7ie13cq5"
+path="res://.godot/imported/portrait_ormos.png-a6ae03363765ee08f1e4a59eca82e464.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/portrait_nyra.png"
-dest_files=["res://.godot/imported/portrait_nyra.png-a908df5a90a0a033943382aa75d10c8e.ctex"]
+source_file="res://assets/ui/portrait_ormos.png"
+dest_files=["res://.godot/imported/portrait_ormos.png-a6ae03363765ee08f1e4a59eca82e464.ctex"]
 
 [params]
 

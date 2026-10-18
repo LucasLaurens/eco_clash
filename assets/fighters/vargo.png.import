@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bmc0inccxy156"
-path="res://.godot/imported/nyra.png-7b2e911a4c22146436b8db3fe333198b.ctex"
+uid="uid://b31v008nrtxwl"
+path="res://.godot/imported/vargo.png-93c3f27bcdbf71994aee6d27c66677de.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/fighters/nyra.png"
-dest_files=["res://.godot/imported/nyra.png-7b2e911a4c22146436b8db3fe333198b.ctex"]
+source_file="res://assets/fighters/vargo.png"
+dest_files=["res://.godot/imported/vargo.png-93c3f27bcdbf71994aee6d27c66677de.ctex"]
 
 [params]
 

@@ -32,7 +32,9 @@ Touches physiques : la disposition s'adapte au clavier AZERTY ou QWERTY.
 | Kael | Équilibré | Uppercut Eco (vertical, sert aussi à revenir) |
 | Pip | Rapide, léger, triple saut | Ruée Bleue (charge horizontale) |
 | Grondak | Lourd, frappe fort | Séisme Rouge (sol des deux côtés, plongeon en l'air) |
-| Nyra | Distance | Orbe Jaune (projectile) |
+| Ormos | Vieux sage à distance | Orbe Jaune (projectile) |
+| Vargo | Colosse du désert, lourd | Pacificateur (tir lourd et lent, projette loin) |
+| Kragg | Patron sur fauteuil volant, double saut | Ruée du Fauteuil (charge horizontale) |
 
 Règles : 3 vies. Plus le pourcentage monte, plus on vole loin. Sortir de l'écran coûte une vie.
 

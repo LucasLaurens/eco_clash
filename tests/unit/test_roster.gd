@@ -1,14 +1,14 @@
 extends TestCase
 
 
-func test_four_unique_fighters() -> void:
+func test_six_unique_fighters() -> void:
 	# Arrange
 	var ids: Dictionary[StringName, bool] = {}
 	# Act
 	for definition in FighterRoster.list_all():
 		ids[definition.id] = true
 	# Assert
-	assert_equal(ids.size(), 4, "four distinct ids")
+	assert_equal(ids.size(), 6, "six distinct ids")
 
 
 func test_sheets_match_the_generated_layout() -> void:

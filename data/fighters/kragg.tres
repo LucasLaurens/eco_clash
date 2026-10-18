@@ -4,65 +4,62 @@
 [ext_resource type="Script" path="res://src/fighters/moves/melee_strike.gd" id="2_melee"]
 [ext_resource type="Script" path="res://src/combat/attack_data.gd" id="3_attack"]
 [ext_resource type="Script" path="res://src/fighters/moves/projectile_shot.gd" id="5_projectile"]
-[ext_resource type="Texture2D" path="res://assets/fighters/nyra.png" id="6_sheet"]
-[ext_resource type="Texture2D" path="res://assets/ui/portrait_nyra.png" id="7_portrait"]
-[ext_resource type="Texture2D" path="res://assets/ui/stock_nyra.png" id="8_stock"]
-[ext_resource type="Texture2D" path="res://assets/fx/eco_bolt.png" id="9_bolt"]
+[ext_resource type="Texture2D" path="res://assets/fighters/kragg.png" id="6_sheet"]
+[ext_resource type="Texture2D" path="res://assets/ui/portrait_kragg.png" id="7_portrait"]
+[ext_resource type="Texture2D" path="res://assets/ui/stock_kragg.png" id="8_stock"]
 
 [sub_resource type="Resource" id="light_hit"]
 script = ExtResource("3_attack")
-damage = 5.0
-base_knockback = 100.0
-knockback_growth = 3.0
+damage = 7.0
+base_knockback = 115.0
+knockback_growth = 3.2
 launch_angle_deg = 40.0
-hitbox_offset = Vector2(24, -27)
-hitbox_size = Vector2(33, 21)
-startup = 0.08
+hitbox_offset = Vector2(24, -24)
+hitbox_size = Vector2(27, 21)
+startup = 0.09
 active = 0.1
-recovery = 0.18
+recovery = 0.2
 
 [sub_resource type="Resource" id="light_move"]
 script = ExtResource("2_melee")
-display_name = "COUP DE BÂTON"
+display_name = "GIFLE BAGUÉE"
 description = ""
 animation = &"attack"
 attack = SubResource("light_hit")
 
 [sub_resource type="Resource" id="special_hit"]
 script = ExtResource("3_attack")
-damage = 7.0
-base_knockback = 90.0
-knockback_growth = 2.4
-launch_angle_deg = 20.0
-hitbox_offset = Vector2(21, -27)
-hitbox_size = Vector2(18, 15)
-startup = 0.16
-active = 0.05
-recovery = 0.28
+damage = 12.0
+base_knockback = 150.0
+knockback_growth = 3.6
+launch_angle_deg = 30.0
+hitbox_offset = Vector2(18, -18)
+hitbox_size = Vector2(36, 30)
+startup = 0.18
+active = 0.22
+recovery = 0.35
 
 [sub_resource type="Resource" id="special_move"]
-script = ExtResource("5_projectile")
-display_name = "ORBE JAUNE"
-description = "TIRE UN ORBE D'ÉCO JAUNE QUI TRAVERSE L'ARÈNE."
+script = ExtResource("2_melee")
+display_name = "RUÉE DU FAUTEUIL"
+description = "LE FAUTEUIL FONCE DROIT DEVANT. DOUBLE SAUT EN VOL STATIONNAIRE."
 animation = &"special"
 attack = SubResource("special_hit")
-speed = 240.0
-lifetime = 1.4
-sprite_sheet = ExtResource("9_bolt")
+lunge = Vector2(360, 0)
 
 [resource]
 script = ExtResource("1_definition")
-id = &"nyra"
-display_name = "NYRA"
-title = "LA SAGE"
-accent_color = Color(1.0, 0.88, 0.35, 1)
+id = &"kragg"
+display_name = "KRAGG"
+title = "LE PATRON"
+accent_color = Color(1.0, 0.62, 0.25, 1)
 sprite_sheet = ExtResource("6_sheet")
 portrait = ExtResource("7_portrait")
 stock_icon = ExtResource("8_stock")
-body_size = Vector2(16, 44)
-run_speed = 115.0
-jump_velocity = 369.0
-air_jumps = 1
-weight = 90.0
+body_size = Vector2(30, 40)
+run_speed = 100.0
+jump_velocity = 352.0
+air_jumps = 2
+weight = 140.0
 light_attack = SubResource("light_move")
 special = SubResource("special_move")
