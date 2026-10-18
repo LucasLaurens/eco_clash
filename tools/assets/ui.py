@@ -1,4 +1,4 @@
-"""UI kit: logo, Precursor-metal panels, character portraits, stock icons, player selectors."""
+"""UI kit: logo, ancient-metal panels, character portraits, stock icons, player selectors."""
 from __future__ import annotations
 
 from PIL import Image
@@ -26,7 +26,7 @@ def render_logo() -> Image.Image:
                 pixels[x, y] = mix_colors(top, bottom, y / text.height)
             elif alpha:
                 pixels[x, y] = (*palette.OUTLINE, 255)
-    shadow = Image.new("RGBA", text.size, (*palette.ECO_BLUE.shade, 255))
+    shadow = Image.new("RGBA", text.size, (*palette.FLUX_BLUE.shade, 255))
     shadow.putalpha(text.getchannel("A"))
     canvas.paste(shadow, (6, 7))
     canvas.paste(text, (4, 4))
@@ -50,7 +50,7 @@ def render_panel(border: Ramp, fill: Color) -> Canvas:
 
 
 def render_panels() -> dict[str, Canvas]:
-    metal, glow = palette.PRECURSOR_METAL, palette.PRECURSOR_GLOW
+    metal, glow = palette.ANCIENT_METAL, palette.ANCIENT_GLOW
     return {
         "panel": render_panel(metal, (28, 40, 60, 230)),
         "button": render_panel(metal, (40, 58, 84)),
@@ -71,8 +71,8 @@ def crop_head(artist: FighterArtist) -> Image.Image:
 
 def render_portrait(artist: FighterArtist) -> Image.Image:
     canvas = Canvas(PORTRAIT_SIZE, PORTRAIT_SIZE)
-    eco = artist.eco
-    canvas.fill_vertical_gradient((2, 2, PORTRAIT_SIZE - 3, PORTRAIT_SIZE - 3), [eco.light, eco.base, eco.shade])
+    flux = artist.flux
+    canvas.fill_vertical_gradient((2, 2, PORTRAIT_SIZE - 3, PORTRAIT_SIZE - 3), [flux.light, flux.base, flux.shade])
     head = crop_head(artist).resize((PORTRAIT_SIZE - 4, PORTRAIT_SIZE - 4), Image.NEAREST)
     canvas.paste(head, (2, 4))
     frame = Canvas(PORTRAIT_SIZE, PORTRAIT_SIZE)

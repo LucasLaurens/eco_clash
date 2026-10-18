@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" path="res://assets/fighters/ormos.png" id="6_sheet"]
 [ext_resource type="Texture2D" path="res://assets/ui/portrait_ormos.png" id="7_portrait"]
 [ext_resource type="Texture2D" path="res://assets/ui/stock_ormos.png" id="8_stock"]
-[ext_resource type="Texture2D" path="res://assets/fx/eco_bolt.png" id="9_bolt"]
+[ext_resource type="Texture2D" path="res://assets/fx/flux_bolt.png" id="9_bolt"]
 
 [sub_resource type="Resource" id="light_hit"]
 script = ExtResource("3_attack")
@@ -43,7 +43,7 @@ recovery = 0.28
 [sub_resource type="Resource" id="special_move"]
 script = ExtResource("5_projectile")
 display_name = "ORBE JAUNE"
-description = "TIRE UN ORBE D'ÉCO JAUNE QUI TRAVERSE L'ARÈNE."
+description = "TIRE UN ORBE DE FLUX JAUNE QUI TRAVERSE L'ARÈNE."
 animation = &"special"
 attack = SubResource("special_hit")
 speed = 240.0

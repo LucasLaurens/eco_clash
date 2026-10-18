@@ -11,10 +11,9 @@ combattant qui a encore des vies gagne.
 
 ## Univers
 
-L'arène est une dalle de tech Précurseur qui flotte au crépuscule au-dessus d'une mer de nuages,
-dans l'esprit de Jak II et Jak 3 : métal patiné, éco qui luit dans les objets (conduits, cristaux,
-anneaux), grandes formes simples. Les six combattants s'inspirent de cet univers sans en reprendre
-les personnages.
+L'arène est une dalle de tech ancienne qui flotte au crépuscule au-dessus d'une mer de nuages :
+métal patiné, flux d'énergie qui luit dans les objets (conduits, cristaux, anneaux), grandes formes
+simples. L'univers, ses termes et ses six combattants sont originaux.
 
 ## Public et contexte
 
@@ -28,8 +27,8 @@ Ils sont écrits dans [`PRODUCT.md`](../../PRODUCT.md), qui fait foi :
 
 1. On sait toujours qui est qui, même quand les deux joueurs ont le même personnage.
 2. Chaque coup se sent : l'impact se voit sur la cible, pas seulement dans le chiffre.
-3. Le décor vit mais ne gêne jamais la lecture : peu d'éléments, palette réduite, un seul accent
-   éco (cyan) pour la tech ; les couleurs vives sont réservées aux personnages.
+3. Le décor vit mais ne gêne jamais la lecture : peu d'éléments, palette réduite, un seul accent de
+   flux (cyan) pour la tech ; les couleurs vives sont réservées aux personnages.
 4. Le pixel reste net, sur une seule grille : pas de flou, pas de résolutions mélangées.
 
 Anti-référence : le néon et le cyberpunk (glow partout, scanlines, fond noir et fluo).

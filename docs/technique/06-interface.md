@@ -9,7 +9,7 @@
 | `src/ui/ui_text.gd` | **Tous** les textes affichés, en constantes. Rien n'est écrit en dur ailleurs. |
 | `src/ui/ui_kit.gd` | Fabrique des widgets récurrents : libellé, bouton, colonne centrée, fond d'arène, voile. |
 | `src/ui/scene_paths.gd` | Chemins des scènes. |
-| `assets/ui/theme.tres` | Thème global : police EcoPixel, boutons et panneaux en métal Précurseur. |
+| `assets/ui/theme.tres` | Thème global : police EcoPixel, boutons et panneaux en métal ancien. |
 
 ### Règles de `UiKit`
 

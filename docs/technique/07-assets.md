@@ -30,7 +30,7 @@ python3 tools/assets/preview.py assets/fighters/kael.png /tmp/kael_x6.png 6
 | Fichier | Produit |
 |---|---|
 | `pixel.py` | Primitives sur pixels entiers : `Canvas`, rectangles, ellipses, polygones, dégradé tramé, contour, voile (`tint_toward`). |
-| `palette.py` | Toutes les couleurs : éco (vert, bleu, rouge, jaune, sombre, orange), métal Précurseur, ciel, mer de nuages, couleurs de joueur. |
+| `palette.py` | Toutes les couleurs : flux (vert, bleu, rouge, jaune, sombre, orange), métal ancien, ciel, mer de nuages, couleurs de joueur. |
 | `fighters.py` | Planches des 6 personnages et `layout.json`. |
 | `stage.py` | Couches du décor, couches animées et `animated_layers.json`, effets (étincelle, orbes, ombre, poussière, éclat de KO). |
 | `ui.py` | Logo, panneaux, portraits, têtes de HUD, curseurs, marqueurs de joueur. |
@@ -42,8 +42,8 @@ python3 tools/assets/preview.py assets/fighters/kael.png /tmp/kael_x6.png 6
 | Dossier | Contenu |
 |---|---|
 | `assets/fighters/` | `<id>.png` (une planche par personnage, images de 64 px), `layout.json`. |
-| `assets/stage/` | `sky`, `clouds`, `far`, `mid`, `island`, `platform`, `pylon_glow`, `eco_motes`, `animated_layers.json`. |
-| `assets/fx/` | `hit_spark`, `eco_bolt` (jaune), `eco_bolt_dark` (sombre), `shadow`, `dust`, `ko_burst`. |
+| `assets/stage/` | `sky`, `clouds`, `far`, `mid`, `island`, `platform`, `pylon_glow`, `flux_motes`, `animated_layers.json`. |
+| `assets/fx/` | `hit_spark`, `flux_bolt` (jaune), `flux_bolt_dark` (sombre), `shadow`, `dust`, `ko_burst`. |
 | `assets/ui/` | `logo`, `panel`, `button*`, `portrait_<id>`, `stock_<id>`, `selector_<slot>`, `marker_<slot>`. |
 | `assets/fonts/` | `eco_pixel.png`, `eco_pixel.fnt`. |
 | `icon.png` | Portrait de Kael agrandi. |
@@ -100,7 +100,7 @@ seul le spécial a des poses propres à chaque personnage.
 - Pixels entiers uniquement : aucun agrandissement non entier à l'exécution. L'ombre, par exemple,
   a trois tailles dessinées plutôt qu'une échelle.
 - Jamais de noir pur pour les ombres : elles prennent la couleur du contour (`palette.OUTLINE`).
-- Le décor garde peu de teintes ; l'éco cyan est sa seule lumière. Les couleurs vives vont aux
+- Le décor garde peu de teintes ; le flux cyan est sa seule lumière. Les couleurs vives vont aux
   personnages.
 - Un effet ne doit jamais déborder sur l'image voisine d'une planche (les rayons de l'éclat de KO
   sont bornés pour ça).

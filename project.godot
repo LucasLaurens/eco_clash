@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Eco Clash"
-config/description="Jeu de combat 1v1 pixel art sur l'ile Precursor."
+config/description="Jeu de combat 1v1 pixel art au-dessus des nuages."
 run/main_scene="res://scenes/ui/main_menu.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.png"

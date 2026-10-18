@@ -8,12 +8,12 @@ Couches dessinées de l'arrière vers l'avant :
 
 | Nœud | Contenu |
 |---|---|
-| `Sky` | Ciel de crépuscule, arche Précurseur lointaine, soleil bas. |
+| `Sky` | Ciel de crépuscule, arche ancienne lointaine, soleil bas. |
 | `Clouds` | Bande de nuages qui défile lentement (`Parallax2D`, boucle sur 480 px). |
-| `Far` | Flèches Précurseur et mer de nuages. |
-| `EcoMotes` | Particules d'éco qui scintillent (animée). |
+| `Far` | Flèches anciennes et mer de nuages. |
+| `FluxMotes` | Particules de flux qui scintillent (animée). |
 | `Mid` | Deux pylônes flottants qui encadrent l'arène. |
-| `PylonGlow` | Conduits d'éco des pylônes qui pulsent (animée). |
+| `PylonGlow` | Conduits de flux des pylônes qui pulsent (animée). |
 | `Ground` | Le sol : collision 312 x 40, surface à y = 186, et la dalle dessinée. |
 | `Platforms` | Trois plateformes à sens unique, 60 x 6 : gauche (150, 130), droite (330, 130), haut (240, 84). |
 | `Spawns` | Points de départ (176, 186) et (304, 186). |

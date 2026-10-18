@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" path="res://assets/fighters/grondak.png" id="6_sheet"]
 [ext_resource type="Texture2D" path="res://assets/ui/portrait_grondak.png" id="7_portrait"]
 [ext_resource type="Texture2D" path="res://assets/ui/stock_grondak.png" id="8_stock"]
-[ext_resource type="Texture2D" path="res://assets/fx/eco_bolt.png" id="9_bolt"]
+[ext_resource type="Texture2D" path="res://assets/fx/flux_bolt.png" id="9_bolt"]
 
 [sub_resource type="Resource" id="light_hit"]
 script = ExtResource("3_attack")

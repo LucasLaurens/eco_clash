@@ -3,7 +3,7 @@
 Template Method: FighterArtist fixes the skeleton, the inverse kinematics and the drawing order;
 each character subclass only paints its own torso, head, limbs' dress and extras.
 
-Proportions follow Jak II: about five heads tall, long tapered limbs, a fighting guard at rest.
+Heroic proportions: about five heads tall, long tapered limbs, a fighting guard at rest.
 """
 from __future__ import annotations
 
@@ -193,7 +193,7 @@ class FighterArtist:
     limb: Ramp
     sleeve: Ramp
     boot: Ramp
-    eco: Ramp
+    flux: Ramp
     special_poses: list[Pose] = field(default_factory=lambda: GENERIC_SPECIAL)
 
     def render_sheet(self) -> Image.Image:
@@ -263,7 +263,7 @@ class FighterArtist:
         self.paint_boot(canvas, ankle, front)
 
     def paint_boot(self, canvas: Canvas, ankle: Point, front: bool) -> None:
-        """Shin guard plus a long toe: the silhouette of Jak's boots."""
+        """Shin guard plus a long toe: an adventurer's boot silhouette."""
         tone = self.boot.base if front else self.boot.shade
         x, y = ankle
         canvas.fill_polygon([(x - 2, y - 4), (x + 2, y - 4), (x + 6, y + 1), (x + 6, y + 2), (x - 3, y + 2)], tone)
@@ -303,30 +303,30 @@ class FighterArtist:
     def paint_effect(self, canvas: Canvas, skeleton: Skeleton, pose: Pose) -> None:
         hand_x, hand_y = skeleton.front_hand
         shoulder_x, shoulder_y = skeleton.shoulder
-        eco = self.eco
+        flux = self.flux
         if pose.effect is Effect.SMEAR:
             radius = abs(hand_x - shoulder_x) + 4
             box = (shoulder_x - radius, shoulder_y - radius, shoulder_x + radius, shoulder_y + radius)
             canvas.draw_arc(box, -60, 40, (*palette.WHITE, 220), 2)
-            canvas.draw_arc((box[0] + 3, box[1] + 3, box[2] - 3, box[3] - 3), -45, 30, (*eco.base, 200), 1)
+            canvas.draw_arc((box[0] + 3, box[1] + 3, box[2] - 3, box[3] - 3), -45, 30, (*flux.base, 200), 1)
         elif pose.effect is Effect.CHARGE:
             for dx, dy in ((-6, -4), (5, -6), (7, 4), (-4, 6)):
-                canvas.put_pixel(hand_x + dx, hand_y + dy, eco.light)
-                canvas.put_pixel(hand_x + dx + 1, hand_y + dy, eco.base)
-            canvas.fill_ellipse((hand_x - 3, hand_y - 3, hand_x + 3, hand_y + 3), (*eco.base, 170))
+                canvas.put_pixel(hand_x + dx, hand_y + dy, flux.light)
+                canvas.put_pixel(hand_x + dx + 1, hand_y + dy, flux.base)
+            canvas.fill_ellipse((hand_x - 3, hand_y - 3, hand_x + 3, hand_y + 3), (*flux.base, 170))
         elif pose.effect is Effect.RELEASE:
-            canvas.fill_ellipse((hand_x - 6, hand_y - 6, hand_x + 6, hand_y + 6), (*eco.base, 150))
-            canvas.fill_ellipse((hand_x - 3, hand_y - 3, hand_x + 3, hand_y + 3), eco.light)
+            canvas.fill_ellipse((hand_x - 6, hand_y - 6, hand_x + 6, hand_y + 6), (*flux.base, 150))
+            canvas.fill_ellipse((hand_x - 3, hand_y - 3, hand_x + 3, hand_y + 3), flux.light)
             for dx, dy in ((-9, 0), (9, 0), (0, -9), (0, 9)):
-                canvas.put_pixel(hand_x + dx, hand_y + dy, eco.light)
+                canvas.put_pixel(hand_x + dx, hand_y + dy, flux.light)
         elif pose.effect is Effect.FOLLOW:
             for dx, dy in ((-4, -3), (-8, 1), (-3, 4), (-11, -1)):
-                canvas.put_pixel(hand_x + dx, hand_y + dy, eco.base)
+                canvas.put_pixel(hand_x + dx, hand_y + dy, flux.base)
 
 
 class KaelArtist(FighterArtist):
-    """Eco ranger: military cut (shaved sides, long blond crest standing up and back, green tips), goatee,
-    goggles strapped over the shaved side, long elf ears, blue vest, red scarf, metal gauntlets, leather boots."""
+    """Flux ranger: military cut (shaved sides, long blond crest standing up and back, green tips), goatee,
+    goggles strapped over the shaved side, long pointed ears, blue vest, red scarf, metal gauntlets, leather boots."""
 
     HAIR = Ramp(shade=(200, 140, 40), base=(246, 206, 84), light=(255, 238, 160))
     HAIR_TIP: Color = (96, 196, 80)
@@ -352,9 +352,9 @@ class KaelArtist(FighterArtist):
         (shoulder_x, shoulder_y), (hip_x, hip_y) = skeleton.shoulder, skeleton.hip
         fill_v_torso(canvas, skeleton.shoulder, skeleton.hip, self.anatomy, self.VEST)
         canvas.fill_rect((hip_x - 4, hip_y - 2, hip_x + 4, hip_y), self.BELT)
-        canvas.put_pixel(hip_x + 1, hip_y - 1, self.eco.light)
+        canvas.put_pixel(hip_x + 1, hip_y - 1, self.flux.light)
         canvas.fill_rect((hip_x - 4, hip_y, hip_x + 4, hip_y + 2), self.limb.base)
-        canvas.fill_shaded_ellipse((shoulder_x + 2, shoulder_y - 3, shoulder_x + 9, shoulder_y + 3), palette.PRECURSOR_METAL)
+        canvas.fill_shaded_ellipse((shoulder_x + 2, shoulder_y - 3, shoulder_x + 9, shoulder_y + 3), palette.ANCIENT_METAL)
         canvas.fill_rect((shoulder_x - 4, shoulder_y - 3, shoulder_x + 4, shoulder_y - 1), self.SCARF.base)
         canvas.draw_line((shoulder_x - 3, shoulder_y - 3), (shoulder_x + 3, shoulder_y - 3), self.SCARF.light)
 
@@ -362,7 +362,7 @@ class KaelArtist(FighterArtist):
         x, y = skeleton.head
         skin = self.skin
         canvas.fill_rect((x - 2, y + 4, x, y + 7), skin.shade)
-        # Long pointed ear sweeping back: the Precursor-elf signature.
+        # Long pointed ear sweeping back: Kael's signature.
         canvas.fill_polygon([(x - 2, y + 1), (x - 10, y - 4), (x - 1, y + 3)], skin.base)
         canvas.draw_line((x - 3, y + 1), (x - 8, y - 3), skin.shade)
         canvas.fill_ellipse((x - 4, y - 5, x + 5, y + 6), skin.base)
@@ -390,15 +390,15 @@ class KaelArtist(FighterArtist):
         canvas.put_pixel(x + 2, y - 6, palette.WHITE)
 
     def paint_forearm(self, canvas: Canvas, elbow: Point, hand: Point, front: bool) -> None:
-        metal = palette.PRECURSOR_METAL
+        metal = palette.ANCIENT_METAL
         fill_limb(canvas, elbow, hand, self.anatomy.forearm_width, self.anatomy.forearm_width - 0.2, metal.base if front else metal.shade)
         if front:
             canvas.draw_line((elbow[0], elbow[1] - 1), ((elbow[0] + hand[0]) // 2, (elbow[1] + hand[1]) // 2 - 1), metal.light)
-            canvas.put_pixel((elbow[0] + hand[0]) // 2, (elbow[1] + hand[1]) // 2, self.eco.light)
+            canvas.put_pixel((elbow[0] + hand[0]) // 2, (elbow[1] + hand[1]) // 2, self.flux.light)
 
 
 class PipArtist(FighterArtist):
-    """Fast ottsel: orange fur, cream muzzle and belly, huge ears, bushy striped tail, goggles, tech collar."""
+    """Fast ferret: orange fur, cream muzzle and belly, huge ears, bushy striped tail, goggles, tech collar."""
 
     CREAM = Ramp(shade=(220, 190, 140), base=(255, 236, 200), light=(255, 250, 235))
     INNER_EAR: Color = (240, 140, 140)
@@ -424,8 +424,8 @@ class PipArtist(FighterArtist):
         (shoulder_x, shoulder_y), (hip_x, hip_y) = skeleton.shoulder, skeleton.hip
         canvas.fill_shaded_ellipse((hip_x - 6, shoulder_y - 1, hip_x + 6, hip_y + 3), self.skin)
         canvas.fill_ellipse((hip_x, shoulder_y + 2, hip_x + 5, hip_y + 2), self.CREAM.base)
-        canvas.fill_rect((shoulder_x - 4, shoulder_y - 1, shoulder_x + 4, shoulder_y), palette.PRECURSOR_METAL.base)
-        canvas.put_pixel(shoulder_x + 2, shoulder_y, self.eco.light)
+        canvas.fill_rect((shoulder_x - 4, shoulder_y - 1, shoulder_x + 4, shoulder_y), palette.ANCIENT_METAL.base)
+        canvas.put_pixel(shoulder_x + 2, shoulder_y, self.flux.light)
 
     def paint_boot(self, canvas: Canvas, ankle: Point, front: bool) -> None:
         x, y = ankle
@@ -448,7 +448,7 @@ class PipArtist(FighterArtist):
 
 
 class GrondakArtist(FighterArtist):
-    """Metal Head brute, like their leader: dark hide, bone carapace plates and dorsal spikes, a horned skull
+    """Carapace brute: dark hide, bone carapace plates and dorsal spikes, a horned skull
     with a glowing gem in the forehead, red eye sockets, mandible tusks, huge metal fists."""
 
     BONE = Ramp(shade=(156, 122, 74), base=(210, 178, 112), light=(240, 222, 168))
@@ -466,7 +466,7 @@ class GrondakArtist(FighterArtist):
 
     def paint_torso(self, canvas: Canvas, skeleton: Skeleton, pose: Pose) -> None:
         (shoulder_x, shoulder_y), (hip_x, hip_y) = skeleton.shoulder, skeleton.hip
-        metal = palette.PRECURSOR_METAL
+        metal = palette.ANCIENT_METAL
         canvas.fill_shaded_ellipse((shoulder_x - 12, shoulder_y - 4, shoulder_x + 10, hip_y + 4), self.skin)
         # Overlapping carapace plates down the chest, like an insect's armour.
         for row in range(3):
@@ -488,19 +488,19 @@ class GrondakArtist(FighterArtist):
         canvas.fill_polygon([(x + 1, y - radius), (x - 3, y - radius - 9), (x - 6, y - radius - 8), (x - 1, y - radius + 2)], self.BONE.base)
         canvas.fill_shaded_ellipse((x - radius, y - radius, x + radius + 2, y + radius), self.BONE)
         canvas.fill_ellipse((x - 1, y + 1, x + radius + 3, y + radius + 3), self.skin.shade)
-        canvas.fill_polygon([(x + 1, y - radius - 1), (x + 3, y - radius + 1), (x + 1, y - radius + 3), (x - 1, y - radius + 1)], self.eco.light)
+        canvas.fill_polygon([(x + 1, y - radius - 1), (x + 3, y - radius + 1), (x + 1, y - radius + 3), (x - 1, y - radius + 1)], self.flux.light)
         canvas.put_pixel(x + 1, y - radius + 1, palette.WHITE)
         if pose.hurt:
             self.paint_eye(canvas, x + 3, y - 2, pose)
         else:
             canvas.fill_rect((x + 1, y - 2, x + radius + 1, y - 1), self.SOCKET)
-            canvas.put_pixel(x + 2, y - 2, self.eco.base)
-            canvas.put_pixel(x + radius, y - 2, self.eco.light)
+            canvas.put_pixel(x + 2, y - 2, self.flux.base)
+            canvas.put_pixel(x + radius, y - 2, self.flux.light)
         canvas.fill_polygon([(x + 1, y + 2), (x + 3, y + 2), (x + 1, y + 6)], self.BONE.light)
         canvas.fill_polygon([(x + radius, y + 1), (x + radius + 2, y + 1), (x + radius + 2, y + 5)], self.BONE.light)
 
     def paint_boot(self, canvas: Canvas, ankle: Point, front: bool) -> None:
-        metal = palette.PRECURSOR_METAL
+        metal = palette.ANCIENT_METAL
         x, y = ankle
         canvas.fill_polygon([(x - 3, y - 6), (x + 3, y - 6), (x + 6, y + 2), (x - 4, y + 2)], metal.base if front else metal.shade)
         if front:
@@ -508,25 +508,25 @@ class GrondakArtist(FighterArtist):
 
     def paint_arm(self, canvas: Canvas, shoulder: Point, elbow: Point, hand: Point, front: bool) -> None:
         super().paint_arm(canvas, shoulder, elbow, hand, front)
-        metal = palette.PRECURSOR_METAL
+        metal = palette.ANCIENT_METAL
         radius = self.anatomy.hand_radius
         canvas.fill_shaded_ellipse((hand[0] - radius, hand[1] - radius, hand[0] + radius, hand[1] + radius), metal if front else Ramp(metal.shade, metal.shade, metal.base))
         if front:
-            canvas.fill_rect((hand[0] - 1, hand[1] - radius + 1, hand[0] + 1, hand[1] - radius + 1), self.eco.light)
+            canvas.fill_rect((hand[0] - 1, hand[1] - radius + 1, hand[0] + 1, hand[1] - radius + 1), self.flux.light)
 
     def paint_effect(self, canvas: Canvas, skeleton: Skeleton, pose: Pose) -> None:
         if pose.effect is not Effect.RELEASE:
             super().paint_effect(canvas, skeleton, pose)
             return
         for offset in (8, 15, 22):
-            canvas.draw_line((CENTER_X - offset, FEET_Y - 1), (CENTER_X - offset - 4, FEET_Y - 7), self.eco.base)
-            canvas.draw_line((CENTER_X + offset, FEET_Y - 1), (CENTER_X + offset + 4, FEET_Y - 7), self.eco.base)
-        canvas.fill_rect((CENTER_X - 26, FEET_Y, CENTER_X + 26, FEET_Y), self.eco.light)
+            canvas.draw_line((CENTER_X - offset, FEET_Y - 1), (CENTER_X - offset - 4, FEET_Y - 7), self.flux.base)
+            canvas.draw_line((CENTER_X + offset, FEET_Y - 1), (CENTER_X + offset + 4, FEET_Y - 7), self.flux.base)
+        canvas.fill_rect((CENTER_X - 26, FEET_Y, CENTER_X + 26, FEET_Y), self.flux.light)
 
 
 class OrmosArtist(FighterArtist):
     """Old green sage: hunched, green skin, long white beard and bushy brows, a log hat sprouting leaves,
-    sand-linen robe with a moss sash, gnarled wooden staff topped with a yellow eco orb."""
+    sand-linen robe with a moss sash, gnarled wooden staff topped with a yellow flux orb."""
 
     # Light linen, so the dark log hat and the green skin both stand out against it.
     ROBE = Ramp(shade=(164, 138, 100), base=(206, 184, 136), light=(236, 222, 178))
@@ -548,8 +548,8 @@ class OrmosArtist(FighterArtist):
         canvas.draw_line((hand_x, hand_y + 12), (hand_x, top_y + 2), self.STAFF.shade)
         canvas.draw_line((hand_x - 1, top_y), (hand_x - 4, top_y - 3), self.STAFF.base)
         canvas.draw_line((hand_x - 1, top_y), (hand_x + 2, top_y - 3), self.STAFF.base)
-        canvas.fill_ellipse((hand_x - 4, top_y - 7, hand_x + 1, top_y - 2), self.eco.base)
-        canvas.put_pixel(hand_x - 2, top_y - 6, self.eco.light)
+        canvas.fill_ellipse((hand_x - 4, top_y - 7, hand_x + 1, top_y - 2), self.flux.base)
+        canvas.put_pixel(hand_x - 2, top_y - 6, self.flux.light)
 
     def paint_torso(self, canvas: Canvas, skeleton: Skeleton, pose: Pose) -> None:
         (shoulder_x, shoulder_y), (hip_x, hip_y) = skeleton.shoulder, skeleton.hip
@@ -598,12 +598,12 @@ class OrmosArtist(FighterArtist):
         if pose.effect is Effect.CHARGE:
             hand_x, hand_y = skeleton.back_hand
             orb_y = max(hand_y - STAFF_REACH, STAFF_TOP_MIN_Y) - 4
-            canvas.fill_ellipse((hand_x - 7, orb_y - 5, hand_x + 4, orb_y + 6), (*self.eco.light, 140))
+            canvas.fill_ellipse((hand_x - 7, orb_y - 5, hand_x + 4, orb_y + 6), (*self.flux.light, 140))
 
 
 class VargoArtist(FighterArtist):
     """Desert colossus: bare muscular arms, khaki armour vest, bandolier, metal mask-helmet with a glowing
-    visor, a big shoulder plate and a heavy eco cannon held in the lead hand."""
+    visor, a big shoulder plate and a heavy flux cannon held in the lead hand."""
 
     VEST = Ramp(shade=(120, 104, 70), base=(166, 146, 100), light=(206, 190, 140))
     STRAP: Color = (78, 52, 36)
@@ -618,11 +618,11 @@ class VargoArtist(FighterArtist):
         for step in range(1, 4):
             bullet_x = shoulder_x - 7 + step * 4
             bullet_y = shoulder_y + 1 + step * (hip_y - shoulder_y - 3) // 4
-            canvas.put_pixel(bullet_x, bullet_y - 1, self.eco.light)
+            canvas.put_pixel(bullet_x, bullet_y - 1, self.flux.light)
         canvas.fill_rect((hip_x - 6, hip_y - 2, hip_x + 6, hip_y), self.STRAP)
         canvas.fill_rect((hip_x - 6, hip_y, hip_x + 6, hip_y + 2), self.limb.base)
-        canvas.fill_shaded_ellipse((shoulder_x + 1, shoulder_y - 4, shoulder_x + 12, shoulder_y + 4), palette.PRECURSOR_METAL)
-        canvas.draw_line((shoulder_x + 3, shoulder_y - 3), (shoulder_x + 10, shoulder_y - 3), palette.PRECURSOR_METAL.light)
+        canvas.fill_shaded_ellipse((shoulder_x + 1, shoulder_y - 4, shoulder_x + 12, shoulder_y + 4), palette.ANCIENT_METAL)
+        canvas.draw_line((shoulder_x + 3, shoulder_y - 3), (shoulder_x + 10, shoulder_y - 3), palette.ANCIENT_METAL.light)
 
     def paint_head(self, canvas: Canvas, skeleton: Skeleton, pose: Pose) -> None:
         x, y = skeleton.head
@@ -631,37 +631,37 @@ class VargoArtist(FighterArtist):
         canvas.fill_ellipse((x - radius, y - radius + 1, x + radius + 1, y + radius + 1), self.skin.base)
         canvas.fill_polygon([(x, y + 3), (x + radius + 2, y + 2), (x + radius, y + 7), (x + 1, y + 7)], self.BEARD)
         # Mask-helmet: a metal dome down to the nose, a dark visor band with one glowing slit.
-        metal = palette.PRECURSOR_METAL
+        metal = palette.ANCIENT_METAL
         canvas.fill_shaded_ellipse((x - radius - 1, y - radius - 2, x + radius + 2, y + 3), metal)
         canvas.fill_rect((x - 1, y - 2, x + radius + 2, y), palette.OUTLINE)
         if pose.hurt:
             canvas.fill_rect((x + 1, y - 1, x + radius + 1, y - 1), palette.WHITE)
         else:
-            canvas.fill_rect((x + 1, y - 1, x + radius + 1, y - 1), self.eco.light)
+            canvas.fill_rect((x + 1, y - 1, x + radius + 1, y - 1), self.flux.light)
         canvas.fill_rect((x - 2, y - radius - 4, x + 1, y - radius - 2), metal.light)
 
     def paint_front_extras(self, canvas: Canvas, skeleton: Skeleton, pose: Pose) -> None:
         hand_x, hand_y = skeleton.front_hand
         cannon = self.CANNON
-        # Heavy cannon held at the hip line of the lead hand, barrel forward, eco coil glowing on the side.
+        # Heavy cannon held at the hip line of the lead hand, barrel forward, flux coil glowing on the side.
         canvas.fill_rect((hand_x - 6, hand_y - 3, hand_x + 3, hand_y + 2), cannon.base)
         canvas.fill_rect((hand_x + 3, hand_y - 2, hand_x + 13, hand_y + 1), cannon.shade)
         canvas.fill_rect((hand_x + 3, hand_y - 2, hand_x + 13, hand_y - 2), cannon.light)
         canvas.fill_rect((hand_x + 13, hand_y - 3, hand_x + 15, hand_y + 2), cannon.base)
         for coil_x in range(hand_x - 4, hand_x + 2, 2):
-            canvas.put_pixel(coil_x, hand_y - 1, self.eco.base)
+            canvas.put_pixel(coil_x, hand_y - 1, self.flux.base)
         canvas.fill_rect((hand_x - 6, hand_y + 2, hand_x - 4, hand_y + 5), cannon.shade)
 
 
 class KraggArtist(FighterArtist):
     """Gang boss on a hover chair: huge belly in a wine-red velvet jacket with gold buttons, slicked-back
-    hair, thin moustache, double chin, gold rings; the chair floats on an orange eco thruster."""
+    hair, thin moustache, double chin, gold rings; the chair floats on an orange flux thruster."""
 
     JACKET = Ramp(shade=(96, 26, 46), base=(144, 44, 68), light=(194, 86, 104))
     SHIRT: Color = (230, 222, 196)
     GOLD = Ramp(shade=(176, 128, 36), base=(232, 188, 72), light=(255, 236, 150))
     HAIR: Color = (36, 30, 40)
-    CHAIR = palette.PRECURSOR_METAL
+    CHAIR = palette.ANCIENT_METAL
 
     def place_head(self, shoulder: Point) -> Point:
         return shoulder[0] + 3, shoulder[1] - self.anatomy.head_radius - 1
@@ -719,23 +719,22 @@ class KraggArtist(FighterArtist):
         canvas.fill_rect((hip_x - 16, hip_y + 4, hip_x + 13, hip_y + 4), chair.light)
         canvas.fill_polygon([(hip_x - 13, hip_y + 10), (hip_x + 10, hip_y + 10), (hip_x + 6, hip_y + 13), (hip_x - 9, hip_y + 13)], chair.shade)
         for light_x in (hip_x - 8, hip_x - 1, hip_x + 6):
-            canvas.put_pixel(light_x, hip_y + 7, self.eco.light)
+            canvas.put_pixel(light_x, hip_y + 7, self.flux.light)
 
     def paint_effect(self, canvas: Canvas, skeleton: Skeleton, pose: Pose) -> None:
         super().paint_effect(canvas, skeleton, pose)
         hip_x, hip_y = skeleton.hip
         # Thruster flame under the hull: longer when climbing or dashing.
         flame = 3 + (3 if pose.front_foot[1] >= 4 or pose.lean >= 6 else 0) + (pose.bob % 2)
-        canvas.fill_polygon([(hip_x - 6, hip_y + 14), (hip_x + 3, hip_y + 14), (hip_x - 2, hip_y + 14 + flame)], (*self.eco.base, 210))
-        canvas.fill_polygon([(hip_x - 4, hip_y + 14), (hip_x + 1, hip_y + 14), (hip_x - 2, hip_y + 13 + flame // 2 + 1)], self.eco.light)
+        canvas.fill_polygon([(hip_x - 6, hip_y + 14), (hip_x + 3, hip_y + 14), (hip_x - 2, hip_y + 14 + flame)], (*self.flux.base, 210))
+        canvas.fill_polygon([(hip_x - 4, hip_y + 14), (hip_x + 1, hip_y + 14), (hip_x - 2, hip_y + 13 + flame // 2 + 1)], self.flux.light)
 
 
 SKIN_LIGHT = Ramp(shade=(198, 132, 92), base=(238, 182, 132), light=(255, 214, 172))
 SKIN_TAN = Ramp(shade=(150, 96, 66), base=(200, 140, 100), light=(232, 180, 140))
 SAGE_SKIN = Ramp(shade=(70, 130, 80), base=(110, 176, 104), light=(164, 214, 140))
-METAL_HEAD_HIDE = Ramp(shade=(44, 38, 64), base=(70, 60, 98), light=(108, 96, 146))
+CARAPACE_HIDE = Ramp(shade=(44, 38, 64), base=(70, 60, 98), light=(108, 96, 146))
 PIP_FUR = Ramp(shade=(190, 96, 24), base=(240, 140, 40), light=(255, 196, 100))
-LURKER_HIDE = Ramp(shade=(84, 62, 130), base=(122, 96, 178), light=(166, 142, 218))
 
 
 def build_artists() -> dict[str, FighterArtist]:
@@ -747,7 +746,7 @@ def build_artists() -> dict[str, FighterArtist]:
             limb=Ramp(shade=(52, 50, 66), base=(80, 76, 96), light=(118, 114, 138)),
             sleeve=KaelArtist.VEST,
             boot=Ramp(shade=(78, 52, 40), base=(118, 80, 56), light=(160, 116, 80)),
-            eco=palette.ECO_GREEN,
+            flux=palette.FLUX_GREEN,
             special_poses=[
                 Pose(bob=3, front_hand=(5, 7), back_hand=(-2, 9), effect=Effect.CHARGE),
                 Pose(lean=1, front_foot=(4, 7), back_foot=(-3, 9), front_hand=(5, -16), back_hand=(-8, 5), effect=Effect.RELEASE),
@@ -762,7 +761,7 @@ def build_artists() -> dict[str, FighterArtist]:
             limb=PIP_FUR,
             sleeve=PIP_FUR,
             boot=PipArtist.CREAM,
-            eco=palette.ECO_BLUE,
+            flux=palette.FLUX_BLUE,
             special_poses=[
                 Pose(bob=2, lean=-3, front_hand=(3, 8), back_hand=(-3, 8), effect=Effect.CHARGE),
                 Pose(lean=8, front_foot=(11, 4), back_foot=(-12, 5), front_hand=(17, 4), back_hand=(-12, 3), effect=Effect.RELEASE),
@@ -773,11 +772,11 @@ def build_artists() -> dict[str, FighterArtist]:
             anatomy=Anatomy(leg_length=18, torso_height=19, shoulder_half_width=10, waist_half_width=7, head_radius=5,
                             thigh_width=3.6, shin_width=3.0, upper_arm_width=3.4, forearm_width=3.2, hand_radius=4,
                             arm_length=18, reach=1.15),
-            skin=METAL_HEAD_HIDE,
-            limb=METAL_HEAD_HIDE,
-            sleeve=METAL_HEAD_HIDE,
-            boot=palette.PRECURSOR_METAL,
-            eco=palette.ECO_RED,
+            skin=CARAPACE_HIDE,
+            limb=CARAPACE_HIDE,
+            sleeve=CARAPACE_HIDE,
+            boot=palette.ANCIENT_METAL,
+            flux=palette.FLUX_RED,
             special_poses=[
                 Pose(front_hand=(3, -15), back_hand=(-2, -15), effect=Effect.CHARGE),
                 Pose(bob=4, front_hand=(11, 18), back_hand=(-6, 18), front_foot=(8, 0), back_foot=(-8, 0), effect=Effect.RELEASE),
@@ -792,7 +791,7 @@ def build_artists() -> dict[str, FighterArtist]:
             limb=SAGE_SKIN,
             sleeve=OrmosArtist.ROBE,
             boot=SAGE_SKIN,
-            eco=palette.ECO_YELLOW,
+            flux=palette.FLUX_YELLOW,
         ),
         "vargo": VargoArtist(
             anatomy=Anatomy(leg_length=22, torso_height=18, shoulder_half_width=9, waist_half_width=6, head_radius=5,
@@ -802,7 +801,7 @@ def build_artists() -> dict[str, FighterArtist]:
             limb=Ramp(shade=(64, 66, 50), base=(92, 94, 72), light=(130, 132, 104)),
             sleeve=SKIN_TAN,
             boot=Ramp(shade=(78, 52, 40), base=(118, 80, 56), light=(160, 116, 80)),
-            eco=palette.ECO_DARK,
+            flux=palette.FLUX_DARK,
             special_poses=[
                 Pose(bob=2, lean=-1, front_hand=(8, 6), back_hand=(4, 8), effect=Effect.CHARGE),
                 Pose(lean=-2, front_foot=(8, 0), front_hand=(13, 2), back_hand=(5, 5), effect=Effect.RELEASE),
@@ -817,7 +816,7 @@ def build_artists() -> dict[str, FighterArtist]:
             limb=KraggArtist.JACKET,
             sleeve=KraggArtist.JACKET,
             boot=KraggArtist.JACKET,
-            eco=palette.ECO_ORANGE,
+            flux=palette.FLUX_ORANGE,
             special_poses=[
                 Pose(bob=1, lean=-3, front_hand=(4, 8), back_hand=(-3, 8), effect=Effect.CHARGE),
                 Pose(lean=8, front_hand=(15, 3), back_hand=(-8, 4), effect=Effect.RELEASE),

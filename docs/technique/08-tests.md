@@ -14,7 +14,7 @@ Code de sortie 1 en cas d'échec. Chaque test est listé par son nom, puis le to
 # test_knockback_formula.gd
   ok   test_force_grows_with_damage
   ...
-27 tests, 0 failed
+30 tests, 0 failed
 ```
 
 Ne jamais se fier au total seul : un fichier qui ne se charge pas n'apporte aucun test. Lire les
@@ -42,6 +42,7 @@ noms.
 | `test_ui_text` | La police sait dessiner chaque texte et chaque nom de personnage. |
 | `test_stage_layers` | Les plateformes sont sur la couche que les combattants traversent ; chaque couche animée a son nœud et une planche découpable. |
 | `test_fighter_visuals` | L'ombre est pleine au sol, la plus petite à hauteur max, et ne grandit jamais en montant. |
+| `test_docs` | Chaque personnage du roster figure dans le README et la page Personnages ; chaque lien relatif des docs pointe vers un fichier existant ; aucun terme d'une autre licence (liste dans `CONTRIBUTING.md`) dans le code, les données ou la doc. |
 | `test_match_simulation` | Un coup au corps à corps ne touche qu'une fois ; deux bots s'affrontent 2 400 ticks sans erreur et se touchent. |
 
 ## Conventions
