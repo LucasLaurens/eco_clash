@@ -1,6 +1,6 @@
 {
-  "frame_size": 48,
-  "feet_y": 44,
+  "frame_size": 64,
+  "feet_y": 62,
   "animations": {
     "idle": {
       "frames": [

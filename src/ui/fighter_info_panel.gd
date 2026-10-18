@@ -2,7 +2,7 @@ class_name FighterInfoPanel
 extends PanelContainer
 ## Character-select side panel: animated preview, name, stat pips, special move, ready state.
 
-const PREVIEW_SIZE := Vector2(48, 48)
+const PREVIEW_SIZE := Vector2(64, 64)
 const PIP_SIZE := Vector2(8, 5)
 const PIP_OFF_COLOR := Color(0.16, 0.22, 0.32)
 const READY_COLOR := Color(0.5, 1.0, 0.55)
@@ -20,7 +20,7 @@ var _slot_text := ""
 func _init() -> void:
 	custom_minimum_size = Vector2(212, 0)
 	var column := VBoxContainer.new()
-	column.add_theme_constant_override(&"separation", 2)
+	column.add_theme_constant_override(&"separation", 1)
 	add_child(column)
 	column.add_child(_build_header())
 	for stat_name: String in [UiText.STAT_SPEED, UiText.STAT_POWER, UiText.STAT_WEIGHT]:

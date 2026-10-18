@@ -1,7 +1,8 @@
 extends Control
 ## Victory screen: the winner, the match length, and three ways to continue.
 
-const PREVIEW_SCALE := 2.0
+## 1x: a 64px fighter at 2x would push the last button off a 270px screen.
+const PREVIEW_SCALE := 1.0
 
 
 func _ready() -> void:
@@ -23,11 +24,11 @@ func _ready() -> void:
 
 func _build_winner_preview(winner: FighterDefinition) -> Control:
 	var preview_box := Control.new()
-	preview_box.custom_minimum_size = Vector2(0, 84)
+	preview_box.custom_minimum_size = Vector2(0, PREVIEW_SCALE * FighterSpriteFrames.read_layout()["frame_size"])
 	var sprite := AnimatedSprite2D.new()
 	sprite.sprite_frames = FighterSpriteFrames.create(winner.sprite_sheet)
 	sprite.scale = Vector2.ONE * PREVIEW_SCALE
-	sprite.position = Vector2(0, 40)
+	sprite.position = Vector2(0, PREVIEW_SCALE * FighterSpriteFrames.read_layout()["frame_size"] / 2.0)
 	sprite.play(&"idle")
 	preview_box.add_child(sprite)
 	preview_box.resized.connect(func() -> void: sprite.position.x = preview_box.size.x / 2.0)

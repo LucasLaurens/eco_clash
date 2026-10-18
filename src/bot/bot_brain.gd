@@ -2,14 +2,14 @@ class_name BotBrain
 extends RefCounted
 ## Decides one InputFrame from a BotPerception: recover first, then chase and hit.
 
-const ATTACK_RANGE := 26.0
-const VERTICAL_REACH := 22.0
+const ATTACK_RANGE := 36.0
+const VERTICAL_REACH := 32.0
 const CHASE_STOP_RATIO := 0.7
 const FACE_NUDGE := 0.1
-const JUMP_CHASE_RANGE := 50.0
+const JUMP_CHASE_RANGE := 70.0
 const SPECIAL_MIN_RANGE := 40.0
 const SPECIAL_MAX_RANGE := 140.0
-const EDGE_MARGIN := 10.0
+const EDGE_MARGIN := 14.0
 const OFF_STAGE_DEPTH := 8.0
 const PLATFORM_CLEARANCE := 4.0
 const FALLING_SPEED := 30.0
