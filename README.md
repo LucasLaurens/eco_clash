@@ -1,7 +1,7 @@
 # Eco Clash
 
-Jeu de combat 1 contre 1 en pixel art, façon Smash Bros, dans l'univers Precursor
-de Jak II et Jak 3 : une arène de tech ancienne qui flotte au crépuscule au-dessus des nuages. Godot 4.7, GDScript, rendu 480x270 agrandi x3.
+Jeu de combat 1 contre 1 en pixel art, façon Smash Bros, dans un univers
+de tech ancienne : une arène qui flotte au crépuscule au-dessus des nuages. Godot 4.7, GDScript, rendu 480x270 agrandi x3.
 
 ## Documentation
 
@@ -44,7 +44,7 @@ Fiches complètes et statistiques : [docs/fonctionnel/03-personnages.md](docs/fo
 
 | | Rôle | Spécial |
 |---|---|---|
-| Kael | Équilibré | Uppercut Eco (vertical, sert aussi à revenir) |
+| Kael | Équilibré | Uppercut Flux (vertical, sert aussi à revenir) |
 | Pip | Rapide, léger, triple saut | Ruée Bleue (charge horizontale) |
 | Grondak | Lourd, frappe fort | Séisme Rouge (sol des deux côtés, plongeon en l'air) |
 | Ormos | Vieux sage à distance | Orbe Jaune (projectile) |
@@ -71,13 +71,13 @@ Tous les sprites, le décor, l'UI et la police pixel sont générés une seule f
 `tools/assets/generate_assets.py` (Python + Pillow), puis versionnés en PNG.
 Le jeu ne les régénère jamais. `assets/fighters/layout.json` est la seule source
 des indices d'animation, lue par Python et par Godot. De même, `assets/stage/animated_layers.json`
-place et cadence les couches animées du décor (conduits d'éco des pylônes, particules d'éco).
+place et cadence les couches animées du décor (conduits de flux des pylônes, particules de flux).
 Les couleurs de joueur (1P rouge, 2P bleu, BOT gris) vivent dans `tools/assets/palette.py`.
 
 ## Lisibilité en combat
 
 Un marqueur 1P / 2P / BOT flotte au-dessus de chaque combattant, une ombre au sol rétrécit
-quand il monte, et le décor garde peu de formes et peu de teintes : seule l'éco (cyan) y luit, les couleurs
+quand il monte, et le décor garde peu de formes et peu de teintes : seul le flux (cyan) y luit, les couleurs
 vives restent aux personnages. Les cartes du HUD sont compactes et sans cadre.
 Chaque coup fait flasher la cible en blanc ; saut et atterrissage soulèvent de la poussière ;
 un KO éclate au bord de l'écran dans la couleur du personnage. Le cadre produit est décrit
@@ -102,5 +102,6 @@ src/ui/          Textes, kit UI, menus, HUD, pause, résultats
 tests/           Runner headless + suites unitaires et scénarios
 tools/assets/    Générateur d'assets (one-shot)
 PRODUCT.md       Public, personnalité et principes visuels du jeu
+CONTRIBUTING.md  Règles du projet : doc à jour à chaque changement, univers original
 docs/            Documentation fonctionnelle et technique
 ```

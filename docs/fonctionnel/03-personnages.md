@@ -17,24 +17,24 @@ statistiques ci-dessous ; elles ne sont jamais saisies à la main.
 | Vargo | Lourd, distance | 2 | 4 | 4 | 1 | Violet |
 | Kragg | Très lourd, aérien | 2 | 4 | 5 | 2 | Orange |
 
-La couleur est celle de l'éco du personnage : elle teinte son nom et ses vies dans le HUD, ses
+La couleur est celle du flux du personnage : elle teinte son nom et ses vies dans le HUD, ses
 effets et son éclat de KO.
 
 ## Fiches
 
 ### Kael, l'aventurier
 
-Ranger éco à coupe militaire : côtés rasés, longue crête blonde dressée, bouc, lunettes, longues
+Ranger du flux à coupe militaire : côtés rasés, longue crête blonde dressée, bouc, lunettes, longues
 oreilles, gilet bleu, écharpe rouge, gantelets de métal.
 
 | Coup | Dégâts | Effet |
 |---|---|---|
 | Direct (attaque) | 6 % | Coup de poing rapide devant soi. |
-| Uppercut Éco (spécial) | 11 % | Bond vertical qui projette vers le haut. Sert aussi à revenir du vide. |
+| Uppercut Flux (spécial) | 11 % | Bond vertical qui projette vers le haut. Sert aussi à revenir du vide. |
 
 ### Pip, le furtif
 
-Petit ottsel orange avec lunettes, collier tech et grande queue rayée. Le plus rapide, le plus
+Petit furet orange avec lunettes, collier tech et grande queue rayée. Le plus rapide, le plus
 léger : il vole loin quand il est touché.
 
 | Coup | Dégâts | Effet |
@@ -44,7 +44,7 @@ léger : il vole loin quand il est touché.
 
 ### Grondak, la brute
 
-Brute Metal Head : peau sombre, carapace d'os, épines dorsales, crâne à cornes avec une gemme
+Brute à carapace : peau sombre, carapace d'os, épines dorsales, crâne à cornes avec une gemme
 lumineuse au front, poings de métal. Lent mais très lourd et très puissant.
 
 | Coup | Dégâts | Effet |
@@ -55,7 +55,7 @@ lumineuse au front, poings de métal. Lent mais très lourd et très puissant.
 ### Ormos, le sage
 
 Vieux sage à la peau verte : longue barbe blanche, chapeau-souche d'où sortent des feuilles,
-robe de lin, bâton surmonté d'un orbe d'éco jaune. Il joue à distance.
+robe de lin, bâton surmonté d'un orbe de flux jaune. Il joue à distance.
 
 | Coup | Dégâts | Effet |
 |---|---|---|
@@ -65,17 +65,17 @@ robe de lin, bâton surmonté d'un orbe d'éco jaune. Il joue à distance.
 ### Vargo, le colosse
 
 Guerrier du désert : bras nus, gilet de cuir, bandoulière, casque-masque à visière lumineuse,
-canon lourd à éco sombre.
+canon lourd à flux sombre.
 
 | Coup | Dégâts | Effet |
 |---|---|---|
 | Crosse (attaque) | 8 % | Coup de crosse du canon. |
-| Pacificateur (spécial) | 14 % | Tir lourd et lent d'éco sombre qui projette très loin. Long à préparer. |
+| Pacificateur (spécial) | 14 % | Tir lourd et lent de flux sombre qui projette très loin. Long à préparer. |
 
 ### Kragg, le patron
 
 Chef de gang sur fauteuil volant : énorme ventre, veste de velours bordeaux, boutons dorés,
-moustache, bagues. Le fauteuil flotte sur un réacteur d'éco orange.
+moustache, bagues. Le fauteuil flotte sur un réacteur de flux orange.
 
 | Coup | Dégâts | Effet |
 |---|---|---|

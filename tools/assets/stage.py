@@ -1,6 +1,6 @@
-"""Precursor arena at dusk: sky, sea of clouds, distant spires, floating pylons, the arena and its platforms.
+"""Ancient arena at dusk: sky, sea of clouds, distant spires, floating pylons, the arena and its platforms.
 
-Few shapes, few tones. The only light in the decor is eco (cyan), and it lives inside objects:
+Few shapes, few tones. The only light in the decor is flux (cyan), and it lives inside objects:
 spire tips, pylon conduits, the arena's seam and core.
 """
 from __future__ import annotations
@@ -26,9 +26,9 @@ SPIRES = ((62, HORIZON_Y + 6, 104, 7), (418, HORIZON_Y + 6, 78, 6), (300, HORIZO
 PYLONS = ((34, 96, 112, 14), (448, 112, 96, 12))
 PYLON_GLOW_FRAMES = 3
 PYLON_GLOW_FPS = 3
-ECO_MOTE_FRAMES = 3
-ECO_MOTE_FPS = 4
-ECO_MOTE_COUNT = 26
+FLUX_MOTE_FRAMES = 3
+FLUX_MOTE_FPS = 4
+FLUX_MOTE_COUNT = 26
 
 
 def render_sky() -> Canvas:
@@ -43,7 +43,7 @@ def render_sky() -> Canvas:
 
 
 def _paint_far_ring(canvas: Canvas) -> None:
-    """A colossal Precursor arch rising out of the clouds, so far away it barely darkens the sky."""
+    """A colossal ancient arch rising out of the clouds, so far away it barely darkens the sky."""
     ring = mix_colors(palette.SKY_BANDS[2], palette.SILHOUETTE_FAR, 0.5)
     edge = mix_colors(palette.SKY_BANDS[2], palette.SUN.base, 0.25)
     box = (150, HORIZON_Y - 120, 450, HORIZON_Y + 120)
@@ -93,8 +93,8 @@ def _paint_spire(canvas: Canvas, center_x: int, base_y: int, height: int, half_w
     canvas.fill_polygon([(center_x - half_width, base_y), (center_x - 1, top_y), (center_x + 1, top_y), (center_x + half_width, base_y)], color)
     collar_y = top_y + height // 3
     canvas.fill_rect((center_x - half_width + 1, collar_y, center_x + half_width - 1, collar_y + 2), color)
-    canvas.put_pixel(center_x, top_y - 2, palette.PRECURSOR_GLOW.light)
-    canvas.put_pixel(center_x, top_y - 1, palette.PRECURSOR_GLOW.base)
+    canvas.put_pixel(center_x, top_y - 2, palette.ANCIENT_GLOW.light)
+    canvas.put_pixel(center_x, top_y - 1, palette.ANCIENT_GLOW.base)
 
 
 def render_mid() -> Canvas:
@@ -114,7 +114,7 @@ def _compute_pylon_outline(center_x: int, top_y: int, height: int, half_width: i
 
 
 def _compute_pylon_seams(center_x: int, top_y: int, height: int, half_width: int) -> list[tuple[tuple[int, int], tuple[int, int]]]:
-    """Eco conduits carved in the lit face. Shared by the static pylon and its pulsing glow layer."""
+    """Flux conduits carved in the lit face. Shared by the static pylon and its pulsing glow layer."""
     seam_x = center_x - half_width // 2
     return [((seam_x, top_y + 12), (seam_x, top_y + height - 22))]
 
@@ -137,7 +137,7 @@ def render_pylon_glow() -> Canvas:
 
     O(f * s) time, f frames and s seam segments.
     """
-    glow = palette.PRECURSOR_GLOW
+    glow = palette.ANCIENT_GLOW
     pulse = (glow.light, glow.base, mix_colors(glow.base, palette.SILHOUETTE_MID.shade, 0.5))
     canvas = Canvas(WIDTH * PYLON_GLOW_FRAMES, HEIGHT)
     for frame in range(PYLON_GLOW_FRAMES):
@@ -151,15 +151,15 @@ def render_pylon_glow() -> Canvas:
     return canvas
 
 
-def render_eco_motes() -> Canvas:
-    """Specks of eco drifting in the air, each twinkling on its own phase: bright cross, dim dot, gone."""
-    canvas = Canvas(WIDTH * ECO_MOTE_FRAMES, HEIGHT)
+def render_flux_motes() -> Canvas:
+    """Specks of flux drifting in the air, each twinkling on its own phase: bright cross, dim dot, gone."""
+    canvas = Canvas(WIDTH * FLUX_MOTE_FRAMES, HEIGHT)
     rng = random.Random(5)
-    motes = [(rng.randrange(4, WIDTH - 4), rng.randrange(20, HORIZON_Y + 60), rng.randrange(ECO_MOTE_FRAMES)) for _ in range(ECO_MOTE_COUNT)]
-    glow = palette.PRECURSOR_GLOW
-    for frame in range(ECO_MOTE_FRAMES):
+    motes = [(rng.randrange(4, WIDTH - 4), rng.randrange(20, HORIZON_Y + 60), rng.randrange(FLUX_MOTE_FRAMES)) for _ in range(FLUX_MOTE_COUNT)]
+    glow = palette.ANCIENT_GLOW
+    for frame in range(FLUX_MOTE_FRAMES):
         for x, y, phase in motes:
-            step = (frame - phase) % ECO_MOTE_FRAMES
+            step = (frame - phase) % FLUX_MOTE_FRAMES
             mote_x = frame * WIDTH + x
             if step == 0:
                 canvas.put_pixel(mote_x, y, glow.light)
@@ -173,15 +173,15 @@ def render_eco_motes() -> Canvas:
 def build_animated_layers() -> dict:
     """Placement and timing of the animated stage layers, read by Godot (one source, like layout.json)."""
     return {
-        "EcoMotes": {"sheet": "eco_motes.png", "frame_width": WIDTH, "fps": ECO_MOTE_FPS, "offset": (0, 0)},
+        "FluxMotes": {"sheet": "flux_motes.png", "frame_width": WIDTH, "fps": FLUX_MOTE_FPS, "offset": (0, 0)},
         "PylonGlow": {"sheet": "pylon_glow.png", "frame_width": WIDTH, "fps": PYLON_GLOW_FPS, "offset": (0, 0)},
     }
 
 
 def render_island() -> Canvas:
-    """Main arena: a Precursor slab with one eco seam, over a tapering hull with a glowing core."""
+    """Main arena: an ancient slab with one flux seam, over a tapering hull with a glowing core."""
     width, height = ISLAND_SIZE
-    metal, glow = palette.PRECURSOR_METAL, palette.PRECURSOR_GLOW
+    metal, glow = palette.ANCIENT_METAL, palette.ANCIENT_GLOW
     hull_shade = mix_colors(metal.shade, palette.OUTLINE, 0.35)
     canvas = Canvas(width, height)
     top = ISLAND_SURFACE_Y
@@ -207,7 +207,7 @@ def render_island() -> Canvas:
 
 def render_platform() -> Canvas:
     width, height = PLATFORM_SIZE
-    metal, glow = palette.PRECURSOR_METAL, palette.PRECURSOR_GLOW
+    metal, glow = palette.ANCIENT_METAL, palette.ANCIENT_GLOW
     canvas = Canvas(width, height)
     top = PLATFORM_SURFACE_Y
     canvas.fill_polygon([(0, top), (width - 1, top), (width - 6, top + 7), (5, top + 7)], metal.base)
@@ -219,7 +219,7 @@ def render_platform() -> Canvas:
 
 
 def render_hit_spark() -> Canvas:
-    """4 frames, 32px each: an expanding white star with an eco-warm core."""
+    """4 frames, 32px each: an expanding white star with an flux-warm core."""
     size, frames = 32, 4
     canvas = Canvas(size * frames, size)
     for frame in range(frames):
@@ -236,16 +236,16 @@ def render_hit_spark() -> Canvas:
     return canvas
 
 
-def render_eco_bolt(eco: Ramp) -> Canvas:
-    """2 frames, 16px each: pulsing eco orb with a trailing tail (faces right)."""
+def render_flux_bolt(flux: Ramp) -> Canvas:
+    """2 frames, 16px each: pulsing flux orb with a trailing tail (faces right)."""
     size = 16
     canvas = Canvas(size * 2, size)
     for frame in range(2):
         center_x, center_y = frame * size + 10, size // 2
-        canvas.fill_ellipse((center_x - 9, center_y - 2, center_x - 1, center_y + 2), (*eco.shade, 140))
+        canvas.fill_ellipse((center_x - 9, center_y - 2, center_x - 1, center_y + 2), (*flux.shade, 140))
         radius = 4 + frame
-        canvas.fill_ellipse((center_x - radius, center_y - radius, center_x + radius, center_y + radius), (*eco.base, 200))
-        canvas.fill_ellipse((center_x - 2, center_y - 2, center_x + 2, center_y + 2), eco.light)
+        canvas.fill_ellipse((center_x - radius, center_y - radius, center_x + radius, center_y + radius), (*flux.base, 200))
+        canvas.fill_ellipse((center_x - 2, center_y - 2, center_x + 2, center_y + 2), flux.light)
     return canvas
 
 

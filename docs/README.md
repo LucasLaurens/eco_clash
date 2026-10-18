@@ -37,6 +37,11 @@ renvoie vers la précédente et la suivante.
 
 ## Tenir la doc à jour
 
-Une modification qui change un comportement décrit ici met à jour la page concernée dans le même
-commit. Les valeurs chiffrées (statistiques, constantes) sont recopiées du code : si elles changent
-dans le code, elles changent ici.
+Tout ajout, suppression ou modification met à jour la page concernée dans le même commit. La table
+« ce qui change, pages à mettre à jour » est dans [`CONTRIBUTING.md`](../CONTRIBUTING.md), avec la règle d'univers
+original (pas de terme d'une autre licence ; l'énergie s'appelle le flux). Les valeurs chiffrées
+(statistiques, constantes) sont recopiées du code : si elles changent dans le code, elles changent
+ici.
+
+Le test `test_docs` en vérifie une partie : chaque personnage est documenté, chaque lien relatif
+résout, aucun terme interdit n'apparaît.

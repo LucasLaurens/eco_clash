@@ -33,7 +33,7 @@ centered = false
 texture = ExtResource("4_far")
 centered = false
 
-[node name="EcoMotes" type="AnimatedSprite2D" parent="."]
+[node name="FluxMotes" type="AnimatedSprite2D" parent="."]
 
 [node name="Mid" type="Sprite2D" parent="."]
 texture = ExtResource("5_mid")

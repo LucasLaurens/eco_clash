@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c7e4slm4vx253"
-path="res://.godot/imported/eco_motes.png-2e5d3a1953fabdcb1bd7fe252aa36a1d.ctex"
+uid="uid://cykktdprxvbce"
+path="res://.godot/imported/flux_bolt.png-f3b9860f6ff42125886bfda55cc92093.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/stage/eco_motes.png"
-dest_files=["res://.godot/imported/eco_motes.png-2e5d3a1953fabdcb1bd7fe252aa36a1d.ctex"]
+source_file="res://assets/fx/flux_bolt.png"
+dest_files=["res://.godot/imported/flux_bolt.png-f3b9860f6ff42125886bfda55cc92093.ctex"]
 
 [params]
 

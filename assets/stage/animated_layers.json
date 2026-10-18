@@ -1,6 +1,6 @@
 {
-  "EcoMotes": {
-    "sheet": "eco_motes.png",
+  "FluxMotes": {
+    "sheet": "flux_motes.png",
     "frame_width": 480,
     "fps": 4,
     "offset": [

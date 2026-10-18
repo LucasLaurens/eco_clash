@@ -2,7 +2,7 @@ class_name UiText
 extends RefCounted
 ## Every user-facing string, in one place. A test checks the pixel font can draw each of them.
 
-const MENU_TAGLINE := "COMBATS SUR L'ÎLE PRECURSOR"
+const MENU_TAGLINE := "COMBATS AU-DESSUS DES NUAGES"
 const MENU_VS_BOT := "1 JOUEUR VS BOT"
 const MENU_VERSUS := "2 JOUEURS"
 const MENU_QUIT := "QUITTER"

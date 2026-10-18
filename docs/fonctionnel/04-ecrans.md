@@ -16,7 +16,7 @@ flowchart LR
     Results -->|Menu| Menu
 ```
 
-Derrière tous les menus, l'arène vit (nuages, particules d'éco, conduits des pylônes) sous un voile
+Derrière tous les menus, l'arène vit (nuages, particules de flux, conduits des pylônes) sous un voile
 sombre qui garde le texte lisible. Les plateformes flottantes y sont masquées pour ne jamais couper
 le logo, un bouton ou le vainqueur.
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bcf3t070oaf73"
-path="res://.godot/imported/eco_bolt.png-b3819ec8d5f4c0290d9f75c91d005bfd.ctex"
+uid="uid://bhgu612m0inxv"
+path="res://.godot/imported/flux_bolt_dark.png-a3b2f4f7bdd2e427477160adaf237ffb.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/fx/eco_bolt.png"
-dest_files=["res://.godot/imported/eco_bolt.png-b3819ec8d5f4c0290d9f75c91d005bfd.ctex"]
+source_file="res://assets/fx/flux_bolt_dark.png"
+dest_files=["res://.godot/imported/flux_bolt_dark.png-a3b2f4f7bdd2e427477160adaf237ffb.ctex"]
 
 [params]
 

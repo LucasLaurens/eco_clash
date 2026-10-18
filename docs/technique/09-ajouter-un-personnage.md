@@ -17,10 +17,10 @@ Dans `tools/assets/fighters.py` :
 2. Ajouter l'entrée `"zara": ZaraArtist(...)` dans `build_artists()`, avec :
    - son `Anatomy` ;
    - ses couleurs (`skin`, `limb`, `sleeve`, `boot`) ;
-   - son éco (une couleur de `palette.py`, distincte des autres pour le HUD) ;
+   - son flux (une couleur de `palette.py`, distincte des autres pour le HUD) ;
    - si besoin, ses `special_poses` (3 poses : préparation, déclenchement, suite).
 3. Si son spécial est un projectile d'une nouvelle couleur, ajouter la planche dans
-   `generate_stage()` : `stage.render_eco_bolt(palette.ECO_...)`.
+   `generate_stage()` : `stage.render_flux_bolt(palette.FLUX_...)`.
 
 Générer, puis importer :
 
@@ -38,7 +38,7 @@ Copier une ressource proche dans `data/fighters/zara.tres` et adapter :
 
 - **chemins** : `assets/fighters/zara.png`, `assets/ui/portrait_zara.png`,
   `assets/ui/stock_zara.png` ;
-- **identité** : `id = &"zara"`, `display_name`, `title`, `accent_color` (la couleur de son éco) ;
+- **identité** : `id = &"zara"`, `display_name`, `title`, `accent_color` (la couleur de son flux) ;
 - **corps** : `body_size`, à mesurer sur la silhouette dessinée, pieds en bas ;
 - **déplacement** : `run_speed`, `jump_velocity`, `air_jumps`, `weight` ;
 - **coups** : `light_attack` et `special`, chacun un `MeleeStrike` (avec `lunge`) ou un
