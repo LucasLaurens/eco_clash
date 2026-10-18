@@ -17,27 +17,23 @@ ECO_YELLOW = Ramp(shade=(210, 140, 20), base=(255, 226, 70), light=(255, 252, 20
 PRECURSOR_METAL = Ramp(shade=(56, 72, 96), base=(104, 130, 158), light=(170, 196, 214))
 PRECURSOR_GLOW = Ramp(shade=(40, 150, 200), base=(110, 230, 255), light=(230, 255, 255))
 
-GRASS = Ramp(shade=(46, 120, 52), base=(86, 170, 64), light=(160, 216, 92))
-DIRT = Ramp(shade=(120, 62, 40), base=(176, 98, 56), light=(214, 146, 88))
-ROCK = Ramp(shade=(88, 60, 64), base=(132, 92, 84), light=(178, 132, 110))
 SAND = Ramp(shade=(206, 168, 110), base=(238, 210, 150), light=(252, 236, 196))
-WOOD = Ramp(shade=(96, 58, 34), base=(140, 92, 54), light=(184, 132, 80))
 
 # Player identity: selectors, in-fight markers. Distinct in luminance, not only in hue.
 SLOT_P1: Color = (236, 70, 70)
 SLOT_P2: Color = (70, 140, 240)
 SLOT_BOT: Color = (150, 150, 160)
 
-# Atmospheric perspective: the middle layer fades toward the horizon sky so the arena reads first.
-HAZE: Color = (156, 202, 240)
-MID_HAZE_RATIO = 0.35
-
+# Dusk over a sea of clouds. The decor keeps to these few tones plus one eco accent (cyan);
+# saturated colour is left to the fighters so they read first.
 SKY_BANDS: list[Color] = [
-    (58, 128, 214),
-    (84, 152, 228),
-    (118, 178, 236),
-    (156, 202, 240),
-    (196, 222, 236),
-    (240, 226, 196),
-    (255, 206, 150),
+    (30, 40, 82),
+    (58, 74, 128),
+    (124, 108, 158),
+    (222, 148, 132),
+    (250, 202, 152),
 ]
+CLOUD_SEA: list[Color] = [(244, 190, 156), (196, 140, 152), (128, 104, 150), (78, 76, 128)]
+SILHOUETTE_FAR: Color = (104, 96, 150)
+SILHOUETTE_MID = Ramp(shade=(40, 42, 78), base=(58, 60, 102), light=(96, 102, 148))
+SUN = Ramp(shade=(246, 180, 130), base=(252, 214, 164), light=(255, 238, 206))

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c4qs47oco0woc"
-path="res://.godot/imported/sea_glints.png-d98ecb4c3785203f4bb4b7795192f7bc.ctex"
+uid="uid://c7e4slm4vx253"
+path="res://.godot/imported/eco_motes.png-2e5d3a1953fabdcb1bd7fe252aa36a1d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/stage/sea_glints.png"
-dest_files=["res://.godot/imported/sea_glints.png-d98ecb4c3785203f4bb4b7795192f7bc.ctex"]
+source_file="res://assets/stage/eco_motes.png"
+dest_files=["res://.godot/imported/eco_motes.png-2e5d3a1953fabdcb1bd7fe252aa36a1d.ctex"]
 
 [params]
 

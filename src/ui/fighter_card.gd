@@ -1,41 +1,48 @@
 class_name FighterCard
 extends PanelContainer
-## HUD card of one fighter: portrait, name, damage percent (white to red), remaining stocks.
+## HUD card of one fighter: head icon, "1P · KAEL", damage percent (white to red), one pip per stock.
+## Kept small and frameless: the arena is the show, the card only answers "how hurt, how many lives".
 
-const PORTRAIT_SIZE := Vector2(32, 32)
 const DANGER_PERCENT := 150.0
 const WARM_COLOR := Color(1.0, 0.72, 0.24)
 const DANGER_COLOR := Color(0.92, 0.18, 0.16)
 const POP_SCALE := 1.35
 const POP_TIME := 0.15
+const CARD_VEIL_ALPHA := 0.55
+const CARD_PADDING := 3
+const STOCK_PIP_SIZE := Vector2(4, 4)
 
 var _percent_label: Label
-var _stocks_row: HBoxContainer
-var _stock_icon: Texture2D
+var _stock_pips: HBoxContainer
+var _accent_color: Color
 
 
 func bind_fighter(fighter: Fighter, definition: FighterDefinition, slot_label: String) -> void:
-	_stock_icon = definition.stock_icon
+	_accent_color = definition.accent_color
+	add_theme_stylebox_override(&"panel", UiKit.create_veil_style(CARD_VEIL_ALPHA, CARD_PADDING))
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override(&"separation", 4)
 	add_child(row)
-	var portrait := TextureRect.new()
-	portrait.texture = definition.portrait
-	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	portrait.custom_minimum_size = PORTRAIT_SIZE
-	row.add_child(portrait)
+	var head := TextureRect.new()
+	head.texture = definition.stock_icon
+	head.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(head)
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override(&"separation", 0)
 	row.add_child(column)
-	var name_label := UiKit.create_label("%s · %s" % [slot_label, definition.display_name], UiKit.FONT_SMALL, definition.accent_color)
+	var header := HBoxContainer.new()
+	header.add_theme_constant_override(&"separation", 4)
+	column.add_child(header)
+	var name_label := UiKit.create_label("%s · %s" % [slot_label, definition.display_name], UiKit.FONT_SMALL, _accent_color)
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	column.add_child(name_label)
+	header.add_child(name_label)
+	_stock_pips = HBoxContainer.new()
+	_stock_pips.add_theme_constant_override(&"separation", 2)
+	_stock_pips.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	header.add_child(_stock_pips)
 	_percent_label = UiKit.create_label("", UiKit.FONT_MEDIUM)
 	_percent_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	column.add_child(_percent_label)
-	_stocks_row = HBoxContainer.new()
-	_stocks_row.add_theme_constant_override(&"separation", 1)
-	row.add_child(_stocks_row)
 	fighter.damage_changed.connect(_on_damage_changed)
 	fighter.stocks_changed.connect(_on_stocks_changed)
 	_show_percent(fighter.damage_percent)
@@ -57,10 +64,10 @@ func _show_percent(percent: float) -> void:
 
 
 func _on_stocks_changed(stocks: int) -> void:
-	for child in _stocks_row.get_children():
+	for child in _stock_pips.get_children():
 		child.queue_free()
 	for _stock in stocks:
-		var icon := TextureRect.new()
-		icon.texture = _stock_icon
-		icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		_stocks_row.add_child(icon)
+		var pip := ColorRect.new()
+		pip.color = _accent_color
+		pip.custom_minimum_size = STOCK_PIP_SIZE
+		_stock_pips.add_child(pip)

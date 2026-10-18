@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://j3m2uruv3db"
-path="res://.godot/imported/waterfall.png-d4c10eb0e9b47adae500c6494b86ead2.ctex"
+uid="uid://kgj720a7y0bg"
+path="res://.godot/imported/pylon_glow.png-d9b39a530fcc54fa33e3cca1d01185d4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/stage/waterfall.png"
-dest_files=["res://.godot/imported/waterfall.png-d4c10eb0e9b47adae500c6494b86ead2.ctex"]
+source_file="res://assets/stage/pylon_glow.png"
+dest_files=["res://.godot/imported/pylon_glow.png-d9b39a530fcc54fa33e3cca1d01185d4.ctex"]
 
 [params]
 

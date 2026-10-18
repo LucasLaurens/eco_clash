@@ -33,6 +33,11 @@ func resolve_slot_tag(slot: int) -> String:
 	return "bot" if is_bot_slot(slot) else "p%d" % (slot + 1)
 
 
+## Short form for tight spots (HUD card), same words as the floating marker: "1P", "2P", "BOT".
+func format_short_slot_label(slot: int) -> String:
+	return UiText.SLOT_BOT if is_bot_slot(slot) else UiText.SLOT_TAG_PLAYER % (slot + 1)
+
+
 func format_slot_label(slot: int) -> String:
 	return UiText.SLOT_BOT if is_bot_slot(slot) else UiText.SLOT_PLAYER % (slot + 1)
 
