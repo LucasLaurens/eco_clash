@@ -10,6 +10,8 @@ const STAGE_SCENE := preload("res://scenes/stage.tscn")
 const TEXT_LIGHT := Color(0.92, 0.96, 1.0)
 const TEXT_MUTED := Color(0.62, 0.72, 0.84)
 const TEXT_GOLD := Color(1.0, 0.86, 0.36)
+## Night-blue veil laid over the arena so menu text reads; only its alpha varies per screen.
+const VEIL_COLOR := Color(0.04, 0.05, 0.12)
 
 
 static func create_label(text: String, size := FONT_SMALL, color := TEXT_LIGHT) -> Label:
@@ -30,14 +32,21 @@ static func create_button(text: String, on_pressed: Callable) -> Button:
 	return button
 
 
-## The arena itself, alive behind the menus (clouds drift), then a dark veil for readability.
+## The arena itself, alive behind the menus (clouds, waterfall, sea), then a dark veil for readability.
+## Platforms are hidden: floating slabs would cut through the logo, the buttons and the winner.
 static func add_backdrop(parent: Control, veil_alpha: float) -> void:
-	parent.add_child(STAGE_SCENE.instantiate())
+	var stage := STAGE_SCENE.instantiate()
+	stage.get_node("Platforms").hide()
+	parent.add_child(stage)
+	parent.add_child(create_veil(veil_alpha))
+
+
+static func create_veil(alpha: float) -> ColorRect:
 	var veil := ColorRect.new()
-	veil.color = Color(0.04, 0.05, 0.12, veil_alpha)
+	veil.color = Color(VEIL_COLOR, alpha)
 	veil.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	veil.set_anchors_preset(Control.PRESET_FULL_RECT)
-	parent.add_child(veil)
+	return veil
 
 
 static func create_centered_column(parent: Control, separation: int) -> VBoxContainer:

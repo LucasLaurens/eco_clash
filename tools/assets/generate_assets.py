@@ -15,6 +15,8 @@ import ui
 
 ROOT = Path(__file__).resolve().parents[2]
 ASSETS = ROOT / "assets"
+# Slot tags match MatchConfig.resolve_slot_tag on the Godot side.
+SLOTS = (("p1", palette.SLOT_P1, "1P"), ("p2", palette.SLOT_P2, "2P"), ("bot", palette.SLOT_BOT, "BOT"))
 
 
 def ensure_dir(path: Path) -> Path:
@@ -40,9 +42,15 @@ def generate_stage() -> None:
     stage.render_mid().save(target / "mid.png")
     stage.render_island().save(target / "island.png")
     stage.render_platform().save(target / "platform.png")
+    stage.render_waterfall().save(target / "waterfall.png")
+    stage.render_sea_glints().save(target / "sea_glints.png")
+    (target / "animated_layers.json").write_text(json.dumps(stage.build_animated_layers(), indent=2))
     fx_target = ensure_dir(ASSETS / "fx")
     stage.render_hit_spark().save(fx_target / "hit_spark.png")
     stage.render_eco_bolt(palette.ECO_YELLOW).save(fx_target / "eco_bolt.png")
+    stage.render_shadow().save(fx_target / "shadow.png")
+    stage.render_dust().save(fx_target / "dust.png")
+    stage.render_ko_burst().save(fx_target / "ko_burst.png")
 
 
 def generate_ui() -> None:
@@ -50,9 +58,9 @@ def generate_ui() -> None:
     ui.render_logo().save(target / "logo.png")
     for name, panel in ui.render_panels().items():
         panel.save(str(target / f"{name}.png"))
-    ui.render_selector((236, 70, 70), "1P").save(target / "selector_p1.png")
-    ui.render_selector((70, 140, 240), "2P").save(target / "selector_p2.png")
-    ui.render_selector((150, 150, 160), "BOT").save(target / "selector_bot.png")
+    for slot_tag, color, label in SLOTS:
+        ui.render_selector(color, label).save(target / f"selector_{slot_tag}.png")
+        ui.render_slot_marker(color, label).save(target / f"marker_{slot_tag}.png")
     fonts_target = ensure_dir(ASSETS / "fonts")
     atlas, descriptor = font.render_font("eco_pixel.png")
     atlas.save(fonts_target / "eco_pixel.png")

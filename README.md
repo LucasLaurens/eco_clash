@@ -49,7 +49,17 @@ Code de sortie 1 en cas d'échec. Chaque test est listé par son nom.
 Tous les sprites, le décor, l'UI et la police pixel sont générés une seule fois par
 `tools/assets/generate_assets.py` (Python + Pillow), puis versionnés en PNG.
 Le jeu ne les régénère jamais. `assets/fighters/layout.json` est la seule source
-des indices d'animation, lue par Python et par Godot.
+des indices d'animation, lue par Python et par Godot. De même, `assets/stage/animated_layers.json`
+place et cadence les couches animées du décor (cascade, reflets sur la mer).
+Les couleurs de joueur (1P rouge, 2P bleu, BOT gris) vivent dans `tools/assets/palette.py`.
+
+## Lisibilité en combat
+
+Un marqueur 1P / 2P / BOT flotte au-dessus de chaque combattant, une ombre au sol rétrécit
+quand il monte, et le plan intermédiaire est voilé vers le ciel pour que l'arène ressorte.
+Chaque coup fait flasher la cible en blanc ; saut et atterrissage soulèvent de la poussière ;
+un KO éclate au bord de l'écran dans la couleur du personnage. Le cadre produit est décrit
+dans `PRODUCT.md`.
 
 ## Arborescence
 
@@ -63,8 +73,9 @@ src/combat/      AttackData, formule de knockback, HitVolume, CombatResolver
 src/fighters/    Fighter, définitions, roster, coups (MeleeStrike, ProjectileShot)
 src/match/       Config, résultat, autoload MatchSettings, fabrique d'entrées, scène de combat
 src/stage/       Arène : sol, plateformes, spawns, zone d'éjection
-src/fx/          Étincelle d'impact, tremblement de caméra, découpe de sprite strips
+src/fx/          Effets ponctuels (étincelle, poussière, KO), flash d'impact, tremblement de caméra, sprite strips
 src/ui/          Textes, kit UI, menus, HUD, pause, résultats
 tests/           Runner headless + suites unitaires et scénarios
 tools/assets/    Générateur d'assets (one-shot)
+PRODUCT.md       Public, personnalité et principes visuels du jeu
 ```

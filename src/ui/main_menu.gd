@@ -2,7 +2,8 @@ extends Control
 ## Title screen: logo over the live arena, three choices, controls reminder.
 
 const LOGO := preload("res://assets/ui/logo.png")
-const FOOTER_MARGIN := 6.0
+const FOOTER_PADDING := 4
+const FOOTER_VEIL_ALPHA := 0.7
 
 
 func _ready() -> void:
@@ -22,16 +23,23 @@ func _ready() -> void:
 	vs_bot_button.grab_focus()
 
 
+## A dark band lifts the controls off the island: two player lines first, the shared tip quieter below.
 func _add_footer() -> void:
-	var footer := VBoxContainer.new()
-	footer.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	footer.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	footer.offset_bottom = -FOOTER_MARGIN
-	footer.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	footer.add_child(UiKit.create_label(UiKit.format_controls(1, UiText.CONTROLS_P1), UiKit.FONT_SMALL, UiKit.TEXT_MUTED))
-	footer.add_child(UiKit.create_label(UiKit.format_controls(2, UiText.CONTROLS_P2), UiKit.FONT_SMALL, UiKit.TEXT_MUTED))
-	footer.add_child(UiKit.create_label(UiText.CONTROLS_EXTRA, UiKit.FONT_SMALL, UiKit.TEXT_MUTED))
-	add_child(footer)
+	var band := PanelContainer.new()
+	var band_style := StyleBoxFlat.new()
+	band_style.bg_color = Color(UiKit.VEIL_COLOR, FOOTER_VEIL_ALPHA)
+	band_style.set_content_margin_all(FOOTER_PADDING)
+	band.add_theme_stylebox_override(&"panel", band_style)
+	band.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	band.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	band.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var lines := VBoxContainer.new()
+	lines.add_theme_constant_override(&"separation", 0)
+	band.add_child(lines)
+	lines.add_child(UiKit.create_label(UiKit.format_controls(1, UiText.CONTROLS_P1), UiKit.FONT_SMALL, UiKit.TEXT_LIGHT))
+	lines.add_child(UiKit.create_label(UiKit.format_controls(2, UiText.CONTROLS_P2), UiKit.FONT_SMALL, UiKit.TEXT_LIGHT))
+	lines.add_child(UiKit.create_label(UiText.CONTROLS_EXTRA, UiKit.FONT_SMALL, UiKit.TEXT_MUTED))
+	add_child(band)
 
 
 func _open_character_select(mode: MatchConfig.Mode) -> void:

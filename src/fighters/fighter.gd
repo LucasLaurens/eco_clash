@@ -23,6 +23,12 @@ const RESPAWN_INVULNERABILITY := 2.0
 const BLINK_PERIOD := 0.08
 const BLINK_ALPHA := 0.35
 const RUN_ANIMATION_THRESHOLD := 12.0
+const HIT_FLASH_SHADER := preload("res://src/fx/hit_flash.gdshader")
+const HIT_FLASH_DURATION := 0.08
+const LANDING_DUST_SPEED := 120.0
+const DUST_OFFSET := Vector2(0, -6)
+const MARKER_GAP := 14.0
+const SHADOW_MAX_DISTANCE := 160.0
 
 var definition: FighterDefinition
 var damage_percent := 0.0
@@ -40,10 +46,13 @@ var _air_jumps_left := 0
 var _air_special_used := false
 var _drop_through_left := 0.0
 var _invulnerable_left := 0.0
+var _hit_flash_left := 0.0
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
 @onready var _body_shape: CollisionShape2D = $BodyShape
 @onready var _melee_volumes: Node2D = $Volumes
+@onready var _shadow: Sprite2D = $Shadow
+@onready var _marker: Sprite2D = $Marker
 
 
 ## Call right after add_child: the fighter is inert until it knows who it is.
@@ -59,6 +68,16 @@ func configure(fighter_definition: FighterDefinition, world: Node2D, starting_st
 	_sprite.sprite_frames = FighterSpriteFrames.create(definition.sprite_sheet)
 	_sprite.position = FighterSpriteFrames.compute_sprite_offset()
 	_sprite.play(&"idle")
+	var hit_flash := ShaderMaterial.new()
+	hit_flash.shader = HIT_FLASH_SHADER
+	_sprite.material = hit_flash
+	_shadow.hframes = _shadow.texture.get_width() / _shadow.texture.get_height()
+	_marker.position = Vector2(0.0, -definition.body_size.y - MARKER_GAP)
+
+
+## The tag floating over the head ("1P", "2P", "BOT"): who is who, even in a mirror match.
+func show_slot_marker(texture: Texture2D) -> void:
+	_marker.texture = texture
 
 
 func attach_input(input_source: InputSource) -> void:
@@ -78,11 +97,13 @@ func _physics_process(delta: float) -> void:
 		State.HITSTUN:
 			_update_hitstun_state(delta)
 	_apply_gravity(frame, delta)
+	var was_on_floor := is_on_floor()
+	var landing_speed := velocity.y
 	move_and_slide()
 	if is_on_floor():
-		_air_jumps_left = definition.air_jumps
-		_air_special_used = false
+		_land(was_on_floor, landing_speed)
 	_update_visuals()
+	_update_shadow()
 
 
 func receive_hit(attack: AttackData, direction: int) -> void:
@@ -91,6 +112,7 @@ func receive_hit(attack: AttackData, direction: int) -> void:
 	velocity = KnockbackFormula.compute_launch_velocity(attack, direction, force)
 	_hitstun_left = KnockbackFormula.compute_hitstun(force)
 	_state = State.HITSTUN
+	_hit_flash_left = HIT_FLASH_DURATION
 	facing = -direction
 	_clear_melee_volumes()
 	damage_changed.emit(damage_percent)
@@ -156,6 +178,7 @@ func launch_projectile(attack: AttackData, speed: float, lifetime: float, frames
 
 func _tick_timers(delta: float) -> void:
 	_invulnerable_left = maxf(_invulnerable_left - delta, 0.0)
+	_hit_flash_left = maxf(_hit_flash_left - delta, 0.0)
 	if _drop_through_left <= 0.0:
 		return
 	_drop_through_left -= delta
@@ -185,9 +208,22 @@ func _update_free_state(frame: InputFrame, delta: float) -> void:
 func _jump() -> void:
 	if is_on_floor():
 		velocity.y = -definition.jump_velocity
+		_spawn_dust()
 	elif _air_jumps_left > 0:
 		_air_jumps_left -= 1
 		velocity.y = -definition.jump_velocity * AIR_JUMP_RATIO
+		_spawn_dust()
+
+
+func _land(was_on_floor: bool, landing_speed: float) -> void:
+	_air_jumps_left = definition.air_jumps
+	_air_special_used = false
+	if not was_on_floor and landing_speed > LANDING_DUST_SPEED:
+		_spawn_dust()
+
+
+func _spawn_dust() -> void:
+	_world.add_child(OneShotEffect.create(OneShotEffect.DUST, global_position + DUST_OFFSET))
 
 
 func _drop_through_platforms() -> void:
@@ -243,6 +279,7 @@ func _clear_melee_volumes() -> void:
 func _update_visuals() -> void:
 	_sprite.flip_h = facing < 0
 	_sprite.modulate.a = BLINK_ALPHA if _is_blinking() else 1.0
+	(_sprite.material as ShaderMaterial).set_shader_parameter(&"flash_amount", 1.0 if _hit_flash_left > 0.0 else 0.0)
 	match _state:
 		State.ACTING:
 			_show_move_frame()
@@ -266,3 +303,23 @@ func _select_motion_animation() -> StringName:
 	if not is_on_floor():
 		return &"jump" if velocity.y < 0.0 else &"fall"
 	return &"run" if absf(velocity.x) > RUN_ANIMATION_THRESHOLD else &"idle"
+
+
+## O(1): one ray per tick, cast with the fighter's own mask so a drop-through skips the platforms.
+func _update_shadow() -> void:
+	var ray := PhysicsRayQueryParameters2D.create(
+		global_position + Vector2.UP, global_position + Vector2.DOWN * SHADOW_MAX_DISTANCE, collision_mask
+	)
+	var hit := get_world_2d().direct_space_state.intersect_ray(ray)
+	_shadow.visible = not hit.is_empty()
+	if hit.is_empty():
+		return
+	var surface: Vector2 = hit["position"]
+	# Local offset: the fighter is never rotated or scaled, and a top_level shadow would draw over every fighter.
+	_shadow.position = surface - global_position
+	_shadow.frame = compute_shadow_frame(surface.y - global_position.y, _shadow.hframes)
+
+
+## Bigger frame index = smaller shadow. Height 0 is the full shadow, SHADOW_MAX_DISTANCE the smallest.
+static func compute_shadow_frame(height: float, frame_count: int) -> int:
+	return clampi(int(height / SHADOW_MAX_DISTANCE * frame_count), 0, frame_count - 1)
