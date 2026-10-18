@@ -2,7 +2,8 @@ class_name Hud
 extends CanvasLayer
 ## In-fight overlay: one card per fighter, the countdown and the end banner.
 
-const CARD_CENTERS_X := [150.0, 330.0]
+## Far enough apart that two cards never touch, close enough to read both at a glance.
+const CARD_CENTERS_X := [126.0, 354.0]
 const CARD_BOTTOM_MARGIN := 4.0
 const COUNTDOWN_STEP := 0.6
 const POP_SCALE := 2.0
@@ -22,7 +23,7 @@ func bind_fighters(fighters: Array[Fighter], config: MatchConfig) -> void:
 	for slot in fighters.size():
 		var card := FighterCard.new()
 		add_child(card)
-		card.bind_fighter(fighters[slot], config.definitions[slot], config.format_slot_label(slot))
+		card.bind_fighter(fighters[slot], config.definitions[slot], config.format_short_slot_label(slot))
 		card.reset_size()
 		card.position = Vector2(CARD_CENTERS_X[slot] - card.size.x / 2.0, _read_screen_size().y - card.size.y - CARD_BOTTOM_MARGIN)
 

@@ -41,6 +41,14 @@ static func add_backdrop(parent: Control, veil_alpha: float) -> void:
 	parent.add_child(create_veil(veil_alpha))
 
 
+## Same veil as a panel background, for bands and cards that size to their content.
+static func create_veil_style(alpha: float, padding: int) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(VEIL_COLOR, alpha)
+	style.set_content_margin_all(padding)
+	return style
+
+
 static func create_veil(alpha: float) -> ColorRect:
 	var veil := ColorRect.new()
 	veil.color = Color(VEIL_COLOR, alpha)

@@ -26,10 +26,7 @@ func _ready() -> void:
 ## A dark band lifts the controls off the island: two player lines first, the shared tip quieter below.
 func _add_footer() -> void:
 	var band := PanelContainer.new()
-	var band_style := StyleBoxFlat.new()
-	band_style.bg_color = Color(UiKit.VEIL_COLOR, FOOTER_VEIL_ALPHA)
-	band_style.set_content_margin_all(FOOTER_PADDING)
-	band.add_theme_stylebox_override(&"panel", band_style)
+	band.add_theme_stylebox_override(&"panel", UiKit.create_veil_style(FOOTER_VEIL_ALPHA, FOOTER_PADDING))
 	band.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	band.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	band.mouse_filter = Control.MOUSE_FILTER_IGNORE

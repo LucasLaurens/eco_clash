@@ -12,24 +12,28 @@ comprendre à chaque instant ce qui se passe à l'écran.
 
 ## Product Purpose
 
-Eco Clash est un jeu de combat 1 contre 1 en pixel art, façon Smash Bros, dans l'univers tropical
-et Precursor de Jak and Daxter. Réussi quand un joueur qui découvre le jeu sait en deux secondes
+Eco Clash est un jeu de combat 1 contre 1 en pixel art, façon Smash Bros, dans l'univers
+Precursor de Jak II et Jak 3 : une arène de tech ancienne qui flotte au-dessus des nuages. Réussi quand un joueur qui découvre le jeu sait en deux secondes
 quel personnage il contrôle, sent chaque coup porté, et a envie de relancer une revanche.
 
 ## Brand Personality
 
-Aventure tropicale chaleureuse. Soleil, couleurs chaudes, ludique, jamais agressif.
-Trois mots : lumineux, joueur, généreux.
+Futuriste et ancien à la fois : la tech Précurseur, épurée, au crépuscule. Métal patiné,
+éco qui luit dans les objets, grandes formes simples et beaucoup d'air.
+Trois mots : épuré, mystérieux, vif.
 
 ## Anti-references
 
-Néon / cyberpunk : glow, scanlines CRT, fond noir et couleurs fluo.
+Néon / cyberpunk : glow, scanlines CRT, fond noir et couleurs fluo. La lumière vient de l'éco,
+dans des objets précis (conduits, cristaux, anneaux), jamais d'un halo posé partout.
+Décor surchargé : chaque élément de fond doit mériter sa place.
 
 ## Design Principles
 
 1. On sait toujours qui est qui, même quand les deux joueurs ont le même personnage.
 2. Chaque coup se sent : l'impact se voit sur la cible, pas seulement dans le chiffre.
-3. Le décor vit, mais ne gêne jamais la lecture du combat.
+3. Le décor vit, mais ne gêne jamais la lecture du combat : peu d'éléments, palette réduite,
+   un seul accent éco (cyan) pour la tech, les couleurs vives réservées aux personnages.
 4. Le pixel reste net, sur une seule grille : pas de flou, pas de résolutions mélangées.
 
 ## Accessibility & Inclusion
