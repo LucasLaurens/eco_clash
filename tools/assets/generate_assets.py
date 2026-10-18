@@ -2,13 +2,14 @@
 
 Usage (from the repo root):  python3 tools/assets/generate_assets.py
 """
+
 from __future__ import annotations
 
 import json
 from pathlib import Path
 
-import font
 import fighters
+import font
 import palette
 import stage
 import ui
@@ -24,9 +25,9 @@ def ensure_dir(path: Path) -> Path:
     return path
 
 
-def generate_fighters() -> None:
-    target = ensure_dir(ASSETS / "fighters")
-    ui_target = ensure_dir(ASSETS / "ui")
+def generate_fighters(assets: Path) -> None:
+    target = ensure_dir(assets / "fighters")
+    ui_target = ensure_dir(assets / "ui")
     for fighter_id, artist in fighters.build_artists().items():
         artist.render_sheet().save(target / f"{fighter_id}.png")
         ui.render_portrait(artist).save(ui_target / f"portrait_{fighter_id}.png")
@@ -34,8 +35,8 @@ def generate_fighters() -> None:
     (target / "layout.json").write_text(json.dumps(fighters.build_layout(), indent=2))
 
 
-def generate_stage() -> None:
-    target = ensure_dir(ASSETS / "stage")
+def generate_stage(assets: Path) -> None:
+    target = ensure_dir(assets / "stage")
     stage.render_sky().save(target / "sky.png")
     stage.render_clouds().save(target / "clouds.png")
     stage.render_far().save(target / "far.png")
@@ -45,7 +46,7 @@ def generate_stage() -> None:
     stage.render_pylon_glow().save(target / "pylon_glow.png")
     stage.render_flux_motes().save(target / "flux_motes.png")
     (target / "animated_layers.json").write_text(json.dumps(stage.build_animated_layers(), indent=2))
-    fx_target = ensure_dir(ASSETS / "fx")
+    fx_target = ensure_dir(assets / "fx")
     stage.render_hit_spark().save(fx_target / "hit_spark.png")
     stage.render_flux_bolt(palette.FLUX_YELLOW).save(fx_target / "flux_bolt.png")
     stage.render_flux_bolt(palette.FLUX_DARK).save(fx_target / "flux_bolt_dark.png")
@@ -54,23 +55,28 @@ def generate_stage() -> None:
     stage.render_ko_burst().save(fx_target / "ko_burst.png")
 
 
-def generate_ui() -> None:
-    target = ensure_dir(ASSETS / "ui")
+def generate_ui(assets: Path, icon_path: Path) -> None:
+    target = ensure_dir(assets / "ui")
     ui.render_logo().save(target / "logo.png")
     for name, panel in ui.render_panels().items():
         panel.save(str(target / f"{name}.png"))
     for slot_tag, color, label in SLOTS:
         ui.render_selector(color, label).save(target / f"selector_{slot_tag}.png")
         ui.render_slot_marker(color, label).save(target / f"marker_{slot_tag}.png")
-    fonts_target = ensure_dir(ASSETS / "fonts")
+    fonts_target = ensure_dir(assets / "fonts")
     atlas, descriptor = font.render_font("eco_pixel.png")
     atlas.save(fonts_target / "eco_pixel.png")
     (fonts_target / "eco_pixel.fnt").write_text(descriptor, encoding="utf-8")
-    ui.render_portrait(fighters.build_artists()["kael"]).resize((128, 128)).save(ROOT / "icon.png")
+    ui.render_portrait(fighters.build_artists()["kael"]).resize((128, 128)).save(icon_path)
+
+
+def generate_all(assets: Path, icon_path: Path) -> None:
+    """Writes every asset under `assets` and the app icon at `icon_path` (a temp dir in tests)."""
+    generate_fighters(assets)
+    generate_stage(assets)
+    generate_ui(assets, icon_path)
 
 
 if __name__ == "__main__":
-    generate_fighters()
-    generate_stage()
-    generate_ui()
+    generate_all(ASSETS, ROOT / "icon.png")
     print(f"Assets written to {ASSETS}")

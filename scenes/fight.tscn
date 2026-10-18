@@ -25,6 +25,5 @@ script = ExtResource("4_camera")
 script = ExtResource("5_hud")
 
 [node name="PauseMenu" type="CanvasLayer" parent="."]
-process_mode = 3
 layer = 10
 script = ExtResource("6_pause")

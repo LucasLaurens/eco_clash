@@ -52,4 +52,7 @@ func test_hitstun_is_proportional_to_force() -> void:
 	# Arrange
 	var force := RandomNumberGenerator.new().randf_range(100.0, 500.0)
 	# Act & Assert
-	assert_true(is_equal_approx(KnockbackFormula.compute_hitstun(force * 2.0), KnockbackFormula.compute_hitstun(force) * 2.0), "linear hitstun")
+	assert_true(
+		is_equal_approx(KnockbackFormula.compute_hitstun(force * 2.0), KnockbackFormula.compute_hitstun(force) * 2.0),
+		"linear hitstun"
+	)

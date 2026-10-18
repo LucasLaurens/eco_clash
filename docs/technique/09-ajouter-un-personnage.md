@@ -1,6 +1,6 @@
 # Ajouter un personnage
 
-[Sommaire](../README.md) · Précédent : [Tests](08-tests.md)
+[Sommaire](../README.md) · Précédent : [Tests](08-tests.md) · Suivant : [Qualité et CI](10-qualite-et-ci.md)
 
 Exemple : un personnage d'identifiant `zara`. L'identifiant sert partout (fichiers, ressource).
 
@@ -61,6 +61,7 @@ dans l'écran de sélection.
 
 ```bash
 godot --headless --path . --fixed-fps 60 res://tests/test_runner.tscn
+pytest --cov
 ```
 
 Les tests contrôlent :

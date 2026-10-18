@@ -27,5 +27,8 @@ func test_animated_layers_match_their_nodes_and_sheets() -> void:
 		var spec: Dictionary = layers[node_name]
 		var sheet: Texture2D = load(Stage.STAGE_ASSETS_DIR + String(spec["sheet"]))
 		assert_true(stage.get_node_or_null(node_name) is AnimatedSprite2D, "%s node exists in the stage" % node_name)
-		assert_true(sheet != null and sheet.get_width() % int(spec["frame_width"]) == 0, "%s sheet splits into whole frames" % node_name)
+		assert_true(
+			sheet != null and sheet.get_width() % int(spec["frame_width"]) == 0,
+			"%s sheet splits into whole frames" % node_name
+		)
 	stage.free()

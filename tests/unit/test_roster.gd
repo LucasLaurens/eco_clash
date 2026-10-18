@@ -27,11 +27,19 @@ func test_every_move_is_complete() -> void:
 		for move: FighterMove in [definition.light_attack, definition.special]:
 			assert_true(move != null and move.attack != null, "%s has both moves" % definition.id)
 			assert_true(move.attack.compute_total_duration() > 0.0, "%s move has a timeline" % definition.id)
-			assert_true(FighterSpriteFrames.read_layout()["animations"].has(String(move.animation)), "%s animation exists" % definition.id)
+			assert_true(
+				FighterSpriteFrames.read_layout()["animations"].has(String(move.animation)),
+				"%s animation exists" % definition.id
+			)
 
 
 func test_ratings_stay_on_the_five_pip_scale() -> void:
 	# Act & Assert
 	for definition in FighterRoster.list_all():
-		for rating in [definition.compute_speed_rating(), definition.compute_power_rating(), definition.compute_weight_rating()]:
-			assert_true(rating >= 1 and rating <= FighterDefinition.MAX_RATING, "%s rating %d in range" % [definition.id, rating])
+		for rating in [
+			definition.compute_speed_rating(), definition.compute_power_rating(), definition.compute_weight_rating()
+		]:
+			assert_true(
+				rating >= 1 and rating <= FighterDefinition.MAX_RATING,
+				"%s rating %d in range" % [definition.id, rating]
+			)

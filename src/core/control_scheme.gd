@@ -5,7 +5,8 @@ extends RefCounted
 enum Action { LEFT, RIGHT, UP, DOWN, ATTACK, SPECIAL }
 
 const PLAYER_KEYS := {
-	1: {
+	1:
+	{
 		Action.LEFT: KEY_A,
 		Action.RIGHT: KEY_D,
 		Action.UP: KEY_W,
@@ -13,7 +14,8 @@ const PLAYER_KEYS := {
 		Action.ATTACK: KEY_F,
 		Action.SPECIAL: KEY_G,
 	},
-	2: {
+	2:
+	{
 		Action.LEFT: KEY_LEFT,
 		Action.RIGHT: KEY_RIGHT,
 		Action.UP: KEY_UP,
@@ -23,6 +25,7 @@ const PLAYER_KEYS := {
 	},
 }
 
+const HEADLESS_DISPLAY_SERVER := "headless"
 const ARROW_GLYPHS := {
 	KEY_LEFT: "←",
 	KEY_RIGHT: "→",
@@ -53,8 +56,16 @@ func format_key_label(action: Action) -> String:
 	var physical_key: Key = PLAYER_KEYS[player][action]
 	if ARROW_GLYPHS.has(physical_key):
 		return ARROW_GLYPHS[physical_key]
+	return OS.get_keycode_string(_resolve_layout_key(physical_key)).to_upper()
+
+
+## The key this physical position types on the user's layout (ZQSD on AZERTY). A headless display server
+## (tests, CI) has no keyboard layout, so it keeps the physical key instead of logging an error per call.
+func _resolve_layout_key(physical_key: Key) -> Key:
+	if DisplayServer.get_name() == HEADLESS_DISPLAY_SERVER:
+		return physical_key
 	var localized_key := DisplayServer.keyboard_get_label_from_physical(physical_key)
-	return OS.get_keycode_string(localized_key if localized_key != KEY_NONE else physical_key).to_upper()
+	return localized_key if localized_key != KEY_NONE else physical_key
 
 
 func _register_action(action: Action) -> void:

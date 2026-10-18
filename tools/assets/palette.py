@@ -1,4 +1,5 @@
 """Shared colours: a dusk sky, ancient metal, and glowing flux in six colours."""
+
 from __future__ import annotations
 
 from pixel import Color, Ramp

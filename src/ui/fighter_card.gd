@@ -33,7 +33,9 @@ func bind_fighter(fighter: Fighter, definition: FighterDefinition, slot_label: S
 	var header := HBoxContainer.new()
 	header.add_theme_constant_override(&"separation", 4)
 	column.add_child(header)
-	var name_label := UiKit.create_label("%s · %s" % [slot_label, definition.display_name], UiKit.FONT_SMALL, _accent_color)
+	var name_label := UiKit.create_label(
+		"%s · %s" % [slot_label, definition.display_name], UiKit.FONT_SMALL, _accent_color
+	)
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	header.add_child(name_label)
 	_stock_pips = HBoxContainer.new()
@@ -59,7 +61,11 @@ func _on_damage_changed(percent: float) -> void:
 func _show_percent(percent: float) -> void:
 	_percent_label.text = UiText.PERCENT % roundi(percent)
 	var danger_ratio := clampf(percent / DANGER_PERCENT, 0.0, 1.0)
-	var color := Color.WHITE.lerp(WARM_COLOR, danger_ratio * 2.0) if danger_ratio < 0.5 else WARM_COLOR.lerp(DANGER_COLOR, (danger_ratio - 0.5) * 2.0)
+	var color := (
+		Color.WHITE.lerp(WARM_COLOR, danger_ratio * 2.0)
+		if danger_ratio < 0.5
+		else WARM_COLOR.lerp(DANGER_COLOR, (danger_ratio - 0.5) * 2.0)
+	)
 	_percent_label.add_theme_color_override(&"font_color", color)
 
 

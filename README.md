@@ -14,7 +14,8 @@ La documentation complète est dans [`docs/`](docs/README.md) :
   [le combattant](docs/technique/02-combattant.md), [combat](docs/technique/03-combat.md),
   [IA](docs/technique/04-ia.md), [arène et effets](docs/technique/05-arene-et-effets.md),
   [interface](docs/technique/06-interface.md), [pipeline d'assets](docs/technique/07-assets.md),
-  [tests](docs/technique/08-tests.md), [ajouter un personnage](docs/technique/09-ajouter-un-personnage.md).
+  [tests](docs/technique/08-tests.md), [ajouter un personnage](docs/technique/09-ajouter-un-personnage.md),
+  [qualité et CI](docs/technique/10-qualite-et-ci.md).
 
 ## Lancer le jeu (Mac)
 
@@ -59,9 +60,18 @@ Suites et conventions : [docs/technique/08-tests.md](docs/technique/08-tests.md)
 
 ```bash
 godot --headless --path . --fixed-fps 60 res://tests/test_runner.tscn
+pytest --cov
 ```
 
-Code de sortie 1 en cas d'échec. Chaque test est listé par son nom.
+Le premier lance les tests du jeu (ajouter `-- --only=unit` ou `-- --only=features` pour une seule
+famille), le second ceux des outils Python (`pip install -r requirements-dev.txt`). Code de sortie
+1 en cas d'échec. Chaque test est listé par son nom.
+
+## Qualité et CI
+
+À chaque push et pull request, la CI GitHub Actions vérifie le format et le lint (gdformat, gdlint,
+ruff), la règle de nommage (fonctions qui commencent par un verbe), lance tous les tests et mesure la
+couverture. Détails et commandes locales : [docs/technique/10-qualite-et-ci.md](docs/technique/10-qualite-et-ci.md).
 
 ## Assets
 
@@ -99,8 +109,11 @@ src/match/       Config, résultat, autoload MatchSettings, fabrique d'entrées,
 src/stage/       Arène : sol, plateformes, spawns, zone d'éjection
 src/fx/          Effets ponctuels (étincelle, poussière, KO), flash d'impact, tremblement de caméra, sprite strips
 src/ui/          Textes, kit UI, menus, HUD, pause, résultats
-tests/           Runner headless + suites unitaires et scénarios
+tests/           Runner headless, unit/ et features/
 tools/assets/    Générateur d'assets (one-shot)
+tools/ci/        Règle de nommage, couverture GDScript
+tools/tests/     Tests pytest des outils
+.github/         Workflow de CI
 PRODUCT.md       Public, personnalité et principes visuels du jeu
 CONTRIBUTING.md  Règles du projet : doc à jour à chaque changement, univers original
 docs/            Documentation fonctionnelle et technique

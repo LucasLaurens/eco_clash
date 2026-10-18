@@ -1,4 +1,5 @@
 """Dev helper: upscale a PNG with nearest-neighbour so pixel art can be inspected."""
+
 from __future__ import annotations
 
 import sys

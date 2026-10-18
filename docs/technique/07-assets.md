@@ -13,6 +13,10 @@ Depuis la racine du dépôt (Python 3 et Pillow requis) :
 python3 tools/assets/generate_assets.py
 ```
 
+`generate_all(assets, icon_path)` peut écrire ailleurs que dans le dépôt : c'est ce que fait le test
+`tools/tests/test_generated_assets.py`, qui compare la sortie du générateur aux PNG versionnés et
+échoue si l'un des deux a changé sans l'autre.
+
 Puis laisser Godot importer les nouveaux fichiers (création des `.import`) :
 
 ```bash

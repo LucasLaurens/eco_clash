@@ -1,6 +1,7 @@
 class_name PauseMenu
 extends CanvasLayer
-## Escape toggles a pause overlay. Runs while the tree is paused (process_mode = ALWAYS).
+## Escape toggles a pause overlay. Sets its own process_mode to ALWAYS: it must keep reading input
+## while the rest of the tree is paused, wherever it is instanced.
 
 const PAUSE_VEIL_ALPHA := 0.6
 
@@ -9,6 +10,7 @@ var _resume_button: Button
 
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	_overlay = Control.new()
 	_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(_overlay)

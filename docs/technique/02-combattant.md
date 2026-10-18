@@ -55,7 +55,8 @@ Un `InputFrame` est l'intention d'un tick physique, identique quelle que soit sa
 
 `ControlScheme` (`src/core/control_scheme.gd`) associe à chaque joueur des **touches physiques**
 (donc ZQSD en AZERTY et WASD en QWERTY) et crée les actions `p1_left`, `p1_attack`, `p2_up`, etc.
-`format_key_label` affiche la touche telle que le clavier de l'utilisateur la nomme.
+`format_key_label` affiche la touche telle que le clavier de l'utilisateur la nomme ; en headless
+(tests, CI), sans disposition de clavier, il affiche la touche physique.
 `InputSourceFactory` choisit clavier ou bot pour chaque slot selon le `MatchConfig`.
 
 ## Machine à états

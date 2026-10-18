@@ -1,0 +1,7 @@
+# Pinned dev tools, shared by the CI and local runs: pip install -r requirements-dev.txt
+gdtoolkit==4.5.0
+ruff==0.17.1
+pytest==9.1.1
+pytest-cov==7.1.0
+coverage==7.16.2
+pillow==13.0.0

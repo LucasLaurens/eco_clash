@@ -32,7 +32,10 @@ func test_every_fighter_is_documented() -> void:
 	# Act & Assert
 	for definition in FighterRoster.list_all():
 		for path: String in pages:
-			assert_true(String(pages[path]).contains(definition.display_name.to_lower()), "%s missing from %s" % [definition.display_name, path])
+			assert_true(
+				String(pages[path]).contains(definition.display_name.to_lower()),
+				"%s missing from %s" % [definition.display_name, path]
+			)
 
 
 func test_every_relative_link_resolves() -> void:
@@ -47,7 +50,10 @@ func test_every_relative_link_resolves() -> void:
 			if target.begins_with("http"):
 				continue
 			var resolved := (path.get_base_dir() + "/" + target).simplify_path()
-			assert_true(FileAccess.file_exists(resolved) or DirAccess.dir_exists_absolute(resolved), "%s links to missing %s" % [path, target])
+			assert_true(
+				FileAccess.file_exists(resolved) or DirAccess.dir_exists_absolute(resolved),
+				"%s links to missing %s" % [path, target]
+			)
 
 
 func test_no_franchise_term_anywhere() -> void:

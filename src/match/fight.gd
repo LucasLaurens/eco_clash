@@ -71,9 +71,11 @@ func _attach_controllers() -> void:
 
 func _knock_out(fighter: Fighter) -> void:
 	_camera.add_trauma(KO_TRAUMA)
-	_world.add_child(OneShotEffect.create(
-		OneShotEffect.KO_BURST, _compute_ko_burst_position(fighter.global_position), fighter.definition.accent_color
-	))
+	_world.add_child(
+		OneShotEffect.create(
+			OneShotEffect.KO_BURST, _compute_ko_burst_position(fighter.global_position), fighter.definition.accent_color
+		)
+	)
 	fighter.lose_stock()
 	if fighter.has_stocks_left():
 		fighter.respawn_at(_stage.get_spawn_position(_fighters.find(fighter)) - Vector2(0.0, SPAWN_HEIGHT * 3.0))

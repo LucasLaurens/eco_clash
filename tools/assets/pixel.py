@@ -3,6 +3,7 @@
 PIL draws aliased shapes by default, which is exactly what pixel art needs:
 every primitive here lands on whole pixels, no blending.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -17,8 +18,7 @@ TRANSPARENT: Color = (0, 0, 0, 0)
 
 # 4x4 ordered-dither matrix, normalised to [0, 1).
 BAYER_4X4: tuple[tuple[float, ...], ...] = tuple(
-    tuple(value / 16 for value in row)
-    for row in ((0, 8, 2, 10), (12, 4, 14, 6), (3, 11, 1, 9), (15, 7, 13, 5))
+    tuple(value / 16 for value in row) for row in ((0, 8, 2, 10), (12, 4, 14, 6), (3, 11, 1, 9), (15, 7, 13, 5))
 )
 
 
@@ -37,7 +37,10 @@ def to_rgba(color: Color) -> Color:
 
 def mix_colors(start: Color, end: Color, ratio: float) -> Color:
     start, end = to_rgba(start), to_rgba(end)
-    return tuple(round(a + (b - a) * ratio) for a, b in zip(start, end))
+    return tuple(
+        round(start_channel + (end_channel - start_channel) * ratio)
+        for start_channel, end_channel in zip(start, end, strict=True)
+    )
 
 
 class Canvas:
@@ -119,7 +122,11 @@ class Canvas:
     def _has_opaque_neighbour(self, pixels, x: int, y: int) -> bool:
         for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
             neighbour_x, neighbour_y = x + dx, y + dy
-            if 0 <= neighbour_x < self.width and 0 <= neighbour_y < self.height and pixels[neighbour_x, neighbour_y][3] > 0:
+            if (
+                0 <= neighbour_x < self.width
+                and 0 <= neighbour_y < self.height
+                and pixels[neighbour_x, neighbour_y][3] > 0
+            ):
                 return True
         return False
 

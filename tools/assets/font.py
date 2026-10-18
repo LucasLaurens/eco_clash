@@ -2,6 +2,7 @@
 
 The fill is white so Godot's font_color tints it; the black outline stays black under tinting.
 """
+
 from __future__ import annotations
 
 from PIL import Image
@@ -85,9 +86,17 @@ ACCENTS: dict[str, tuple[str, str]] = {
 }
 
 ACCENTED: dict[str, tuple[str, str]] = {
-    "É": ("E", "acute"), "È": ("E", "grave"), "Ê": ("E", "circumflex"), "Ë": ("E", "diaeresis"),
-    "À": ("A", "grave"), "Â": ("A", "circumflex"), "Ô": ("O", "circumflex"), "Ù": ("U", "grave"),
-    "Û": ("U", "circumflex"), "Î": ("I", "circumflex"), "Ï": ("I", "diaeresis"),
+    "É": ("E", "acute"),
+    "È": ("E", "grave"),
+    "Ê": ("E", "circumflex"),
+    "Ë": ("E", "diaeresis"),
+    "À": ("A", "grave"),
+    "Â": ("A", "circumflex"),
+    "Ô": ("O", "circumflex"),
+    "Ù": ("U", "grave"),
+    "Û": ("U", "circumflex"),
+    "Î": ("I", "circumflex"),
+    "Ï": ("I", "diaeresis"),
 }
 
 SPACE_ADVANCE = 4
@@ -103,7 +112,7 @@ def build_glyph_rows() -> dict[str, list[str]]:
     for char, (base, accent) in ACCENTED.items():
         body = list(GLYPHS[base])
         width = len(body[0])
-        accent_rows = [row[(5 - width) // 2:(5 - width) // 2 + width] for row in ACCENTS[accent]]
+        accent_rows = [row[(5 - width) // 2 : (5 - width) // 2 + width] for row in ACCENTS[accent]]
         rows[char] = accent_rows + body + ["." * width]
     cedilla = list(GLYPHS["C"])
     rows["Ç"] = empty_accent(5) + cedilla + ["..#.."]
@@ -146,8 +155,10 @@ def render_font(page_name: str) -> tuple[Image.Image, str]:
         )
     lines.append(f"char id=32 x=0 y=0 width=0 height=0 xoffset=0 yoffset=0 xadvance={SPACE_ADVANCE} page=0 chnl=15")
     header = [
-        f'info face="EcoPixel" size={FONT_SIZE} bold=0 italic=0 charset="" unicode=1 stretchH=100 smooth=0 aa=1 padding=0,0,0,0 spacing=0,0 outline=0',
-        f"common lineHeight={LINE_HEIGHT} base={1 + ACCENT_ROWS + BODY_ROWS} scaleW={atlas.width} scaleH={atlas.height} pages=1 packed=0",
+        f'info face="EcoPixel" size={FONT_SIZE} bold=0 italic=0 charset="" unicode=1 stretchH=100 smooth=0 aa=1 '
+        "padding=0,0,0,0 spacing=0,0 outline=0",
+        f"common lineHeight={LINE_HEIGHT} base={1 + ACCENT_ROWS + BODY_ROWS} "
+        f"scaleW={atlas.width} scaleH={atlas.height} pages=1 packed=0",
         f'page id=0 file="{page_name}"',
         f"chars count={len(lines)}",
     ]

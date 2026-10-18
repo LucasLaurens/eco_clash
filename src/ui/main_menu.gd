@@ -33,8 +33,12 @@ func _add_footer() -> void:
 	var lines := VBoxContainer.new()
 	lines.add_theme_constant_override(&"separation", 0)
 	band.add_child(lines)
-	lines.add_child(UiKit.create_label(UiKit.format_controls(1, UiText.CONTROLS_P1), UiKit.FONT_SMALL, UiKit.TEXT_LIGHT))
-	lines.add_child(UiKit.create_label(UiKit.format_controls(2, UiText.CONTROLS_P2), UiKit.FONT_SMALL, UiKit.TEXT_LIGHT))
+	lines.add_child(
+		UiKit.create_label(UiKit.format_controls(1, UiText.CONTROLS_P1), UiKit.FONT_SMALL, UiKit.TEXT_LIGHT)
+	)
+	lines.add_child(
+		UiKit.create_label(UiKit.format_controls(2, UiText.CONTROLS_P2), UiKit.FONT_SMALL, UiKit.TEXT_LIGHT)
+	)
 	lines.add_child(UiKit.create_label(UiText.CONTROLS_EXTRA, UiKit.FONT_SMALL, UiKit.TEXT_MUTED))
 	add_child(band)
 

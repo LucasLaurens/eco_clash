@@ -12,7 +12,9 @@ var definitions: Array[FighterDefinition]
 var stocks := DEFAULT_STOCKS
 
 
-static func create(match_mode: Mode, first_definition: FighterDefinition, second_definition: FighterDefinition) -> MatchConfig:
+static func create(
+	match_mode: Mode, first_definition: FighterDefinition, second_definition: FighterDefinition
+) -> MatchConfig:
 	var config := MatchConfig.new()
 	config.mode = match_mode
 	config.definitions = [first_definition, second_definition]

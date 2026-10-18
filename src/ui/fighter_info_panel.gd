@@ -41,7 +41,9 @@ func show_definition(definition: FighterDefinition) -> void:
 	_title_label.text = definition.title
 	_preview_sprite.sprite_frames = FighterSpriteFrames.create(definition.sprite_sheet)
 	_preview_sprite.play(&"idle")
-	var ratings := [definition.compute_speed_rating(), definition.compute_power_rating(), definition.compute_weight_rating()]
+	var ratings := [
+		definition.compute_speed_rating(), definition.compute_power_rating(), definition.compute_weight_rating()
+	]
 	for row_index in _pip_rows.size():
 		_paint_pips(_pip_rows[row_index], ratings[row_index], definition.accent_color)
 	_special_label.text = UiText.SPECIAL_PREFIX % definition.get_special_name()

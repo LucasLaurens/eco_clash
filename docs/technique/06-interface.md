@@ -32,7 +32,7 @@
 | `fighter_info_panel.gd` | Panneau de sélection : aperçu 64 px, nom, titre, jauges, spécial, état. |
 | `hud.gd` | Place les deux `FighterCard`, joue le compte à rebours, affiche la bannière de fin. |
 | `fighter_card.gd` | Carte de HUD : tête 16 px, « 1P · KAEL », pourcentage (blanc puis orange puis rouge vers 150 %), un point par vie. |
-| `pause_menu.gd` | `process_mode = ALWAYS` pour vivre pendant la pause de l'arbre. |
+| `pause_menu.gd` | Se met lui-même en `process_mode = ALWAYS` pour continuer à lire Échap pendant la pause de l'arbre, où qu'il soit instancié. |
 | `results.gd` | Vainqueur animé à l'échelle 1, durée, trois boutons. |
 
 ## Contraintes d'écran
