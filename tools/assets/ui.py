@@ -21,10 +21,10 @@ def render_logo() -> Image.Image:
     pixels = text.load()
     for y in range(text.height):
         for x in range(text.width):
-            r, g, b, a = pixels[x, y]
-            if a and r > 128:
+            red, _green, _blue, alpha = pixels[x, y]
+            if alpha and red > 128:
                 pixels[x, y] = mix_colors(top, bottom, y / text.height)
-            elif a:
+            elif alpha:
                 pixels[x, y] = (*palette.OUTLINE, 255)
     shadow = Image.new("RGBA", text.size, (*palette.ECO_BLUE.shade, 255))
     shadow.putalpha(text.getchannel("A"))

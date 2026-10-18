@@ -11,9 +11,9 @@ const DEFINITIONS := [
 
 
 static func list_all() -> Array[FighterDefinition]:
-	var all: Array[FighterDefinition] = []
-	all.assign(DEFINITIONS)
-	return all
+	var definitions: Array[FighterDefinition] = []
+	definitions.assign(DEFINITIONS)
+	return definitions
 
 
 static func find_at(index: int) -> FighterDefinition:

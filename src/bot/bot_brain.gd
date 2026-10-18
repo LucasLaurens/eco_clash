@@ -25,53 +25,53 @@ func _init(rng: RandomNumberGenerator, aggression := 0.55, special_chance := 0.1
 	_special_chance = special_chance
 
 
-func decide(perception: BotPerception) -> InputFrame:
+func decide_input(perception: BotPerception) -> InputFrame:
 	if is_off_stage(perception):
 		return _decide_recovery(perception)
 	return _decide_offense(perception)
 
 
-func is_off_stage(p: BotPerception) -> bool:
-	var x := p.self_position.x
-	return x < p.ground.position.x or x > p.ground.end.x or p.self_position.y > p.ground.position.y + OFF_STAGE_DEPTH
+func is_off_stage(perception: BotPerception) -> bool:
+	var self_x := perception.self_position.x
+	return self_x < perception.ground.position.x or self_x > perception.ground.end.x or perception.self_position.y > perception.ground.position.y + OFF_STAGE_DEPTH
 
 
-func _decide_recovery(p: BotPerception) -> InputFrame:
+func _decide_recovery(perception: BotPerception) -> InputFrame:
 	var frame := InputFrame.new()
-	frame.move_x = signf(p.ground.get_center().x - p.self_position.x)
-	frame.jump_pressed = p.self_velocity.y > FALLING_SPEED and p.self_has_air_jump
+	frame.move_x = signf(perception.ground.get_center().x - perception.self_position.x)
+	frame.jump_pressed = perception.self_velocity.y > FALLING_SPEED and perception.self_has_air_jump
 	return frame
 
 
-func _decide_offense(p: BotPerception) -> InputFrame:
+func _decide_offense(perception: BotPerception) -> InputFrame:
 	var frame := InputFrame.new()
-	if not p.target_in_play:
+	if not perception.target_in_play:
 		return frame
-	var gap := p.target_position - p.self_position
-	var distance := absf(gap.x)
-	var direction := signf(gap.x)
+	var offset_to_target := perception.target_position - perception.self_position
+	var distance := absf(offset_to_target.x)
+	var direction := signf(offset_to_target.x)
 	frame.move_x = direction if distance > ATTACK_RANGE * CHASE_STOP_RATIO else direction * FACE_NUDGE
-	if _would_walk_off(p, frame.move_x):
+	if _would_walk_off(perception, frame.move_x):
 		frame.move_x = 0.0
-	var aligned := absf(gap.y) <= VERTICAL_REACH
-	if aligned and distance <= ATTACK_RANGE:
+	var is_vertically_aligned := absf(offset_to_target.y) <= VERTICAL_REACH
+	if is_vertically_aligned and distance <= ATTACK_RANGE:
 		frame.attack_pressed = _rng.randf() < _aggression
-	elif aligned and distance >= SPECIAL_MIN_RANGE and distance <= SPECIAL_MAX_RANGE:
+	elif is_vertically_aligned and distance >= SPECIAL_MIN_RANGE and distance <= SPECIAL_MAX_RANGE:
 		frame.special_pressed = _rng.randf() < _special_chance
-	if p.self_on_floor and gap.y < -VERTICAL_REACH and distance < JUMP_CHASE_RANGE:
+	if perception.self_on_floor and offset_to_target.y < -VERTICAL_REACH and distance < JUMP_CHASE_RANGE:
 		frame.jump_pressed = true
-	elif p.self_on_floor and gap.y > VERTICAL_REACH and _is_on_platform(p):
+	elif perception.self_on_floor and offset_to_target.y > VERTICAL_REACH and _is_on_platform(perception):
 		frame.down = true
 		frame.jump_pressed = true
 	return frame
 
 
-func _would_walk_off(p: BotPerception, move_x: float) -> bool:
-	if not p.self_on_floor or _is_on_platform(p):
+func _would_walk_off(perception: BotPerception, move_x: float) -> bool:
+	if not perception.self_on_floor or _is_on_platform(perception):
 		return false
-	var next_x := p.self_position.x + move_x * EDGE_MARGIN
-	return next_x < p.ground.position.x or next_x > p.ground.end.x
+	var next_x := perception.self_position.x + move_x * EDGE_MARGIN
+	return next_x < perception.ground.position.x or next_x > perception.ground.end.x
 
 
-func _is_on_platform(p: BotPerception) -> bool:
-	return p.self_position.y < p.ground.position.y - PLATFORM_CLEARANCE
+func _is_on_platform(perception: BotPerception) -> bool:
+	return perception.self_position.y < perception.ground.position.y - PLATFORM_CLEARANCE

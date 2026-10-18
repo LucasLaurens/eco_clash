@@ -13,16 +13,16 @@ static func create(sheet: Texture2D) -> SpriteFrames:
 	if _cache.has(sheet):
 		return _cache[sheet]
 	var layout := read_layout()
-	var size := Vector2i(int(layout["frame_size"]), int(layout["frame_size"]))
+	var frame_size := Vector2i(int(layout["frame_size"]), int(layout["frame_size"]))
 	var frames := SpriteFrames.new()
 	frames.remove_animation(&"default")
 	for animation_name: String in layout["animations"]:
-		var spec: Dictionary = layout["animations"][animation_name]
+		var animation_spec: Dictionary = layout["animations"][animation_name]
 		frames.add_animation(animation_name)
-		frames.set_animation_speed(animation_name, float(spec["fps"]))
-		frames.set_animation_loop(animation_name, bool(spec["loop"]))
-		for index in spec["frames"]:
-			frames.add_frame(animation_name, SpriteStrip.create_frame(sheet, int(index), size))
+		frames.set_animation_speed(animation_name, float(animation_spec["fps"]))
+		frames.set_animation_loop(animation_name, bool(animation_spec["loop"]))
+		for index in animation_spec["frames"]:
+			frames.add_frame(animation_name, SpriteStrip.create_frame(sheet, int(index), frame_size))
 	_cache[sheet] = frames
 	return frames
 

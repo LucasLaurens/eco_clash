@@ -45,23 +45,23 @@ static func register_all_actions() -> void:
 			scheme._register_action(action)
 
 
-func action(which: Action) -> StringName:
-	return StringName("p%d_%s" % [player, Action.keys()[which].to_lower()])
+func resolve_action_name(action: Action) -> StringName:
+	return StringName("p%d_%s" % [player, Action.keys()[action].to_lower()])
 
 
-func compute_key_label(which: Action) -> String:
-	var physical: Key = PLAYER_KEYS[player][which]
-	if ARROW_GLYPHS.has(physical):
-		return ARROW_GLYPHS[physical]
-	var localized := DisplayServer.keyboard_get_label_from_physical(physical)
-	return OS.get_keycode_string(localized if localized != KEY_NONE else physical).to_upper()
+func format_key_label(action: Action) -> String:
+	var physical_key: Key = PLAYER_KEYS[player][action]
+	if ARROW_GLYPHS.has(physical_key):
+		return ARROW_GLYPHS[physical_key]
+	var localized_key := DisplayServer.keyboard_get_label_from_physical(physical_key)
+	return OS.get_keycode_string(localized_key if localized_key != KEY_NONE else physical_key).to_upper()
 
 
-func _register_action(which: Action) -> void:
-	var name := action(which)
-	if InputMap.has_action(name):
+func _register_action(action: Action) -> void:
+	var action_name := resolve_action_name(action)
+	if InputMap.has_action(action_name):
 		return
-	InputMap.add_action(name)
+	InputMap.add_action(action_name)
 	var event := InputEventKey.new()
-	event.physical_keycode = PLAYER_KEYS[player][which]
-	InputMap.action_add_event(name, event)
+	event.physical_keycode = PLAYER_KEYS[player][action]
+	InputMap.action_add_event(action_name, event)

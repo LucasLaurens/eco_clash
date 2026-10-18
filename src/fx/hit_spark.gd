@@ -8,12 +8,12 @@ const FPS := 24.0
 static var _frames: SpriteFrames
 
 
-static func create(at: Vector2) -> HitSpark:
+static func create(impact_position: Vector2) -> HitSpark:
 	if _frames == null:
 		_frames = SpriteStrip.create_frames(SHEET, FPS, false)
 	var spark := HitSpark.new()
 	spark.sprite_frames = _frames
-	spark.position = at
+	spark.position = impact_position
 	return spark
 
 

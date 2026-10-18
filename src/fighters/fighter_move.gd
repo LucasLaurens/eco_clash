@@ -10,4 +10,4 @@ extends Resource
 @export var attack: AttackData
 
 
-@abstract func release(user: Fighter) -> void
+@abstract func trigger_effect(user: Fighter) -> void

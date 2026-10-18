@@ -11,7 +11,7 @@ const FPS := 10.0
 var _frames: SpriteFrames
 
 
-func release(user: Fighter) -> void:
+func trigger_effect(user: Fighter) -> void:
 	if _frames == null:
 		_frames = SpriteStrip.create_frames(sprite_sheet, FPS, true)
 	user.launch_projectile(attack, speed, lifetime, _frames)

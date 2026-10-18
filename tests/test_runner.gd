@@ -28,24 +28,24 @@ func _ready() -> void:
 func _run_suite(suite: TestCase) -> void:
 	print("\n# %s" % suite.get_script().resource_path.get_file())
 	for method in suite.get_method_list():
-		var name: String = method["name"]
-		if name.begins_with("test_"):
+		var test_name: String = method["name"]
+		if test_name.begins_with("test_"):
 			suite.failures.clear()
-			suite.call(name)
-			_report(name, suite.failures)
+			suite.call(test_name)
+			_print_report(test_name, suite.failures)
 	suite.failures.clear()
 	await suite.run_scenarios(self)
 	if suite.has_meta(&"scenario_names"):
-		for name: String in suite.get_meta(&"scenario_names"):
-			_report(name, suite.failures.filter(func(f: String) -> bool: return f.begins_with(name)))
+		for test_name: String in suite.get_meta(&"scenario_names"):
+			_print_report(test_name, suite.failures.filter(func(failure: String) -> bool: return failure.begins_with(test_name)))
 
 
-func _report(name: String, failures: Array) -> void:
+func _print_report(test_name: String, failures: Array) -> void:
 	_total += 1
 	if failures.is_empty():
-		print("  ok   %s" % name)
+		print("  ok   %s" % test_name)
 		return
 	_failed += 1
-	print("  FAIL %s" % name)
+	print("  FAIL %s" % test_name)
 	for failure: String in failures:
 		print("       - %s" % failure)

@@ -15,7 +15,7 @@ func test_font_draws_every_ui_string() -> void:
 			texts.append_array(value)
 	for definition in FighterRoster.list_all():
 		texts.append_array([definition.display_name, definition.title, definition.light_attack.display_name])
-		texts.append_array([definition.compute_special_name(), definition.compute_special_description()])
+		texts.append_array([definition.get_special_name(), definition.get_special_description()])
 	# Act & Assert
 	for text in texts:
 		for character in text.replace("%d", "").replace("%s", "").replace("%02d", "").replace("%%", FORMAT_TOKEN):

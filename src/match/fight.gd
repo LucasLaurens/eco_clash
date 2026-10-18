@@ -13,7 +13,7 @@ const FINISH_DELAY := 2.0
 
 var _config: MatchConfig
 var _fighters: Array[Fighter] = []
-var _elapsed := 0.0
+var _elapsed_seconds := 0.0
 var _match_over := false
 
 @onready var _stage: Stage = $Stage
@@ -40,16 +40,16 @@ func _exit_tree() -> void:
 func _physics_process(delta: float) -> void:
 	if _match_over:
 		return
-	_elapsed += delta
+	_elapsed_seconds += delta
 	for fighter in _fighters:
-		if fighter.is_in_play() and not _stage.contains_point(fighter.global_position):
+		if fighter.is_in_play() and not _stage.is_inside_blast_zone(fighter.global_position):
 			_knock_out(fighter)
 
 
 func _spawn_fighter(slot: int) -> Fighter:
 	var fighter: Fighter = FIGHTER_SCENE.instantiate()
 	_world.add_child(fighter)
-	fighter.setup(_config.definitions[slot], _world, _config.stocks)
+	fighter.configure(_config.definitions[slot], _world, _config.stocks)
 	fighter.global_position = _stage.get_spawn_position(slot) - Vector2(0.0, SPAWN_HEIGHT)
 	fighter.facing = 1 if slot == 0 else -1
 	_resolver.register_fighter(fighter)
@@ -74,7 +74,7 @@ func _finish_match(loser_slot: int) -> void:
 	_match_over = true
 	var winner_slot := MatchConfig.SLOT_COUNT - 1 - loser_slot
 	MatchSettings.last_result = MatchResult.create(
-		winner_slot, _config.definitions[winner_slot], _config.compute_slot_label(winner_slot), _elapsed
+		winner_slot, _config.definitions[winner_slot], _config.format_slot_label(winner_slot), _elapsed_seconds
 	)
 	for fighter in _fighters:
 		fighter.attach_input(NullInputSource.new())
@@ -85,8 +85,8 @@ func _finish_match(loser_slot: int) -> void:
 	get_tree().change_scene_to_file(ScenePaths.RESULTS)
 
 
-func _on_hit_landed(at: Vector2, attack: AttackData) -> void:
-	_world.add_child(HitSpark.create(at))
+func _on_hit_landed(impact_position: Vector2, attack: AttackData) -> void:
+	_world.add_child(HitSpark.create(impact_position))
 	_camera.add_trauma(attack.damage * TRAUMA_PER_DAMAGE)
 	if not _match_over:
 		_freeze_frames(HITSTOP_BASE + attack.damage * HITSTOP_PER_DAMAGE)

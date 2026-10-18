@@ -24,25 +24,25 @@ const MAX_RATING := 5
 
 
 func compute_speed_rating() -> int:
-	return _rate(run_speed, SPEED_RANGE)
+	return _compute_rating(run_speed, SPEED_RANGE)
 
 
 func compute_power_rating() -> int:
-	return _rate(light_attack.attack.damage + special.attack.damage, POWER_RANGE)
+	return _compute_rating(light_attack.attack.damage + special.attack.damage, POWER_RANGE)
 
 
 func compute_weight_rating() -> int:
-	return _rate(weight, WEIGHT_RANGE)
+	return _compute_rating(weight, WEIGHT_RANGE)
 
 
-func compute_special_name() -> String:
+func get_special_name() -> String:
 	return special.display_name
 
 
-func compute_special_description() -> String:
+func get_special_description() -> String:
 	return special.description
 
 
-func _rate(value: float, value_range: Vector2) -> int:
+func _compute_rating(value: float, value_range: Vector2) -> int:
 	var ratio := inverse_lerp(value_range.x, value_range.y, value)
 	return clampi(1 + roundi(ratio * (MAX_RATING - 1)), 1, MAX_RATING)

@@ -2,45 +2,45 @@ class_name PauseMenu
 extends CanvasLayer
 ## Escape toggles a pause overlay. Runs while the tree is paused (process_mode = ALWAYS).
 
-var _root: Control
-var _resume: Button
+var _overlay: Control
+var _resume_button: Button
 
 
 func _ready() -> void:
-	_root = Control.new()
-	_root.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(_root)
+	_overlay = Control.new()
+	_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(_overlay)
 	var veil := ColorRect.new()
 	veil.color = Color(0.03, 0.04, 0.1, 0.6)
 	veil.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_root.add_child(veil)
-	var column := UiKit.create_centered_column(_root, 8)
+	_overlay.add_child(veil)
+	var column := UiKit.create_centered_column(_overlay, 8)
 	column.add_child(UiKit.create_label(UiText.PAUSE_TITLE, UiKit.FONT_LARGE, UiKit.TEXT_GOLD))
-	_resume = UiKit.create_button(UiText.PAUSE_RESUME, _close)
-	column.add_child(_resume)
+	_resume_button = UiKit.create_button(UiText.PAUSE_RESUME, _resume_game)
+	column.add_child(_resume_button)
 	column.add_child(UiKit.create_button(UiText.PAUSE_QUIT, _quit_to_menu))
-	_root.hide()
+	_overlay.hide()
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_action_pressed(&"ui_cancel"):
 		return
 	get_viewport().set_input_as_handled()
-	if _root.visible:
-		_close()
+	if _overlay.visible:
+		_resume_game()
 	else:
-		_open()
+		_pause_game()
 
 
-func _open() -> void:
+func _pause_game() -> void:
 	get_tree().paused = true
-	_root.show()
-	_resume.grab_focus()
+	_overlay.show()
+	_resume_button.grab_focus()
 
 
-func _close() -> void:
+func _resume_game() -> void:
 	get_tree().paused = false
-	_root.hide()
+	_overlay.hide()
 
 
 func _quit_to_menu() -> void:

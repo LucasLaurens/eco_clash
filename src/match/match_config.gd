@@ -12,10 +12,10 @@ var definitions: Array[FighterDefinition]
 var stocks := DEFAULT_STOCKS
 
 
-static func create(match_mode: Mode, first: FighterDefinition, second: FighterDefinition) -> MatchConfig:
+static func create(match_mode: Mode, first_definition: FighterDefinition, second_definition: FighterDefinition) -> MatchConfig:
 	var config := MatchConfig.new()
 	config.mode = match_mode
-	config.definitions = [first, second]
+	config.definitions = [first_definition, second_definition]
 	return config
 
 
@@ -28,7 +28,7 @@ func is_bot_slot(slot: int) -> bool:
 	return false
 
 
-func compute_slot_label(slot: int) -> String:
+func format_slot_label(slot: int) -> String:
 	return UiText.SLOT_BOT if is_bot_slot(slot) else UiText.SLOT_PLAYER % (slot + 1)
 
 
