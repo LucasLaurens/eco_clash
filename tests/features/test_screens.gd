@@ -10,7 +10,9 @@ const SCENARIOS: Array[String] = [
 	"main_menu_offers_three_choices",
 	"character_select_moves_and_confirms",
 	"results_show_winner_and_duration",
+	"character_select_driven_by_a_pad",
 	"escape_toggles_the_pause",
+	"pad_start_toggles_the_pause",
 ]
 
 
@@ -19,7 +21,9 @@ func run_scenarios(host: Node) -> void:
 	await _test_main_menu_offers_three_choices(host)
 	await _test_character_select_moves_and_confirms(host)
 	await _test_results_show_winner_and_duration(host)
+	await _test_character_select_driven_by_a_pad(host)
 	await _test_escape_toggles_the_pause(host)
+	await _test_pad_start_toggles_the_pause(host)
 
 
 func _test_main_menu_offers_three_choices(host: Node) -> void:
@@ -33,7 +37,7 @@ func _test_main_menu_offers_three_choices(host: Node) -> void:
 	var buttons := menu.find_children("*", "Button", true, false)
 	assert_equal(buttons.size(), MENU_CHOICES, "%s: three buttons" % scenario_name)
 	assert_true((buttons[0] as Button).has_focus(), "%s: first choice focused" % scenario_name)
-	assert_true(_has_label_containing(menu, UiText.CONTROLS_P1), "%s: controls reminder" % scenario_name)
+	assert_true(_has_label_containing(menu, UiText.CONTROLS_PLAYERS[0]), "%s: controls reminder" % scenario_name)
 	_dispose(host, menu)
 
 
@@ -74,6 +78,30 @@ func _test_results_show_winner_and_duration(host: Node) -> void:
 	_dispose(host, results)
 
 
+func _test_character_select_driven_by_a_pad(host: Node) -> void:
+	var scenario_name := "character_select_driven_by_a_pad"
+	# Arrange
+	MatchSettings.pending_mode = MatchConfig.Mode.VERSUS
+	var select := CHARACTER_SELECT_SCENE.instantiate()
+	host.add_child(select)
+	await host.get_tree().process_frame
+	var pad_device := ControlScheme.new(2).resolve_pad_device()
+	# Act
+	await _press_pad_button(host, pad_device, JOY_BUTTON_DPAD_LEFT)
+	await _press_pad_button(host, pad_device, JOY_BUTTON_A)
+	# Assert
+	var reached := FighterRoster.find_at(FighterRoster.count() - 2)
+	assert_true(_has_label_containing(select, reached.display_name), "%s: player 2 cursor moved" % scenario_name)
+	var ready_labels := select.find_children("*", "Label", true, false).filter(
+		func(label: Label) -> bool: return label.text.ends_with(UiText.SELECT_READY)
+	)
+	assert_equal(ready_labels.size(), 1, "%s: only player 2 is ready" % scenario_name)
+	assert_true(
+		ready_labels[0].text.begins_with(UiText.SLOT_PLAYER % 2), "%s: the ready one is player 2" % scenario_name
+	)
+	_dispose(host, select)
+
+
 func _test_escape_toggles_the_pause(host: Node) -> void:
 	var scenario_name := "escape_toggles_the_pause"
 	# Arrange
@@ -81,12 +109,30 @@ func _test_escape_toggles_the_pause(host: Node) -> void:
 	host.add_child(pause_menu)
 	await host.get_tree().process_frame
 	# Act
-	await _press(host, &"ui_cancel")
+	await _press(host, ControlScheme.PAUSE_ACTION)
 	var paused_after_first := host.get_tree().paused
-	await _press(host, &"ui_cancel")
+	await _press(host, ControlScheme.PAUSE_ACTION)
 	# Assert
 	assert_true(paused_after_first, "%s: escape pauses" % scenario_name)
 	assert_true(not host.get_tree().paused, "%s: escape again resumes" % scenario_name)
+	host.get_tree().paused = false
+	_dispose(host, pause_menu)
+
+
+func _test_pad_start_toggles_the_pause(host: Node) -> void:
+	var scenario_name := "pad_start_toggles_the_pause"
+	# Arrange
+	var pause_menu := PauseMenu.new()
+	host.add_child(pause_menu)
+	await host.get_tree().process_frame
+	var pad_device := ControlScheme.new(RandomNumberGenerator.new().randi_range(1, 2)).resolve_pad_device()
+	# Act
+	await _press_pad_button(host, pad_device, ControlScheme.PAUSE_PAD_BUTTON)
+	var paused_after_first := host.get_tree().paused
+	await _press_pad_button(host, pad_device, ControlScheme.PAUSE_PAD_BUTTON)
+	# Assert
+	assert_true(paused_after_first, "%s: Start pauses" % scenario_name)
+	assert_true(not host.get_tree().paused, "%s: Start again resumes" % scenario_name)
 	host.get_tree().paused = false
 	_dispose(host, pause_menu)
 
@@ -96,6 +142,17 @@ func _press(host: Node, action: StringName) -> void:
 	for pressed in [true, false]:
 		var event := InputEventAction.new()
 		event.action = action
+		event.pressed = pressed
+		Input.parse_input_event(event)
+		await host.get_tree().process_frame
+
+
+## Same as _press, from a pad button: down, a frame, then a fresh event for the release.
+func _press_pad_button(host: Node, device: int, button: JoyButton) -> void:
+	for pressed in [true, false]:
+		var event := InputEventJoypadButton.new()
+		event.device = device
+		event.button_index = button
 		event.pressed = pressed
 		Input.parse_input_event(event)
 		await host.get_tree().process_frame

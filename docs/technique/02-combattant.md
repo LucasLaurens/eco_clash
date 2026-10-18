@@ -49,15 +49,40 @@ Un `InputFrame` est l'intention d'un tick physique, identique quelle que soit sa
 
 | Classe | Pilote |
 |---|---|
-| `KeyboardInputSource` | Lit les actions d'un `ControlScheme` (joueur 1 ou 2). |
+| `HumanInputSource` | Lit les actions d'un `ControlScheme` (joueur 1 ou 2), que clavier et manette alimentent ensemble. |
 | `BotInputSource` | Demande une décision au `BotBrain` (voir [IA](04-ia.md)). |
 | `NullInputSource` | Ne fait rien : compte à rebours, fin de match. |
 
-`ControlScheme` (`src/core/control_scheme.gd`) associe à chaque joueur des **touches physiques**
-(donc ZQSD en AZERTY et WASD en QWERTY) et crée les actions `p1_left`, `p1_attack`, `p2_up`, etc.
-`format_key_label` affiche la touche telle que le clavier de l'utilisateur la nomme ; en headless
-(tests, CI), sans disposition de clavier, il affiche la touche physique.
-`InputSourceFactory` choisit clavier ou bot pour chaque slot selon le `MatchConfig`.
+`ControlScheme` (`src/core/control_scheme.gd`) est le seul endroit où vivent les commandes. Il
+associe à chaque joueur des **touches physiques** (donc ZQSD en AZERTY et WASD en QWERTY) et une
+**manette**, et crée les actions `p1_left`, `p1_attack`, `p2_up`, etc. avec les deux à la fois :
+
+| Action | Touches (`PLAYER_KEYS`) | Boutons (`PAD_BUTTONS`) | Stick gauche (`PAD_STICK`) |
+|---|---|---|---|
+| `LEFT` / `RIGHT` | A / D, ← / → | croix ← / → | axe X, -1 / +1 |
+| `UP` | W, ↑ | croix ↑, X | axe Y, -1 |
+| `DOWN` | S, ↓ | croix ↓ | axe Y, +1 |
+| `ATTACK` | F, K | A | |
+| `SPECIAL` | G, L | B | |
+
+- **Appareil** : `resolve_pad_device()` donne au joueur N la N-ième manette branchée. Sans manette,
+  il rend un identifiant qu'aucun matériel n'envoie (`PADLESS_DEVICE_BASE` + N, soit 1001 et 1002) :
+  une manette seule ne pilote jamais les deux joueurs.
+- **Zone morte** : chaque action est créée avec `STICK_DEADZONE` = 0,5.
+- **Actions partagées** : `pause` (Échap, Start de n'importe quelle manette) ouvre la pause et quitte
+  la sélection ; le bouton A de n'importe quelle manette est ajouté à `ui_accept`, que Godot ne lie à
+  aucun bouton. La navigation `ui_up` / `ui_down` / `ui_left` / `ui_right` de Godot connaît déjà la
+  croix et le stick.
+- **Branchement à chaud** : `register_all_actions()` est idempotent. L'autoload `InputBindings`
+  l'appelle au démarrage puis à chaque `Input.joy_connection_changed`, ce qui réattribue les
+  manettes sans redémarrer.
+- **Libellés** : `format_key_label` affiche la touche telle que le clavier de l'utilisateur la
+  nomme ; en headless (tests, CI), sans disposition de clavier, il affiche la touche physique.
+  `format_pad_label` affiche le premier bouton de `PAD_BUTTONS` (noms Xbox : A, B, flèches de la
+  croix). `format_control_label` choisit l'un ou l'autre selon que le joueur a une manette
+  (`has_pad()`) ; c'est lui que lisent les rappels à l'écran.
+
+`InputSourceFactory` choisit humain (clavier et manette) ou bot pour chaque slot selon le `MatchConfig`.
 
 ## Machine à états
 

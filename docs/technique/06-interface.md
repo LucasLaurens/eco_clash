@@ -27,12 +27,12 @@
 
 | Script | Points notables |
 |---|---|
-| `main_menu.gd` | Bandeau de commandes construit avec `UiKit.format_controls`, qui affiche les vraies touches du clavier. |
-| `character_select.gd` | Un `SelectionCursor` par slot. En VS BOT, le joueur 1 pilote les deux curseurs l'un après l'autre. Un `MatchConfig` sert de règles des slots (qui est bot, quel schéma de touches). |
+| `main_menu.gd` | Bandeau de commandes construit avec `UiKit.format_controls`, qui affiche les vraies touches du clavier, ou les boutons de la manette d'un joueur qui en a une (`ControlScheme.format_control_label`). Réécrit à chaque `Input.joy_connection_changed`. |
+| `character_select.gd` | Un `SelectionCursor` par slot. En VS BOT, le joueur 1 pilote les deux curseurs l'un après l'autre. Un `MatchConfig` sert de règles des slots (qui est bot, quel schéma de commandes). L'action `pause` (Échap, Start) revient au menu. Le rappel du bas passe par `format_control_label` et se réécrit au branchement d'une manette. |
 | `fighter_info_panel.gd` | Panneau de sélection : aperçu 64 px, nom, titre, jauges, spécial, état. |
 | `hud.gd` | Place les deux `FighterCard`, joue le compte à rebours, affiche la bannière de fin. |
 | `fighter_card.gd` | Carte de HUD : tête 16 px, « 1P · KAEL », pourcentage (blanc puis orange puis rouge vers 150 %), un point par vie. |
-| `pause_menu.gd` | Se met lui-même en `process_mode = ALWAYS` pour continuer à lire Échap pendant la pause de l'arbre, où qu'il soit instancié. |
+| `pause_menu.gd` | Bascule sur l'action `pause` (Échap, Start). Se met lui-même en `process_mode = ALWAYS` pour continuer à la lire pendant la pause de l'arbre, où qu'il soit instancié. |
 | `results.gd` | Vainqueur animé à l'échelle 1, durée, trois boutons. |
 
 ## Contraintes d'écran

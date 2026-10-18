@@ -22,12 +22,13 @@ var _schemes: Array[ControlScheme] = []
 var _selectors: Array[TextureRect] = []
 var _info_panels: Array[FighterInfoPanel] = []
 var _card_origins: Array[Vector2] = []
+var _controls_hint: Label
 var _is_starting_match := false
 
 
 func _ready() -> void:
 	_mode = MatchSettings.pending_mode
-	# Same rules as the coming match: bot slots and keyboard layouts are decided in one place.
+	# Same rules as the coming match: bot slots and control schemes are decided in one place.
 	_slot_rules = MatchConfig.create(_mode, FighterRoster.find_at(0), FighterRoster.find_at(0))
 	UiKit.add_backdrop(self, 0.6)
 	var title := UiKit.create_label(UiText.SELECT_TITLE, UiKit.FONT_MEDIUM, UiKit.TEXT_GOLD)
@@ -45,7 +46,7 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed(&"ui_cancel"):
+	if event.is_action_pressed(ControlScheme.PAUSE_ACTION):
 		get_tree().change_scene_to_file(ScenePaths.MAIN_MENU)
 		return
 	for slot in MatchConfig.SLOT_COUNT:
@@ -149,14 +150,25 @@ func _build_info_panel(slot: int) -> FighterInfoPanel:
 
 
 func _add_controls_hint() -> void:
+	_controls_hint = UiKit.create_label("", UiKit.FONT_SMALL, UiKit.TEXT_MUTED)
+	_controls_hint.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	_controls_hint.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	_controls_hint.offset_bottom = -4
+	add_child(_controls_hint)
+	_refresh_controls_hint()
+	Input.joy_connection_changed.connect(_refresh_controls_hint.unbind(2))
+
+
+## Rewritten when a pad comes or goes: pad buttons for a player who has one, keys otherwise.
+func _refresh_controls_hint() -> void:
 	var scheme := _schemes[0]
 	var hint_text := (
 		UiText.SELECT_HINT
 		% [
-			scheme.format_key_label(ControlScheme.Action.LEFT),
-			scheme.format_key_label(ControlScheme.Action.RIGHT),
-			scheme.format_key_label(ControlScheme.Action.ATTACK),
-			scheme.format_key_label(ControlScheme.Action.SPECIAL),
+			scheme.format_control_label(ControlScheme.Action.LEFT),
+			scheme.format_control_label(ControlScheme.Action.RIGHT),
+			scheme.format_control_label(ControlScheme.Action.ATTACK),
+			scheme.format_control_label(ControlScheme.Action.SPECIAL),
 		]
 	)
 	if _mode == MatchConfig.Mode.VERSUS:
@@ -164,14 +176,10 @@ func _add_controls_hint() -> void:
 		hint_text += (
 			"   ·   %s%s %s %s"
 			% [
-				second_scheme.format_key_label(ControlScheme.Action.LEFT),
-				second_scheme.format_key_label(ControlScheme.Action.RIGHT),
-				second_scheme.format_key_label(ControlScheme.Action.ATTACK),
-				second_scheme.format_key_label(ControlScheme.Action.SPECIAL),
+				second_scheme.format_control_label(ControlScheme.Action.LEFT),
+				second_scheme.format_control_label(ControlScheme.Action.RIGHT),
+				second_scheme.format_control_label(ControlScheme.Action.ATTACK),
+				second_scheme.format_control_label(ControlScheme.Action.SPECIAL),
 			]
 		)
-	var label := UiKit.create_label(hint_text, UiKit.FONT_SMALL, UiKit.TEXT_MUTED)
-	label.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	label.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	label.offset_bottom = -4
-	add_child(label)
+	_controls_hint.text = hint_text

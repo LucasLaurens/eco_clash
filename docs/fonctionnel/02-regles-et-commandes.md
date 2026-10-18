@@ -6,8 +6,8 @@
 
 | Mode | Depuis | Joueur 1 | Joueur 2 |
 |---|---|---|---|
-| 1 joueur contre bot | Menu « 1 JOUEUR VS BOT » | Humain | Bot |
-| 2 joueurs | Menu « 2 JOUEURS » | Humain (moitié gauche du clavier) | Humain (flèches) |
+| 1 joueur contre bot | Menu « 1 JOUEUR VS BOT » | Humain (clavier ou manette) | Bot |
+| 2 joueurs | Menu « 2 JOUEURS » | Humain (moitié gauche du clavier ou 1re manette) | Humain (flèches ou 2e manette) |
 | Démo | Ligne de commande `-- --demo` | Bot | Bot |
 
 En mode démo, la scène de combat se lance directement avec deux bots (Kael contre Grondak) :
@@ -31,17 +31,29 @@ godot --path . res://scenes/fight.tscn -- --demo
 
 ## Commandes
 
+Chaque joueur joue au clavier ou à la manette (Xbox, DualSense et toute manette reconnue par Godot),
+au choix : clavier + manette ou deux manettes. Les deux marchent en même temps pour un même joueur.
+
 Touches physiques : la disposition s'adapte au clavier AZERTY ou QWERTY.
 
-| Action | Joueur 1 | Joueur 2 |
-|---|---|---|
-| Bouger | Q / D (A / D en QWERTY) | ← / → |
-| Sauter, double saut | Z (W en QWERTY) | ↑ |
-| Chute rapide (en l'air) | S | ↓ |
-| Traverser une plateforme | S + Z (bas + saut) au sol | ↓ + ↑ |
-| Attaque | F | K |
-| Spécial | G | L |
-| Pause | Échap | Échap |
+| Action | Joueur 1 | Joueur 2 | Manette (chaque joueur) |
+|---|---|---|---|
+| Bouger | Q / D (A / D en QWERTY) | ← / → | Stick gauche ou croix ← / → |
+| Sauter, double saut | Z (W en QWERTY) | ↑ | Stick ou croix ↑, ou X (Carré sur DualSense) |
+| Chute rapide (en l'air) | S | ↓ | Stick ou croix ↓ |
+| Traverser une plateforme | S + Z (bas + saut) au sol | ↓ + ↑ | Bas + saut |
+| Attaque | F | K | A (Croix) |
+| Spécial | G | L | B (Rond) |
+| Pause | Échap | Échap | Start (Options) |
+
+Manettes :
+
+- La 1re manette branchée pilote le joueur 1, la 2e le joueur 2. Une manette branchée ou débranchée
+  en cours de partie est prise en compte aussitôt, sans redémarrer.
+- Le stick ne compte qu'à partir de la moitié de son inclinaison : un stick au repos ne fait pas
+  marcher, et un stick à peine penché vers le bas ne fait pas traverser une plateforme.
+- Les rappels de commandes à l'écran montrent les boutons de la manette pour un joueur qui en a une,
+  ses touches sinon.
 
 Précisions :
 
@@ -54,15 +66,16 @@ Précisions :
 
 ## Sélection des personnages
 
-- En **2 joueurs**, chaque joueur déplace son propre curseur avec ses touches.
+- En **2 joueurs**, chaque joueur déplace son propre curseur avec ses touches ou sa manette.
 - En **1 joueur contre bot**, le joueur 1 choisit son personnage, puis celui du bot.
 - Attaque valide, spécial annule (ou revient au menu si rien n'est validé en mode bot).
-  Échap revient au menu.
+  Échap ou Start revient au menu.
 - Le match démarre 0,7 seconde après que les deux choix sont validés.
 
 ## Pause
 
-Échap met le combat en pause : « REPRENDRE » ou « MENU PRINCIPAL ».
+Échap ou Start (Options) met le combat en pause et l'enlève : « REPRENDRE » ou « MENU PRINCIPAL ».
+Dans les menus, la croix ou le stick de n'importe quelle manette change de bouton et A valide.
 
 ## Fin de match
 
