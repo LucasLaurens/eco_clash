@@ -1,0 +1,68 @@
+[gd_resource type="Resource" script_class="FighterDefinition" format=3]
+
+[ext_resource type="Script" path="res://src/fighters/fighter_definition.gd" id="1_definition"]
+[ext_resource type="Script" path="res://src/fighters/moves/melee_strike.gd" id="2_melee"]
+[ext_resource type="Script" path="res://src/combat/attack_data.gd" id="3_attack"]
+[ext_resource type="Script" path="res://src/fighters/moves/projectile_shot.gd" id="5_projectile"]
+[ext_resource type="Texture2D" path="res://assets/fighters/ormos.png" id="6_sheet"]
+[ext_resource type="Texture2D" path="res://assets/ui/portrait_ormos.png" id="7_portrait"]
+[ext_resource type="Texture2D" path="res://assets/ui/stock_ormos.png" id="8_stock"]
+[ext_resource type="Texture2D" path="res://assets/fx/eco_bolt.png" id="9_bolt"]
+
+[sub_resource type="Resource" id="light_hit"]
+script = ExtResource("3_attack")
+damage = 5.0
+base_knockback = 100.0
+knockback_growth = 3.0
+launch_angle_deg = 40.0
+hitbox_offset = Vector2(24, -27)
+hitbox_size = Vector2(33, 21)
+startup = 0.08
+active = 0.1
+recovery = 0.18
+
+[sub_resource type="Resource" id="light_move"]
+script = ExtResource("2_melee")
+display_name = "COUP DE BÂTON"
+description = ""
+animation = &"attack"
+attack = SubResource("light_hit")
+
+[sub_resource type="Resource" id="special_hit"]
+script = ExtResource("3_attack")
+damage = 7.0
+base_knockback = 90.0
+knockback_growth = 2.4
+launch_angle_deg = 20.0
+hitbox_offset = Vector2(21, -27)
+hitbox_size = Vector2(18, 15)
+startup = 0.16
+active = 0.05
+recovery = 0.28
+
+[sub_resource type="Resource" id="special_move"]
+script = ExtResource("5_projectile")
+display_name = "ORBE JAUNE"
+description = "TIRE UN ORBE D'ÉCO JAUNE QUI TRAVERSE L'ARÈNE."
+animation = &"special"
+attack = SubResource("special_hit")
+speed = 240.0
+lifetime = 1.4
+sprite_sheet = ExtResource("9_bolt")
+
+[resource]
+script = ExtResource("1_definition")
+id = &"ormos"
+display_name = "ORMOS"
+title = "LE SAGE"
+accent_color = Color(1.0, 0.88, 0.35, 1)
+sprite_sheet = ExtResource("6_sheet")
+portrait = ExtResource("7_portrait")
+stock_icon = ExtResource("8_stock")
+body_size = Vector2(18, 40)
+run_speed = 115.0
+jump_velocity = 369.0
+air_jumps = 1
+weight = 90.0
+light_attack = SubResource("light_move")
+special = SubResource("special_move")

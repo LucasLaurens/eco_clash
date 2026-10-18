@@ -48,6 +48,7 @@ def generate_stage() -> None:
     fx_target = ensure_dir(ASSETS / "fx")
     stage.render_hit_spark().save(fx_target / "hit_spark.png")
     stage.render_eco_bolt(palette.ECO_YELLOW).save(fx_target / "eco_bolt.png")
+    stage.render_eco_bolt(palette.ECO_DARK).save(fx_target / "eco_bolt_dark.png")
     stage.render_shadow().save(fx_target / "shadow.png")
     stage.render_dust().save(fx_target / "dust.png")
     stage.render_ko_burst().save(fx_target / "ko_burst.png")

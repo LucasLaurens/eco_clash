@@ -13,6 +13,8 @@ ECO_GREEN = Ramp(shade=(46, 160, 70), base=(120, 230, 90), light=(220, 255, 190)
 ECO_BLUE = Ramp(shade=(30, 110, 200), base=(90, 200, 255), light=(210, 245, 255))
 ECO_RED = Ramp(shade=(170, 30, 40), base=(255, 90, 70), light=(255, 210, 180))
 ECO_YELLOW = Ramp(shade=(210, 140, 20), base=(255, 226, 70), light=(255, 252, 200))
+ECO_DARK = Ramp(shade=(90, 40, 140), base=(160, 90, 230), light=(226, 190, 255))
+ECO_ORANGE = Ramp(shade=(200, 90, 20), base=(255, 150, 40), light=(255, 220, 150))
 
 PRECURSOR_METAL = Ramp(shade=(56, 72, 96), base=(104, 130, 158), light=(170, 196, 214))
 PRECURSOR_GLOW = Ramp(shade=(40, 150, 200), base=(110, 230, 255), light=(230, 255, 255))

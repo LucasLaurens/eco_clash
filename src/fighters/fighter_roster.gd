@@ -1,12 +1,14 @@
 class_name FighterRoster
 extends RefCounted
-## The four selectable fighters, in menu order.
+## The selectable fighters, in menu order.
 
 const DEFINITIONS := [
 	preload("res://data/fighters/kael.tres"),
 	preload("res://data/fighters/pip.tres"),
 	preload("res://data/fighters/grondak.tres"),
-	preload("res://data/fighters/nyra.tres"),
+	preload("res://data/fighters/ormos.tres"),
+	preload("res://data/fighters/vargo.tres"),
+	preload("res://data/fighters/kragg.tres"),
 ]
 
 

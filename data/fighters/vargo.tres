@@ -1,0 +1,68 @@
+[gd_resource type="Resource" script_class="FighterDefinition" format=3]
+
+[ext_resource type="Script" path="res://src/fighters/fighter_definition.gd" id="1_definition"]
+[ext_resource type="Script" path="res://src/fighters/moves/melee_strike.gd" id="2_melee"]
+[ext_resource type="Script" path="res://src/combat/attack_data.gd" id="3_attack"]
+[ext_resource type="Script" path="res://src/fighters/moves/projectile_shot.gd" id="5_projectile"]
+[ext_resource type="Texture2D" path="res://assets/fighters/vargo.png" id="6_sheet"]
+[ext_resource type="Texture2D" path="res://assets/ui/portrait_vargo.png" id="7_portrait"]
+[ext_resource type="Texture2D" path="res://assets/ui/stock_vargo.png" id="8_stock"]
+[ext_resource type="Texture2D" path="res://assets/fx/eco_bolt_dark.png" id="9_bolt"]
+
+[sub_resource type="Resource" id="light_hit"]
+script = ExtResource("3_attack")
+damage = 8.0
+base_knockback = 120.0
+knockback_growth = 3.4
+launch_angle_deg = 35.0
+hitbox_offset = Vector2(27, -30)
+hitbox_size = Vector2(30, 21)
+startup = 0.1
+active = 0.1
+recovery = 0.22
+
+[sub_resource type="Resource" id="light_move"]
+script = ExtResource("2_melee")
+display_name = "CROSSE"
+description = ""
+animation = &"attack"
+attack = SubResource("light_hit")
+
+[sub_resource type="Resource" id="special_hit"]
+script = ExtResource("3_attack")
+damage = 14.0
+base_knockback = 160.0
+knockback_growth = 3.8
+launch_angle_deg = 25.0
+hitbox_offset = Vector2(30, -30)
+hitbox_size = Vector2(24, 18)
+startup = 0.35
+active = 0.05
+recovery = 0.4
+
+[sub_resource type="Resource" id="special_move"]
+script = ExtResource("5_projectile")
+display_name = "PACIFICATEUR"
+description = "TIR LOURD ET LENT D'ÉCO SOMBRE. PROJETTE TRÈS LOIN."
+animation = &"special"
+attack = SubResource("special_hit")
+speed = 170.0
+lifetime = 1.8
+sprite_sheet = ExtResource("9_bolt")
+
+[resource]
+script = ExtResource("1_definition")
+id = &"vargo"
+display_name = "VARGO"
+title = "LE COLOSSE"
+accent_color = Color(0.72, 0.5, 1.0, 1)
+sprite_sheet = ExtResource("6_sheet")
+portrait = ExtResource("7_portrait")
+stock_icon = ExtResource("8_stock")
+body_size = Vector2(20, 46)
+run_speed = 115.0
+jump_velocity = 352.0
+air_jumps = 1
+weight = 125.0
+light_attack = SubResource("light_move")
+special = SubResource("special_move")

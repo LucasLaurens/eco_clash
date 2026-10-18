@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://l61hdcvy23dm"
-path="res://.godot/imported/stock_nyra.png-6be8a42bde3f74c9803a0e721570dc50.ctex"
+uid="uid://dcij4ax7gv0je"
+path="res://.godot/imported/stock_vargo.png-78e4e91d995bbffcbf4ddface94deb07.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/stock_nyra.png"
-dest_files=["res://.godot/imported/stock_nyra.png-6be8a42bde3f74c9803a0e721570dc50.ctex"]
+source_file="res://assets/ui/stock_vargo.png"
+dest_files=["res://.godot/imported/stock_vargo.png-78e4e91d995bbffcbf4ddface94deb07.ctex"]
 
 [params]
 
