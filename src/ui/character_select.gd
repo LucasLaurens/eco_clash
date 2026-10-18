@@ -150,20 +150,26 @@ func _build_info_panel(slot: int) -> FighterInfoPanel:
 
 func _add_controls_hint() -> void:
 	var scheme := _schemes[0]
-	var hint_text := UiText.SELECT_HINT % [
-		scheme.format_key_label(ControlScheme.Action.LEFT),
-		scheme.format_key_label(ControlScheme.Action.RIGHT),
-		scheme.format_key_label(ControlScheme.Action.ATTACK),
-		scheme.format_key_label(ControlScheme.Action.SPECIAL),
-	]
+	var hint_text := (
+		UiText.SELECT_HINT
+		% [
+			scheme.format_key_label(ControlScheme.Action.LEFT),
+			scheme.format_key_label(ControlScheme.Action.RIGHT),
+			scheme.format_key_label(ControlScheme.Action.ATTACK),
+			scheme.format_key_label(ControlScheme.Action.SPECIAL),
+		]
+	)
 	if _mode == MatchConfig.Mode.VERSUS:
 		var second_scheme := _schemes[1]
-		hint_text += "   ·   %s%s %s %s" % [
-			second_scheme.format_key_label(ControlScheme.Action.LEFT),
-			second_scheme.format_key_label(ControlScheme.Action.RIGHT),
-			second_scheme.format_key_label(ControlScheme.Action.ATTACK),
-			second_scheme.format_key_label(ControlScheme.Action.SPECIAL),
-		]
+		hint_text += (
+			"   ·   %s%s %s %s"
+			% [
+				second_scheme.format_key_label(ControlScheme.Action.LEFT),
+				second_scheme.format_key_label(ControlScheme.Action.RIGHT),
+				second_scheme.format_key_label(ControlScheme.Action.ATTACK),
+				second_scheme.format_key_label(ControlScheme.Action.SPECIAL),
+			]
+		)
 	var label := UiKit.create_label(hint_text, UiKit.FONT_SMALL, UiKit.TEXT_MUTED)
 	label.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	label.grow_vertical = Control.GROW_DIRECTION_BEGIN

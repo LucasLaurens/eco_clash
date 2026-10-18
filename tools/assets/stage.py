@@ -3,6 +3,7 @@
 Few shapes, few tones. The only light in the decor is flux (cyan), and it lives inside objects:
 spire tips, pylon conduits, the arena's seam and core.
 """
+
 from __future__ import annotations
 
 import math
@@ -36,8 +37,13 @@ def render_sky() -> Canvas:
     canvas.fill_vertical_gradient((0, 0, WIDTH - 1, HORIZON_Y + 10), palette.SKY_BANDS)
     _paint_far_ring(canvas)
     sun_x, sun_y = SUN_CENTER
-    canvas.fill_ellipse((sun_x - SUN_RADIUS, sun_y - SUN_RADIUS, sun_x + SUN_RADIUS, sun_y + SUN_RADIUS), palette.SUN.shade)
-    canvas.fill_ellipse((sun_x - SUN_RADIUS + 3, sun_y - SUN_RADIUS + 2, sun_x + SUN_RADIUS - 3, sun_y + SUN_RADIUS - 4), palette.SUN.base)
+    canvas.fill_ellipse(
+        (sun_x - SUN_RADIUS, sun_y - SUN_RADIUS, sun_x + SUN_RADIUS, sun_y + SUN_RADIUS), palette.SUN.shade
+    )
+    canvas.fill_ellipse(
+        (sun_x - SUN_RADIUS + 3, sun_y - SUN_RADIUS + 2, sun_x + SUN_RADIUS - 3, sun_y + SUN_RADIUS - 4),
+        palette.SUN.base,
+    )
     canvas.fill_ellipse((sun_x - 8, sun_y - 14, sun_x + 4, sun_y - 6), palette.SUN.light)
     return canvas
 
@@ -90,7 +96,15 @@ def render_far() -> Canvas:
 def _paint_spire(canvas: Canvas, center_x: int, base_y: int, height: int, half_width: int) -> None:
     top_y = base_y - height
     color = palette.SILHOUETTE_FAR
-    canvas.fill_polygon([(center_x - half_width, base_y), (center_x - 1, top_y), (center_x + 1, top_y), (center_x + half_width, base_y)], color)
+    canvas.fill_polygon(
+        [
+            (center_x - half_width, base_y),
+            (center_x - 1, top_y),
+            (center_x + 1, top_y),
+            (center_x + half_width, base_y),
+        ],
+        color,
+    )
     collar_y = top_y + height // 3
     canvas.fill_rect((center_x - half_width + 1, collar_y, center_x + half_width - 1, collar_y + 2), color)
     canvas.put_pixel(center_x, top_y - 2, palette.ANCIENT_GLOW.light)
@@ -108,12 +122,18 @@ def render_mid() -> Canvas:
 
 def _compute_pylon_outline(center_x: int, top_y: int, height: int, half_width: int) -> list[tuple[int, int]]:
     return [
-        (center_x - half_width, top_y + 8), (center_x, top_y), (center_x + half_width, top_y + 8),
-        (center_x + half_width, top_y + height - 16), (center_x, top_y + height), (center_x - half_width, top_y + height - 16),
+        (center_x - half_width, top_y + 8),
+        (center_x, top_y),
+        (center_x + half_width, top_y + 8),
+        (center_x + half_width, top_y + height - 16),
+        (center_x, top_y + height),
+        (center_x - half_width, top_y + height - 16),
     ]
 
 
-def _compute_pylon_seams(center_x: int, top_y: int, height: int, half_width: int) -> list[tuple[tuple[int, int], tuple[int, int]]]:
+def _compute_pylon_seams(
+    center_x: int, top_y: int, height: int, half_width: int
+) -> list[tuple[tuple[int, int], tuple[int, int]]]:
     """Flux conduits carved in the lit face. Shared by the static pylon and its pulsing glow layer."""
     seam_x = center_x - half_width // 2
     return [((seam_x, top_y + 12), (seam_x, top_y + height - 22))]
@@ -122,7 +142,12 @@ def _compute_pylon_seams(center_x: int, top_y: int, height: int, half_width: int
 def _paint_pylon(canvas: Canvas, center_x: int, top_y: int, height: int, half_width: int) -> None:
     mid = palette.SILHOUETTE_MID
     canvas.fill_polygon(_compute_pylon_outline(center_x, top_y, height, half_width), mid.shade)
-    lit_face = [(center_x - half_width, top_y + 8), (center_x, top_y), (center_x, top_y + height), (center_x - half_width, top_y + height - 16)]
+    lit_face = [
+        (center_x - half_width, top_y + 8),
+        (center_x, top_y),
+        (center_x, top_y + height),
+        (center_x - half_width, top_y + height - 16),
+    ]
     canvas.fill_polygon(lit_face, mid.base)
     canvas.draw_line((center_x, top_y + 1), (center_x, top_y + height - 1), mid.light)
     for start, end in _compute_pylon_seams(center_x, top_y, height, half_width):
@@ -147,7 +172,15 @@ def render_pylon_glow() -> Canvas:
                 canvas.draw_line((left + x0, y0), (left + x1, y1), pulse[frame])
             center_x, top_y, height, half_width = pylon
             core_x, core_y = center_x - half_width // 2, top_y + height // 2
-            canvas.fill_polygon([(left + core_x - 2, core_y), (left + core_x, core_y - 4), (left + core_x + 2, core_y), (left + core_x, core_y + 4)], pulse[frame])
+            canvas.fill_polygon(
+                [
+                    (left + core_x - 2, core_y),
+                    (left + core_x, core_y - 4),
+                    (left + core_x + 2, core_y),
+                    (left + core_x, core_y + 4),
+                ],
+                pulse[frame],
+            )
     return canvas
 
 
@@ -155,7 +188,10 @@ def render_flux_motes() -> Canvas:
     """Specks of flux drifting in the air, each twinkling on its own phase: bright cross, dim dot, gone."""
     canvas = Canvas(WIDTH * FLUX_MOTE_FRAMES, HEIGHT)
     rng = random.Random(5)
-    motes = [(rng.randrange(4, WIDTH - 4), rng.randrange(20, HORIZON_Y + 60), rng.randrange(FLUX_MOTE_FRAMES)) for _ in range(FLUX_MOTE_COUNT)]
+    motes = [
+        (rng.randrange(4, WIDTH - 4), rng.randrange(20, HORIZON_Y + 60), rng.randrange(FLUX_MOTE_FRAMES))
+        for _ in range(FLUX_MOTE_COUNT)
+    ]
     glow = palette.ANCIENT_GLOW
     for frame in range(FLUX_MOTE_FRAMES):
         for x, y, phase in motes:
@@ -186,12 +222,29 @@ def render_island() -> Canvas:
     canvas = Canvas(width, height)
     top = ISLAND_SURFACE_Y
     slab_bottom = top + 10
-    hull = [(6, slab_bottom), (width - 7, slab_bottom), (width - 44, top + 40), (width // 2 + 26, height - 8),
-            (width // 2 - 26, height - 8), (44, top + 40)]
+    hull = [
+        (6, slab_bottom),
+        (width - 7, slab_bottom),
+        (width - 44, top + 40),
+        (width // 2 + 26, height - 8),
+        (width // 2 - 26, height - 8),
+        (44, top + 40),
+    ]
     canvas.fill_polygon(hull, hull_shade)
-    canvas.fill_polygon([(6, slab_bottom), (width // 2, slab_bottom), (width // 2, height - 8), (width // 2 - 26, height - 8), (44, top + 40)], metal.shade)
+    canvas.fill_polygon(
+        [
+            (6, slab_bottom),
+            (width // 2, slab_bottom),
+            (width // 2, height - 8),
+            (width // 2 - 26, height - 8),
+            (44, top + 40),
+        ],
+        metal.shade,
+    )
     for x in (70, 110, width - 111, width - 71):
-        canvas.draw_line((x, slab_bottom + 2), (x + (width // 2 - x) // 6, top + 38), hull_shade if x < width // 2 else metal.shade)
+        canvas.draw_line(
+            (x, slab_bottom + 2), (x + (width // 2 - x) // 6, top + 38), hull_shade if x < width // 2 else metal.shade
+        )
     canvas.fill_rect((0, top, width - 1, slab_bottom), metal.base)
     canvas.fill_rect((0, top, width - 1, top), metal.light)
     canvas.fill_rect((0, slab_bottom, width - 1, slab_bottom), metal.shade)
@@ -212,7 +265,9 @@ def render_platform() -> Canvas:
     top = PLATFORM_SURFACE_Y
     canvas.fill_polygon([(0, top), (width - 1, top), (width - 6, top + 7), (5, top + 7)], metal.base)
     canvas.fill_rect((0, top, width - 1, top), metal.light)
-    canvas.fill_polygon([(width // 2, top + 2), (width - 1, top + 2), (width - 6, top + 7), (width // 2, top + 7)], metal.shade)
+    canvas.fill_polygon(
+        [(width // 2, top + 2), (width - 1, top + 2), (width - 6, top + 7), (width // 2, top + 7)], metal.shade
+    )
     canvas.fill_rect((12, top + 4, width - 13, top + 4), glow.base)
     canvas.add_outline(palette.OUTLINE)
     return canvas
@@ -232,7 +287,10 @@ def render_hit_spark() -> Canvas:
             outer = (round(center_x + math.cos(angle) * reach), round(center_y + math.sin(angle) * reach))
             canvas.draw_line(inner, outer, (255, 255, 255, fade), 2 if index % 2 == 0 else 1)
         core = max(4 - frame, 1)
-        canvas.fill_ellipse((center_x - core, center_y - core, center_x + core, center_y + core), mix_colors((255, 236, 120), (255, 140, 60), frame / 3))
+        canvas.fill_ellipse(
+            (center_x - core, center_y - core, center_x + core, center_y + core),
+            mix_colors((255, 236, 120), (255, 140, 60), frame / 3),
+        )
     return canvas
 
 
@@ -244,7 +302,9 @@ def render_flux_bolt(flux: Ramp) -> Canvas:
         center_x, center_y = frame * size + 10, size // 2
         canvas.fill_ellipse((center_x - 9, center_y - 2, center_x - 1, center_y + 2), (*flux.shade, 140))
         radius = 4 + frame
-        canvas.fill_ellipse((center_x - radius, center_y - radius, center_x + radius, center_y + radius), (*flux.base, 200))
+        canvas.fill_ellipse(
+            (center_x - radius, center_y - radius, center_x + radius, center_y + radius), (*flux.base, 200)
+        )
         canvas.fill_ellipse((center_x - 2, center_y - 2, center_x + 2, center_y + 2), flux.light)
     return canvas
 
@@ -259,8 +319,19 @@ def render_shadow() -> Canvas:
     canvas = Canvas(size * len(half_sizes), size)
     for frame, (half_width, half_height) in enumerate(half_sizes):
         center_x, center_y = frame * size + size // 2, size // 2
-        canvas.fill_ellipse((center_x - half_width, center_y - half_height, center_x + half_width, center_y + half_height), (*palette.OUTLINE, 70))
-        canvas.fill_ellipse((center_x - half_width + 3, center_y - half_height + 1, center_x + half_width - 3, center_y + half_height - 1), (*palette.OUTLINE, 120))
+        canvas.fill_ellipse(
+            (center_x - half_width, center_y - half_height, center_x + half_width, center_y + half_height),
+            (*palette.OUTLINE, 70),
+        )
+        canvas.fill_ellipse(
+            (
+                center_x - half_width + 3,
+                center_y - half_height + 1,
+                center_x + half_width - 3,
+                center_y + half_height - 1,
+            ),
+            (*palette.OUTLINE, 120),
+        )
     return canvas
 
 
@@ -277,8 +348,12 @@ def render_dust() -> Canvas:
         for side in (-1, 1):
             puff_x = center_x + side * spread
             puff_y = ground_y - radius - frame // 2
-            canvas.fill_ellipse((puff_x - radius, puff_y - radius, puff_x + radius, puff_y + radius), (*sand.shade, alpha))
-            canvas.fill_ellipse((puff_x - radius + 1, puff_y - radius, puff_x + radius - 1, puff_y + radius - 1), (*sand.light, alpha))
+            canvas.fill_ellipse(
+                (puff_x - radius, puff_y - radius, puff_x + radius, puff_y + radius), (*sand.shade, alpha)
+            )
+            canvas.fill_ellipse(
+                (puff_x - radius + 1, puff_y - radius, puff_x + radius - 1, puff_y + radius - 1), (*sand.light, alpha)
+            )
     return canvas
 
 
@@ -297,8 +372,12 @@ def render_ko_burst() -> Canvas:
             outer = (round(center_x + math.cos(angle) * reach), round(center_y + math.sin(angle) * reach))
             canvas.draw_line(inner, outer, (255, 252, 240, fade), 3 if index % 3 == 0 else 1)
         ring = 4 + frame * 4
-        canvas.draw_arc((center_x - ring, center_y - ring, center_x + ring, center_y + ring), 0, 360, (255, 248, 230, fade), 2)
+        canvas.draw_arc(
+            (center_x - ring, center_y - ring, center_x + ring, center_y + ring), 0, 360, (255, 248, 230, fade), 2
+        )
         core = max(7 - frame * 2, 0)
         if core:
-            canvas.fill_ellipse((center_x - core, center_y - core, center_x + core, center_y + core), (255, 252, 240, fade))
+            canvas.fill_ellipse(
+                (center_x - core, center_y - core, center_x + core, center_y + core), (255, 252, 240, fade)
+            )
     return canvas

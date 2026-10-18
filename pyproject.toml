@@ -1,0 +1,24 @@
+# Tooling for the Python side of the repo: the one-shot asset generator and the CI scripts.
+# The game itself is GDScript (formatted by gdformat, linted by gdlint, see gdformatrc / gdlintrc).
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = ["graft", ".godot"]
+# Flat module layout: these folders are import roots, so their modules count as first-party.
+src = ["tools/assets", "tools/ci"]
+
+[tool.ruff.lint]
+# pycodestyle, pyflakes, import order, naming, bugbear, modern syntax.
+select = ["E", "F", "I", "N", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tools/tests"]
+pythonpath = ["tools/assets", "tools/ci"]
+
+[tool.coverage.run]
+source = ["tools/assets", "tools/ci"]
+
+[tool.coverage.report]
+# Script entry points only dispatch to tested functions.
+exclude_also = ['if __name__ == "__main__":']

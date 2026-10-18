@@ -42,7 +42,9 @@ func _start_animated_layers() -> void:
 		var spec: Dictionary = layers[node_name]
 		var sheet: Texture2D = load(STAGE_ASSETS_DIR + String(spec["sheet"]))
 		var layer := get_node(node_name) as AnimatedSprite2D
-		layer.sprite_frames = SpriteStrip.create_frames_of_width(sheet, int(spec["frame_width"]), float(spec["fps"]), true)
+		layer.sprite_frames = SpriteStrip.create_frames_of_width(
+			sheet, int(spec["frame_width"]), float(spec["fps"]), true
+		)
 		layer.centered = false
 		layer.position = Vector2(spec["offset"][0], spec["offset"][1])
 		layer.play()

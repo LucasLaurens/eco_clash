@@ -25,7 +25,9 @@ func bind_fighters(fighters: Array[Fighter], config: MatchConfig) -> void:
 		add_child(card)
 		card.bind_fighter(fighters[slot], config.definitions[slot], config.format_short_slot_label(slot))
 		card.reset_size()
-		card.position = Vector2(CARD_CENTERS_X[slot] - card.size.x / 2.0, _read_screen_size().y - card.size.y - CARD_BOTTOM_MARGIN)
+		card.position = Vector2(
+			CARD_CENTERS_X[slot] - card.size.x / 2.0, _read_screen_size().y - card.size.y - CARD_BOTTOM_MARGIN
+		)
 
 
 func play_countdown() -> void:
@@ -49,7 +51,9 @@ func _animate_banner(text: String) -> void:
 	_banner.position = (_read_screen_size() - _banner.size) / 2.0
 	_banner.pivot_offset = _banner.size / 2.0
 	_banner.scale = Vector2.ONE * POP_SCALE
-	create_tween().tween_property(_banner, "scale", Vector2.ONE, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	create_tween().tween_property(_banner, "scale", Vector2.ONE, 0.25).set_trans(Tween.TRANS_BACK).set_ease(
+		Tween.EASE_OUT
+	)
 
 
 func _read_screen_size() -> Vector2:

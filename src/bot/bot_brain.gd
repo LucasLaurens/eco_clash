@@ -33,7 +33,11 @@ func decide_input(perception: BotPerception) -> InputFrame:
 
 func is_off_stage(perception: BotPerception) -> bool:
 	var self_x := perception.self_position.x
-	return self_x < perception.ground.position.x or self_x > perception.ground.end.x or perception.self_position.y > perception.ground.position.y + OFF_STAGE_DEPTH
+	return (
+		self_x < perception.ground.position.x
+		or self_x > perception.ground.end.x
+		or perception.self_position.y > perception.ground.position.y + OFF_STAGE_DEPTH
+	)
 
 
 func _decide_recovery(perception: BotPerception) -> InputFrame:

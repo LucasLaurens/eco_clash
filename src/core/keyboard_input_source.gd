@@ -10,7 +10,9 @@ func _init(scheme: ControlScheme) -> void:
 
 func read_frame() -> InputFrame:
 	var frame := InputFrame.new()
-	frame.move_x = Input.get_axis(_scheme.resolve_action_name(ControlScheme.Action.LEFT), _scheme.resolve_action_name(ControlScheme.Action.RIGHT))
+	frame.move_x = Input.get_axis(
+		_scheme.resolve_action_name(ControlScheme.Action.LEFT), _scheme.resolve_action_name(ControlScheme.Action.RIGHT)
+	)
 	frame.down = Input.is_action_pressed(_scheme.resolve_action_name(ControlScheme.Action.DOWN))
 	frame.jump_pressed = Input.is_action_just_pressed(_scheme.resolve_action_name(ControlScheme.Action.UP))
 	frame.attack_pressed = Input.is_action_just_pressed(_scheme.resolve_action_name(ControlScheme.Action.ATTACK))

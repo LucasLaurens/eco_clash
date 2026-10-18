@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GODOT_VERSION: "4.7.2"
+  PYTHON_VERSION: "3.12"
+  # Coverage floors: raise them when coverage rises, never lower them to make a run pass.
+  GDSCRIPT_COVERAGE_MIN: "90"
+  PYTHON_COVERAGE_MIN: "95"
+
+jobs:
+  quality:
+    name: Format, lint, naming
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+      - name: Format GDScript (gdformat)
+        run: gdformat --check src tests
+      - name: Lint GDScript (gdlint)
+        run: gdlint src tests
+      - name: Format Python (ruff)
+        run: ruff format --check tools
+      - name: Lint Python (ruff)
+        run: ruff check tools
+      - name: Naming rule (verbs first, no one-letter names)
+        run: python tools/ci/check_naming.py
+
+  python-tests:
+    name: Python tests + coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+      - name: Unit + feature tests of the asset tool and CI scripts
+        run: pytest --cov --cov-report=term-missing --cov-fail-under=${{ env.PYTHON_COVERAGE_MIN }}
+
+  godot-tests:
+    name: Godot tests + coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Cache Godot
+        id: godot-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/godot
+          key: godot-${{ env.GODOT_VERSION }}-linux
+      - name: Download Godot
+        if: steps.godot-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/godot
+          curl -sSfL -o ~/godot/godot.zip \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q ~/godot/godot.zip -d ~/godot
+          mv ~/godot/Godot_v${GODOT_VERSION}-stable_linux.x86_64 ~/godot/godot
+          rm ~/godot/godot.zip
+      - name: Put Godot on the PATH
+        run: |
+          chmod +x ~/godot/godot
+          echo "$HOME/godot" >> "$GITHUB_PATH"
+      - name: Import the project
+        run: godot --headless --path . --import
+      - name: Unit tests
+        run: godot --headless --path . --fixed-fps 60 res://tests/test_runner.tscn -- --only=unit
+      - name: Feature tests
+        run: godot --headless --path . --fixed-fps 60 res://tests/test_runner.tscn -- --only=features
+      - name: GDScript function coverage
+        run: python tools/ci/gd_coverage.py --godot godot --fail-under ${{ env.GDSCRIPT_COVERAGE_MIN }}

@@ -1,4 +1,5 @@
 """UI kit: logo, ancient-metal panels, character portraits, stock icons, player selectors."""
+
 from __future__ import annotations
 
 from PIL import Image

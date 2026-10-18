@@ -11,7 +11,8 @@
 | Résolution | 480 x 270, étirement `canvas_items`, fenêtre 1440 x 810 (x3) |
 | Rendu pixel | filtre `nearest`, transformations 2D alignées sur le pixel |
 | Assets | générés une fois par un outil Python + Pillow, versionnés en PNG |
-| Tests | runner GDScript maison, exécuté en headless |
+| Tests | runner GDScript maison (unitaires + scénarios), exécuté en headless ; pytest pour les outils Python |
+| Qualité | gdformat, gdlint, ruff, règle de nommage, couverture, CI GitHub Actions |
 
 ## Arborescence
 
@@ -27,9 +28,14 @@ src/match/       MatchConfig, MatchResult, autoload MatchSettings, fabrique d'en
 src/stage/       Arène : sol, plateformes, spawns, zone d'éjection, couches animées
 src/fx/          Effets ponctuels, flash d'impact (shader), caméra qui tremble, découpe de strips
 src/ui/          Textes, kit UI, menus, HUD, pause, résultats
-tests/           Runner headless et suites
+tests/           Runner headless, unit/ (tests unitaires), features/ (scénarios)
 tools/assets/    Générateur d'assets Python (one-shot)
+tools/ci/        Règle de nommage et couverture GDScript, lancées par la CI
+tools/tests/     Tests pytest des outils Python
 docs/            Cette documentation
+.github/         Workflow de CI
+CONTRIBUTING.md  Règles du projet (doc, univers original, nommage)
+gdformatrc, gdlintrc, pyproject.toml, requirements-dev.txt   Configuration des outils de qualité
 ```
 
 ## Scènes

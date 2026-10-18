@@ -28,6 +28,7 @@ renvoie vers la précédente et la suivante.
 | [Pipeline d'assets](technique/07-assets.md) | Générateur Python, marionnette et cinématique inverse, fichiers partagés. |
 | [Tests](technique/08-tests.md) | Lancer, suites, conventions, captures d'écran. |
 | [Ajouter un personnage](technique/09-ajouter-un-personnage.md) | Le guide pas à pas. |
+| [Qualité et CI](technique/10-qualite-et-ci.md) | Format, lint, règle de nommage, couverture, CI GitHub Actions. |
 
 ## Documents de référence
 
