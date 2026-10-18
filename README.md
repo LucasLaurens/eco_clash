@@ -47,14 +47,15 @@ Fiches complètes et statistiques : [docs/fonctionnel/03-personnages.md](docs/fo
 
 | | Rôle | Spécial |
 |---|---|---|
-| Kael | Équilibré | Uppercut Flux (vertical, sert aussi à revenir) |
-| Pip | Rapide, léger, triple saut | Ruée Bleue (charge horizontale) |
-| Grondak | Lourd, frappe fort | Séisme Rouge (sol des deux côtés, plongeon en l'air) |
-| Ormos | Vieux sage à distance | Orbe Jaune (projectile) |
-| Vargo | Colosse du désert, lourd | Pacificateur (tir lourd et lent, projette loin) |
-| Kragg | Patron sur fauteuil volant, double saut | Ruée du Fauteuil (charge horizontale) |
+| Kael | Équilibré | Emprise Sombre (son prochain coup frappe bien plus fort) |
+| Pip | Rapide, léger, triple saut | Sprint Éclair (2 s très rapide, le premier contact frappe) |
+| Grondak | Lourd, frappe fort | Orbe de Rage (orbe rouge craché) |
+| Ormos | Vieux sage endurant | Sève de Vie (soigne 30 % des dégâts) |
+| Vargo | Colosse du désert, lourd | Détonation (charge violette qui paralyse 1,5 s) |
+| Kragg | Patron sur fauteuil volant, double saut | Fiole Toxique (poison en cloche, 6 % sur 1,5 s) |
 
 Règles : 3 vies. Plus le pourcentage monte, plus on vole loin. Sortir de l'écran coûte une vie.
+Chaque spécial a un temps de recharge (4,5 à 10 s), visible sous le pourcentage.
 
 ## Tests
 
@@ -106,7 +107,7 @@ scenes/          fighter, stage, fight, ui/(main_menu, character_select, results
 src/core/        Entrées : InputFrame, InputSource (port), clavier et manette, Null Object
 src/bot/         IA : perception, cerveau (pur), source d'entrée bot
 src/combat/      AttackData, formule de knockback, HitVolume, CombatResolver
-src/fighters/    Fighter, définitions, roster, coups (MeleeStrike, ProjectileShot)
+src/fighters/    Fighter, état (FighterStatus), définitions, roster, coups (MeleeStrike, ProjectileShot, DarkSurge, HasteRush, Mend)
 src/match/       Config, résultat, autoload MatchSettings, fabrique d'entrées, scène de combat
 src/stage/       Arène : sol, plateformes, spawns, zone d'éjection
 src/fx/          Effets ponctuels (étincelle, poussière, KO), flash d'impact, tremblement de caméra, sprite strips

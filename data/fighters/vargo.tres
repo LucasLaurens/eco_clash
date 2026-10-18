@@ -30,24 +30,26 @@ attack = SubResource("light_hit")
 
 [sub_resource type="Resource" id="special_hit"]
 script = ExtResource("3_attack")
-damage = 14.0
-base_knockback = 160.0
-knockback_growth = 3.8
-launch_angle_deg = 25.0
+damage = 11.0
+base_knockback = 40.0
+knockback_growth = 0.6
+launch_angle_deg = 20.0
 hitbox_offset = Vector2(30, -30)
-hitbox_size = Vector2(24, 18)
+hitbox_size = Vector2(20, 20)
 startup = 0.35
 active = 0.05
 recovery = 0.4
+paralysis = 1.5
 
 [sub_resource type="Resource" id="special_move"]
 script = ExtResource("5_projectile")
-display_name = "PACIFICATEUR"
-description = "TIR LOURD ET LENT DE FLUX SOMBRE. PROJETTE TRÈS LOIN."
+display_name = "DÉTONATION"
+description = "GROSSE CHARGE DE FLUX VIOLET, LENTE. PARALYSE L'ADVERSAIRE 1,5 S."
 animation = &"special"
 attack = SubResource("special_hit")
+cooldown = 7.0
 speed = 170.0
-lifetime = 1.8
+lifetime = 1.6
 sprite_sheet = ExtResource("9_bolt")
 
 [resource]

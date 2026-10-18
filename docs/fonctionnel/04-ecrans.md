@@ -48,9 +48,14 @@ A).
 - **Ombre au sol** : projetée sur la surface sous le combattant (sol ou plateforme), elle rétrécit
   quand il monte. Elle aide à viser les atterrissages.
 - **HUD** : deux cartes compactes en bas de l'écran, bien séparées. Chacune montre la tête du
-  personnage, « 1P · KAEL », le pourcentage de dégâts et un point par vie restante. Le pourcentage
-  passe du blanc à l'orange puis au rouge à mesure qu'il approche 150 %, et grossit brièvement à
-  chaque coup reçu.
+  personnage, « 1P · KAEL », le pourcentage de dégâts, un point par vie restante et, dessous, une
+  fine jauge de spécial : pâle et partielle pendant la recharge, pleine et dans la couleur du
+  personnage quand le spécial est prêt. Le pourcentage passe du blanc à l'orange puis au rouge à
+  mesure qu'il approche 150 %, et grossit brièvement à chaque coup reçu (et à chaque palier de
+  poison).
+- **États** : le sprite se teinte tant qu'un état dure : sombre (Kael sous Emprise Sombre), bleuté
+  (Pip en sprint), vert (empoisonné), violet (paralysé). Le soin d'Ormos fait jaillir une étincelle
+  verte ; la Détonation de Vargo éclate en violet à l'impact.
 - **Retours d'impact** :
   - la cible flashe en blanc chaud ;
   - une étincelle apparaît au point d'impact ;

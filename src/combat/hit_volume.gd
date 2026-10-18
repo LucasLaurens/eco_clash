@@ -8,6 +8,7 @@ const GROUP := &"hit_volumes"
 var attack: AttackData
 var attacker: Fighter
 var velocity := Vector2.ZERO
+var gravity := 0.0
 
 var _lifetime_left := 0.0
 var _vanishes_on_strike := false
@@ -23,8 +24,9 @@ static func create(attack_data: AttackData, attacker_fighter: Fighter, lifetime:
 	return volume
 
 
-func convert_to_projectile(projectile_velocity: Vector2, frames: SpriteFrames) -> void:
+func convert_to_projectile(projectile_velocity: Vector2, projectile_gravity: float, frames: SpriteFrames) -> void:
 	velocity = projectile_velocity
+	gravity = projectile_gravity
 	_vanishes_on_strike = true
 	var sprite := AnimatedSprite2D.new()
 	sprite.sprite_frames = frames
@@ -33,7 +35,9 @@ func convert_to_projectile(projectile_velocity: Vector2, frames: SpriteFrames) -
 	sprite.play()
 
 
+## shortcut: an arcing projectile ignores the ground and falls until its lifetime ends; add a floor check if it shows.
 func _physics_process(delta: float) -> void:
+	velocity.y += gravity * delta
 	position += velocity * delta
 	_lifetime_left -= delta
 	if _lifetime_left <= 0.0:

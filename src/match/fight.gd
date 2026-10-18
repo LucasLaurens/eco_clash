@@ -12,6 +12,8 @@ const FINISH_TIME_SCALE := 0.35
 const FINISH_DELAY := 2.0
 ## Inset from the screen edge, so the burst of a fighter leaving the blast zone is fully visible.
 const KO_BURST_INSET := 24.0
+## A paralysing hit bursts like a small KO, in violet.
+const DETONATION_TINT := Color(0.75, 0.5, 1.0)
 const SLOT_MARKERS := {
 	"p1": preload("res://assets/ui/marker_p1.png"),
 	"p2": preload("res://assets/ui/marker_p2.png"),
@@ -100,6 +102,8 @@ func _finish_match(loser_slot: int) -> void:
 
 func _on_hit_landed(impact_position: Vector2, attack: AttackData) -> void:
 	_world.add_child(OneShotEffect.create(OneShotEffect.HIT_SPARK, impact_position))
+	if attack.paralysis > 0.0:
+		_world.add_child(OneShotEffect.create(OneShotEffect.KO_BURST, impact_position, DETONATION_TINT))
 	_camera.add_trauma(attack.damage * TRAUMA_PER_DAMAGE)
 	if not _match_over:
 		_freeze_frames(HITSTOP_BASE + attack.damage * HITSTOP_PER_DAMAGE)

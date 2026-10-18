@@ -1,7 +1,8 @@
 class_name FighterCard
 extends PanelContainer
-## HUD card of one fighter: head icon, "1P · KAEL", damage percent (white to red), one pip per stock.
-## Kept small and frameless: the arena is the show, the card only answers "how hurt, how many lives".
+## HUD card of one fighter: head icon, "1P · KAEL", damage percent (white to red), one pip per stock,
+## and a thin special gauge that refills during the cooldown.
+## Kept small and frameless: the arena is the show, the card only answers "how hurt, how many lives, special ready?".
 
 const DANGER_PERCENT := 150.0
 const WARM_COLOR := Color(1.0, 0.72, 0.24)
@@ -11,6 +12,11 @@ const POP_TIME := 0.15
 const CARD_VEIL_ALPHA := 0.55
 const CARD_PADDING := 3
 const STOCK_PIP_SIZE := Vector2(4, 4)
+const SPECIAL_GAUGE_SIZE := Vector2(30, 2)
+const SPECIAL_CHARGING_ALPHA := 0.35
+
+var _fighter: Fighter
+var _special_fill: ColorRect
 
 var _percent_label: Label
 var _stock_pips: HBoxContainer
@@ -45,10 +51,30 @@ func bind_fighter(fighter: Fighter, definition: FighterDefinition, slot_label: S
 	_percent_label = UiKit.create_label("", UiKit.FONT_MEDIUM)
 	_percent_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	column.add_child(_percent_label)
+	column.add_child(_create_special_gauge())
+	_fighter = fighter
 	fighter.damage_changed.connect(_on_damage_changed)
 	fighter.stocks_changed.connect(_on_stocks_changed)
 	_show_percent(fighter.damage_percent)
 	_on_stocks_changed(fighter.stocks)
+
+
+func _process(_delta: float) -> void:
+	var readiness := _fighter.compute_special_readiness()
+	_special_fill.size.x = SPECIAL_GAUGE_SIZE.x * readiness
+	_special_fill.modulate.a = 1.0 if readiness >= 1.0 else SPECIAL_CHARGING_ALPHA
+
+
+func _create_special_gauge() -> Control:
+	var gauge := ColorRect.new()
+	gauge.color = Color(UiKit.TEXT_MUTED, SPECIAL_CHARGING_ALPHA)
+	gauge.custom_minimum_size = SPECIAL_GAUGE_SIZE
+	gauge.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	_special_fill = ColorRect.new()
+	_special_fill.color = _accent_color
+	_special_fill.size = SPECIAL_GAUGE_SIZE
+	gauge.add_child(_special_fill)
+	return gauge
 
 
 func _on_damage_changed(percent: float) -> void:

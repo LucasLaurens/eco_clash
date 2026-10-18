@@ -59,8 +59,15 @@ Précisions :
 
 - **Sauts** : un saut au sol, puis les sauts en l'air propres au personnage (1 pour la plupart,
   2 pour Pip et Kragg). Un saut en l'air est un peu moins haut (90 %).
-- **Spécial en l'air** : utilisable une seule fois par passage en l'air ; il se recharge à
+- **Recharge du spécial** : après chaque spécial, il faut attendre sa recharge (4,5 à 10 s selon le
+  personnage, voir [Personnages](03-personnages.md)) avant le suivant. La fine jauge sous le
+  pourcentage se remplit pendant la recharge et s'allume dans la couleur du personnage quand le
+  spécial est prêt.
+- **Spécial en l'air** : en plus, utilisable une seule fois par passage en l'air ; il se recharge à
   l'atterrissage.
+- **Poison** : la cible perd des dégâts par petits paliers pendant quelques instants après le coup.
+- **Paralysie** : la cible ne peut plus agir pendant la durée indiquée ; le coup suivant qu'elle
+  reçoit la libère.
 - **Plateformes** : les trois plateformes flottantes se traversent par en dessous ; bas + saut
   permet de redescendre à travers.
 

@@ -50,6 +50,8 @@ def generate_stage(assets: Path) -> None:
     stage.render_hit_spark().save(fx_target / "hit_spark.png")
     stage.render_flux_bolt(palette.FLUX_YELLOW).save(fx_target / "flux_bolt.png")
     stage.render_flux_bolt(palette.FLUX_DARK).save(fx_target / "flux_bolt_dark.png")
+    stage.render_flux_bolt(palette.FLUX_RED).save(fx_target / "flux_bolt_red.png")
+    stage.render_poison_vial().save(fx_target / "poison_vial.png")
     stage.render_shadow().save(fx_target / "shadow.png")
     stage.render_dust().save(fx_target / "dust.png")
     stage.render_ko_burst().save(fx_target / "ko_burst.png")

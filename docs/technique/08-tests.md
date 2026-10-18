@@ -21,7 +21,7 @@ puis le total :
 # test_knockback_formula.gd
   ok   test_force_grows_with_damage
   ...
-38 tests, 0 failed
+65 tests, 0 failed
 ```
 
 Ne jamais se fier au total seul : un fichier qui ne se charge pas n'apporte aucun test. Lire les
@@ -60,7 +60,8 @@ Deux précautions pour les scénarios :
 | `test_control_scheme` | Chaque action a une touche et un bouton de manette ; A, B et X donnent attaque, spécial et saut ; la manette d'un joueur ne pilote pas l'autre ; le stick n'agit qu'au-delà de la zone morte ; un branchement de manette en cours de partie réenregistre les actions sans rien dupliquer ; A valide et Start met en pause depuis n'importe quelle manette ; sans manette, les rappels montrent les touches ; la police dessine chaque libellé de bouton. |
 | `test_selection_cursor` | Le curseur boucle sur le roster et se verrouille une fois validé. |
 | `test_match_config` | Qui est bot dans chaque mode, schéma de touches de chaque slot, aucune touche en double, chaque slot a son curseur et son marqueur. |
-| `test_roster` | Six identifiants distincts, planches conformes à `layout.json`, coups complets, jauges entre 1 et 5. |
+| `test_roster` | Six identifiants distincts, planches conformes à `layout.json`, coups complets, recharge de chaque spécial plus longue que le coup, jauges entre 1 et 5. |
+| `test_fighter_status` | La recharge bloque puis libère le spécial et remplit la jauge ; le coup sombre remplace une seule attaque et l'aura s'éteint ensuite ou à la fin de la fenêtre ; le sprint accélère puis s'arrête ; le poison inflige tout son total, par paliers ; un coup normal libère de la paralysie ; la teinte montre l'état le plus fort. |
 | `test_ui_text` | La police sait dessiner chaque texte et chaque nom de personnage. |
 | `test_stage_layers` | Les plateformes sont sur la couche que les combattants traversent ; chaque couche animée a son nœud et une planche découpable. |
 | `test_fighter_visuals` | L'ombre est pleine au sol, la plus petite à hauteur max, et ne grandit jamais en montant. |
@@ -70,7 +71,7 @@ Deux précautions pour les scénarios :
 
 | Suite | Scénarios |
 |---|---|
-| `test_match_flow` | Un coup au corps à corps ne touche qu'une fois ; un projectile touche une fois puis disparaît ; un KO coûte une vie et le combattant réapparaît dans l'arène à 0 % ; deux bots s'affrontent 2 400 ticks sans erreur. |
+| `test_match_flow` | Un coup au corps à corps ne touche qu'une fois ; un projectile touche une fois puis disparaît ; un KO coûte une vie et le combattant réapparaît dans l'arène à 0 % ; deux bots s'affrontent 2 400 ticks sans erreur ; un spécial maintenu ne repart pas avant sa recharge ; l'Emprise Sombre rend la prochaine attaque plus forte ; le sprint dépasse la course normale et frappe au contact une seule fois ; le soin retire la bonne part ; le poison continue après le coup ; la Détonation empêche d'agir jusqu'au coup suivant. |
 | `test_screens` | Le menu propose trois choix et rappelle les commandes ; la sélection déplace le curseur et valide le joueur 1 ; l'écran de victoire nomme le vainqueur et la durée ; en 2 joueurs, la manette du joueur 2 déplace son curseur et le valide sans toucher au joueur 1 ; Échap met et retire la pause ; Start d'une manette aussi. |
 
 ## Tests des outils Python

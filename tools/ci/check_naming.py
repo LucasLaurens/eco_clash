@@ -18,11 +18,11 @@ ROOT = Path(__file__).resolve().parents[2]
 VERBS = frozenset(
     """
     add animate append apply assert attach bind build can cancel change check choose clear collect compute
-    configure confirm convert count crop create decide decode delete dispose draw drop emit encode ensure fill find
-    finish format freeze generate get has hide hit instrument is jump knock land launch list load lose main
-    make map measure merge mix move open paint parse paste pause place play press print put quit read receive
+    configure confirm convert count crop create decide decode delete dispose draw drop emit empower encode ensure fill
+    find finish format freeze generate get has hasten heal hide hit instrument is jump knock land launch list load lose
+    main make map measure merge mix move open paint parse paste pause place play press print put quit read receive
     refresh register remove render repeat reset resolve respawn resume run save scale scan search select set
-    should show solve sort spawn split start step sync test tick tint to trigger try update would write
+    should show solve sort spawn spend split start step sync test tick tint to trigger try update would write
 """.split()
 )
 

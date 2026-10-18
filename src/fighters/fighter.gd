@@ -29,6 +29,8 @@ const LANDING_DUST_SPEED := 120.0
 const DUST_OFFSET := Vector2(0, -6)
 const MARKER_GAP := 14.0
 const SHADOW_MAX_DISTANCE := 160.0
+const HEAL_TINT := Color(0.6, 1.0, 0.5)
+const HEAL_SPARK_OFFSET := Vector2(0, -20)
 
 var definition: FighterDefinition
 var damage_percent := 0.0
@@ -47,6 +49,7 @@ var _air_special_used := false
 var _drop_through_left := 0.0
 var _invulnerable_left := 0.0
 var _hit_flash_left := 0.0
+var _status := FighterStatus.new()
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
 @onready var _body_shape: CollisionShape2D = $BodyShape
@@ -110,7 +113,8 @@ func receive_hit(attack: AttackData, direction: int) -> void:
 	damage_percent += attack.damage
 	var force := KnockbackFormula.compute_force(attack, damage_percent, definition.weight)
 	velocity = KnockbackFormula.compute_launch_velocity(attack, direction, force)
-	_hitstun_left = KnockbackFormula.compute_hitstun(force)
+	_hitstun_left = maxf(KnockbackFormula.compute_hitstun(force), attack.paralysis)
+	_status.apply_hit(attack)
 	_state = State.HITSTUN
 	_hit_flash_left = HIT_FLASH_DURATION
 	facing = -direction
@@ -134,6 +138,10 @@ func has_air_jump() -> bool:
 	return _air_jumps_left > 0
 
 
+func compute_special_readiness() -> float:
+	return _status.compute_special_readiness()
+
+
 func compute_hurt_rect() -> Rect2:
 	var size := definition.body_size
 	return Rect2(global_position - Vector2(size.x / 2.0, size.y), size)
@@ -152,6 +160,7 @@ func respawn_at(spawn_position: Vector2) -> void:
 	damage_percent = 0.0
 	_state = State.FREE
 	_invulnerable_left = RESPAWN_INVULNERABILITY
+	_status = FighterStatus.new()
 	_clear_melee_volumes()
 	damage_changed.emit(damage_percent)
 
@@ -163,22 +172,45 @@ func apply_lunge(lunge: Vector2) -> void:
 		velocity.y = lunge.y
 
 
-func spawn_melee_volume(attack: AttackData) -> void:
-	var volume := HitVolume.create(attack, self, attack.active)
+func spawn_melee_volume(attack: AttackData, lifetime: float) -> void:
+	var volume := HitVolume.create(attack, self, lifetime)
 	volume.position = Vector2(attack.hitbox_offset.x * facing, attack.hitbox_offset.y)
 	_melee_volumes.add_child(volume)
 
 
-func launch_projectile(attack: AttackData, speed: float, lifetime: float, frames: SpriteFrames) -> void:
+## launch_velocity.x is relative to facing.
+func launch_projectile(
+	attack: AttackData, launch_velocity: Vector2, gravity: float, lifetime: float, frames: SpriteFrames
+) -> void:
 	var volume := HitVolume.create(attack, self, lifetime)
 	volume.position = position + Vector2(attack.hitbox_offset.x * facing, attack.hitbox_offset.y)
-	volume.convert_to_projectile(Vector2(speed * facing, 0.0), frames)
+	volume.convert_to_projectile(Vector2(launch_velocity.x * facing, launch_velocity.y), gravity, frames)
 	_world.add_child(volume)
+
+
+func empower(strike: FighterMove, window: float) -> void:
+	_status.empower(strike, window)
+
+
+func hasten(duration: float, multiplier: float) -> void:
+	_status.hasten(duration, multiplier)
+
+
+## Removes a share of the damage taken, never more than max_heal.
+func heal(ratio: float, max_heal: float) -> void:
+	damage_percent -= minf(damage_percent * ratio, max_heal)
+	_world.add_child(OneShotEffect.create(OneShotEffect.HIT_SPARK, global_position + HEAL_SPARK_OFFSET, HEAL_TINT))
+	damage_changed.emit(damage_percent)
 
 
 func _tick_timers(delta: float) -> void:
 	_invulnerable_left = maxf(_invulnerable_left - delta, 0.0)
 	_hit_flash_left = maxf(_hit_flash_left - delta, 0.0)
+	var poison_damage := _status.tick_timers(delta)
+	if poison_damage > 0.0:
+		damage_percent += poison_damage
+		_hit_flash_left = HIT_FLASH_DURATION
+		damage_changed.emit(damage_percent)
 	if _drop_through_left <= 0.0:
 		return
 	_drop_through_left -= delta
@@ -191,7 +223,8 @@ func _update_free_state(frame: InputFrame, delta: float) -> void:
 	var acceleration := AIR_ACCELERATION
 	if is_grounded:
 		acceleration = GROUND_FRICTION if is_zero_approx(frame.move_x) else GROUND_ACCELERATION
-	velocity.x = move_toward(velocity.x, frame.move_x * definition.run_speed, acceleration * delta)
+	var run_speed := definition.run_speed * _status.compute_speed_multiplier()
+	velocity.x = move_toward(velocity.x, frame.move_x * run_speed, acceleration * delta)
 	if not is_zero_approx(frame.move_x):
 		facing = 1 if frame.move_x > 0.0 else -1
 	if frame.jump_pressed and frame.down and is_grounded:
@@ -199,9 +232,12 @@ func _update_free_state(frame: InputFrame, delta: float) -> void:
 	elif frame.jump_pressed:
 		_jump()
 	if frame.attack_pressed:
-		_start_move(definition.light_attack)
-	elif frame.special_pressed and not _air_special_used:
+		var attack_move := _status.select_light_attack(definition.light_attack)
+		_status.spend_empowerment(attack_move.attack.compute_total_duration())
+		_start_move(attack_move)
+	elif frame.special_pressed and not _air_special_used and _status.is_special_ready():
 		_air_special_used = not is_grounded
+		_status.start_special_cooldown(definition.special.cooldown)
 		_start_move(definition.special)
 
 
@@ -278,6 +314,7 @@ func _clear_melee_volumes() -> void:
 
 func _update_visuals() -> void:
 	_sprite.flip_h = facing < 0
+	_sprite.modulate = _status.resolve_tint()
 	_sprite.modulate.a = BLINK_ALPHA if _is_blinking() else 1.0
 	(_sprite.material as ShaderMaterial).set_shader_parameter(&"flash_amount", 1.0 if _hit_flash_left > 0.0 else 0.0)
 	match _state:
