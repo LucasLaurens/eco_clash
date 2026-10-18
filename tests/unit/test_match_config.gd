@@ -39,3 +39,16 @@ func test_two_schemes_never_share_a_key() -> void:
 			seen_keys[key] = true
 	# Assert
 	assert_equal(seen_keys.size(), 12, "6 actions x 2 players")
+
+
+func test_every_slot_tag_has_its_selector_and_marker() -> void:
+	# Arrange
+	var selectors: Dictionary = load("res://src/ui/character_select.gd").get_script_constant_map()["SELECTORS"]
+	var markers: Dictionary = load("res://src/match/fight.gd").get_script_constant_map()["SLOT_MARKERS"]
+	# Act & Assert
+	for mode: MatchConfig.Mode in MatchConfig.Mode.values():
+		var config := _create_config(mode)
+		for slot in MatchConfig.SLOT_COUNT:
+			var tag := config.resolve_slot_tag(slot)
+			assert_true(selectors.has(tag), "selector for %s" % tag)
+			assert_true(markers.has(tag), "in-fight marker for %s" % tag)

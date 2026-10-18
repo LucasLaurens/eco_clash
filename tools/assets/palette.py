@@ -23,6 +23,15 @@ ROCK = Ramp(shade=(88, 60, 64), base=(132, 92, 84), light=(178, 132, 110))
 SAND = Ramp(shade=(206, 168, 110), base=(238, 210, 150), light=(252, 236, 196))
 WOOD = Ramp(shade=(96, 58, 34), base=(140, 92, 54), light=(184, 132, 80))
 
+# Player identity: selectors, in-fight markers. Distinct in luminance, not only in hue.
+SLOT_P1: Color = (236, 70, 70)
+SLOT_P2: Color = (70, 140, 240)
+SLOT_BOT: Color = (150, 150, 160)
+
+# Atmospheric perspective: the middle layer fades toward the horizon sky so the arena reads first.
+HAZE: Color = (156, 202, 240)
+MID_HAZE_RATIO = 0.35
+
 SKY_BANDS: list[Color] = [
     (58, 128, 214),
     (84, 152, 228),

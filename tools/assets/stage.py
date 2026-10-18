@@ -14,6 +14,15 @@ ISLAND_SURFACE_Y = 6
 PLATFORM_SIZE = (64, 14)
 PLATFORM_SURFACE_Y = 2
 
+WATERFALL_X, WATERFALL_TOP_Y, WATERFALL_BOTTOM_Y = 20, 150, 214
+WATERFALL_FRAME_WIDTH = 20
+WATERFALL_FRAMES = 4
+WATERFALL_FPS = 8
+WATERFALL_BAND = 4
+SEA_GLINT_FRAMES = 3
+SEA_GLINT_FPS = 4
+SEA_GLINT_COUNT = 40
+
 
 def render_sky() -> Canvas:
     canvas = Canvas(WIDTH, HEIGHT)
@@ -95,7 +104,7 @@ def render_mid() -> Canvas:
     canvas = Canvas(WIDTH, HEIGHT)
     _paint_islet(canvas, 34, 214, 72, with_hut=True)
     _paint_islet(canvas, 452, 224, 64, with_hut=False)
-    _paint_waterfall(canvas, 20, 150, 214)
+    canvas.tint_toward(palette.HAZE, palette.MID_HAZE_RATIO)
     return canvas
 
 
@@ -133,11 +142,59 @@ def _paint_hut(canvas: Canvas, x: int, base_y: int) -> None:
     canvas.fill_ellipse((x - 2, base_y - 12, x + 1, base_y - 10), palette.PRECURSOR_GLOW.base)
 
 
-def _paint_waterfall(canvas: Canvas, x: int, top_y: int, bottom_y: int) -> None:
-    for column in range(x - 4, x + 5):
-        shade = (200, 236, 250) if column % 3 else (150, 210, 236)
-        canvas.draw_line((column, top_y), (column, bottom_y), shade)
-    canvas.fill_ellipse((x - 9, bottom_y - 3, x + 9, bottom_y + 4), (230, 248, 255))
+def render_waterfall() -> Canvas:
+    """Falling streaks scrolled down one band per frame, so the loop is seamless.
+
+    O(f * w * h) time over the frames, O(1) extra space. Hazed like the middle layer it sits on.
+    """
+    height = WATERFALL_BOTTOM_Y - WATERFALL_TOP_Y + 6
+    canvas = Canvas(WATERFALL_FRAME_WIDTH * WATERFALL_FRAMES, height)
+    center = WATERFALL_FRAME_WIDTH // 2
+    period = WATERFALL_BAND * 3
+    for frame in range(WATERFALL_FRAMES):
+        left = frame * WATERFALL_FRAME_WIDTH
+        shift = frame * period // WATERFALL_FRAMES
+        for column in range(center - 4, center + 5):
+            for y in range(height - 4):
+                band = ((y - shift + column * 5) // WATERFALL_BAND) % 3
+                canvas.put_pixel(left + column, y, (150, 210, 236) if band == 0 else (200, 236, 250))
+        splash = 9 + frame % 2
+        canvas.fill_ellipse((left + center - splash, height - 7, left + center + splash - 1, height - 1), (230, 248, 255))
+    canvas.tint_toward(palette.HAZE, palette.MID_HAZE_RATIO)
+    return canvas
+
+
+def compute_waterfall_offset() -> tuple[int, int]:
+    return WATERFALL_X - WATERFALL_FRAME_WIDTH // 2, WATERFALL_TOP_Y
+
+
+def render_sea_glints() -> Canvas:
+    """Sparkles on the sea, each twinkling on its own phase: bright cross, dim dot, gone."""
+    height = HEIGHT - HORIZON_Y
+    canvas = Canvas(WIDTH * SEA_GLINT_FRAMES, height)
+    rng = random.Random(5)
+    glints = [(rng.randrange(2, WIDTH - 2), rng.randrange(4, height - 2), rng.randrange(SEA_GLINT_FRAMES)) for _ in range(SEA_GLINT_COUNT)]
+    bright: Color = (250, 254, 255)
+    dim: Color = (200, 240, 248)
+    for frame in range(SEA_GLINT_FRAMES):
+        for x, y, phase in glints:
+            step = (frame - phase) % SEA_GLINT_FRAMES
+            gx = frame * WIDTH + x
+            if step == 0:
+                canvas.put_pixel(gx, y, bright)
+                for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    canvas.put_pixel(gx + dx, y + dy, dim)
+            elif step == 1:
+                canvas.put_pixel(gx, y, dim)
+    return canvas
+
+
+def build_animated_layers() -> dict:
+    """Placement and timing of the animated stage layers, read by Godot (one source, like layout.json)."""
+    return {
+        "Waterfall": {"sheet": "waterfall.png", "frame_width": WATERFALL_FRAME_WIDTH, "fps": WATERFALL_FPS, "offset": compute_waterfall_offset()},
+        "SeaGlints": {"sheet": "sea_glints.png", "frame_width": WIDTH, "fps": SEA_GLINT_FPS, "offset": (0, HORIZON_Y)},
+    }
 
 
 def render_island() -> Canvas:
@@ -229,4 +286,59 @@ def render_eco_bolt(eco: Ramp) -> Canvas:
         radius = 4 + frame
         canvas.fill_ellipse((center_x - radius, center_y - radius, center_x + radius, center_y + radius), (*eco.base, 200))
         canvas.fill_ellipse((center_x - 2, center_y - 2, center_x + 2, center_y + 2), eco.light)
+    return canvas
+
+
+def render_shadow() -> Canvas:
+    """3 frames, 18px each: contact shadow shrinking as the fighter rises. Outline-tinted, never pure black.
+
+    Discrete sizes instead of a runtime scale, so the shadow stays on the pixel grid.
+    """
+    size = 18
+    half_sizes = ((8, 2), (6, 2), (4, 1))
+    canvas = Canvas(size * len(half_sizes), size)
+    for frame, (half_width, half_height) in enumerate(half_sizes):
+        center_x, center_y = frame * size + size // 2, size // 2
+        canvas.fill_ellipse((center_x - half_width, center_y - half_height, center_x + half_width, center_y + half_height), (*palette.OUTLINE, 70))
+        canvas.fill_ellipse((center_x - half_width + 3, center_y - half_height + 1, center_x + half_width - 3, center_y + half_height - 1), (*palette.OUTLINE, 120))
+    return canvas
+
+
+def render_dust() -> Canvas:
+    """4 frames, 16px each: two sand puffs drifting apart from the feet and thinning out."""
+    size, frames = 16, 4
+    canvas = Canvas(size * frames, size)
+    sand = palette.SAND
+    for frame in range(frames):
+        center_x, ground_y = frame * size + size // 2, size - 2
+        spread = 2 + frame * 2
+        radius = 4 - frame
+        alpha = 240 - frame * 45
+        for side in (-1, 1):
+            puff_x = center_x + side * spread
+            puff_y = ground_y - radius - frame // 2
+            canvas.fill_ellipse((puff_x - radius, puff_y - radius, puff_x + radius, puff_y + radius), (*sand.shade, alpha))
+            canvas.fill_ellipse((puff_x - radius + 1, puff_y - radius, puff_x + radius - 1, puff_y + radius - 1), (*sand.light, alpha))
+    return canvas
+
+
+def render_ko_burst() -> Canvas:
+    """6 frames, 64px each: a ring and long rays flaring out. Drawn light, tinted by the fighter colour in game."""
+    size, frames = 64, 6
+    canvas = Canvas(size * frames, size)
+    for frame in range(frames):
+        center_x, center_y = frame * size + size // 2, size // 2
+        fade = 255 - frame * 40
+        # Longest ray stays inside its own frame, or it bleeds into the next one.
+        reach = min(10 + frame * 4, size // 2 - 2)
+        for index in range(12):
+            angle = math.radians(index * 30 + 15)
+            inner = (round(center_x + math.cos(angle) * reach * 0.5), round(center_y + math.sin(angle) * reach * 0.5))
+            outer = (round(center_x + math.cos(angle) * reach), round(center_y + math.sin(angle) * reach))
+            canvas.draw_line(inner, outer, (255, 252, 240, fade), 3 if index % 3 == 0 else 1)
+        ring = 4 + frame * 4
+        canvas.draw_arc((center_x - ring, center_y - ring, center_x + ring, center_y + ring), 0, 360, (255, 248, 230, fade), 2)
+        core = max(7 - frame * 2, 0)
+        if core:
+            canvas.fill_ellipse((center_x - core, center_y - core, center_x + core, center_y + core), (255, 252, 240, fade))
     return canvas

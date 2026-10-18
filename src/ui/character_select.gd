@@ -133,8 +133,7 @@ func _build_cards() -> void:
 
 func _build_selector(slot: int) -> TextureRect:
 	var selector := TextureRect.new()
-	var selector_key := "bot" if _slot_rules.is_bot_slot(slot) else "p%d" % (slot + 1)
-	selector.texture = SELECTORS[selector_key]
+	selector.texture = SELECTORS[_slot_rules.resolve_slot_tag(slot)]
 	add_child(selector)
 	return selector
 

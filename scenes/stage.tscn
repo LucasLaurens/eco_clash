@@ -33,9 +33,13 @@ centered = false
 texture = ExtResource("4_far")
 centered = false
 
+[node name="SeaGlints" type="AnimatedSprite2D" parent="."]
+
 [node name="Mid" type="Sprite2D" parent="."]
 texture = ExtResource("5_mid")
 centered = false
+
+[node name="Waterfall" type="AnimatedSprite2D" parent="."]
 
 [node name="Ground" type="StaticBody2D" parent="."]
 position = Vector2(240, 206)

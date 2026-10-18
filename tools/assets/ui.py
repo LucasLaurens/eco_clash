@@ -102,3 +102,16 @@ def render_selector(color: Color, label: str) -> Image.Image:
     canvas.paste(tag, (tag_x, size - 1))
     canvas.add_outline(palette.OUTLINE)
     return canvas.image
+
+
+def render_slot_marker(color: Color, label: str) -> Image.Image:
+    """Tag floating above a fighter: the slot label on its colour, with a notch pointing down at the head."""
+    tag = font.render_text(label, 1)
+    width = tag.width + 4
+    canvas = Canvas(width + 2, tag.height + 4)
+    canvas.fill_rect((1, 2, width, tag.height - 3), color)
+    center = (width + 2) // 2
+    canvas.fill_polygon([(center - 3, tag.height - 3), (center + 3, tag.height - 3), (center, tag.height)], color)
+    canvas.paste(tag, (3, 0))
+    canvas.add_outline(palette.OUTLINE)
+    return canvas.image

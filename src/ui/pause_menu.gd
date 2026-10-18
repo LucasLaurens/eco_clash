@@ -2,6 +2,8 @@ class_name PauseMenu
 extends CanvasLayer
 ## Escape toggles a pause overlay. Runs while the tree is paused (process_mode = ALWAYS).
 
+const PAUSE_VEIL_ALPHA := 0.6
+
 var _overlay: Control
 var _resume_button: Button
 
@@ -10,10 +12,7 @@ func _ready() -> void:
 	_overlay = Control.new()
 	_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(_overlay)
-	var veil := ColorRect.new()
-	veil.color = Color(0.03, 0.04, 0.1, 0.6)
-	veil.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_overlay.add_child(veil)
+	_overlay.add_child(UiKit.create_veil(PAUSE_VEIL_ALPHA))
 	var column := UiKit.create_centered_column(_overlay, 8)
 	column.add_child(UiKit.create_label(UiText.PAUSE_TITLE, UiKit.FONT_LARGE, UiKit.TEXT_GOLD))
 	_resume_button = UiKit.create_button(UiText.PAUSE_RESUME, _resume_game)

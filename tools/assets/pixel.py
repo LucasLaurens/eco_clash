@@ -139,6 +139,18 @@ class Canvas:
                 threshold = BAYER_4X4[y % 4][x % 4]
                 self.put_pixel(x, y, colors[band + 1] if ratio > threshold else colors[band])
 
+    def tint_toward(self, color: Color, ratio: float) -> None:
+        """Pull every opaque pixel toward one colour, keeping alpha (atmospheric haze).
+
+        O(w * h) time, O(1) extra space.
+        """
+        pixels = self.image.load()
+        for y in range(self.height):
+            for x in range(self.width):
+                pixel = pixels[x, y]
+                if pixel[3] > 0:
+                    pixels[x, y] = (*mix_colors(pixel, color, ratio)[:3], pixel[3])
+
     def paste(self, other: Image.Image, position: Point) -> None:
         self.image.alpha_composite(other, dest=position)
 
