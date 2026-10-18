@@ -41,14 +41,14 @@ static func add_backdrop(parent: Control, veil_alpha: float) -> void:
 
 
 static func create_centered_column(parent: Control, separation: int) -> VBoxContainer:
-	var center := CenterContainer.new()
-	center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	parent.add_child(center)
+	var center_container := CenterContainer.new()
+	center_container.set_anchors_preset(Control.PRESET_FULL_RECT)
+	center_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(center_container)
 	var column := VBoxContainer.new()
 	column.alignment = BoxContainer.ALIGNMENT_CENTER
 	column.add_theme_constant_override(&"separation", separation)
-	center.add_child(column)
+	center_container.add_child(column)
 	return column
 
 
@@ -56,10 +56,10 @@ static func format_controls(player_number: int, prefix: String) -> String:
 	var scheme := ControlScheme.new(player_number)
 	return UiText.CONTROLS_LINE % [
 		prefix,
-		scheme.compute_key_label(ControlScheme.Action.LEFT),
-		scheme.compute_key_label(ControlScheme.Action.UP),
-		scheme.compute_key_label(ControlScheme.Action.DOWN),
-		scheme.compute_key_label(ControlScheme.Action.RIGHT),
-		scheme.compute_key_label(ControlScheme.Action.ATTACK),
-		scheme.compute_key_label(ControlScheme.Action.SPECIAL),
+		scheme.format_key_label(ControlScheme.Action.LEFT),
+		scheme.format_key_label(ControlScheme.Action.UP),
+		scheme.format_key_label(ControlScheme.Action.DOWN),
+		scheme.format_key_label(ControlScheme.Action.RIGHT),
+		scheme.format_key_label(ControlScheme.Action.ATTACK),
+		scheme.format_key_label(ControlScheme.Action.SPECIAL),
 	]

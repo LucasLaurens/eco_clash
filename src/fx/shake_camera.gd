@@ -15,5 +15,5 @@ func add_trauma(amount: float) -> void:
 
 func _process(delta: float) -> void:
 	_trauma = maxf(_trauma - DECAY_PER_SECOND * delta, 0.0)
-	var power := _trauma * _trauma * MAX_OFFSET
-	offset = Vector2(roundf(_rng.randf_range(-power, power)), roundf(_rng.randf_range(-power, power)))
+	var shake_amplitude := _trauma * _trauma * MAX_OFFSET
+	offset = Vector2(roundf(_rng.randf_range(-shake_amplitude, shake_amplitude)), roundf(_rng.randf_range(-shake_amplitude, shake_amplitude)))

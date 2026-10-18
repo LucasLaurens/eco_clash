@@ -4,13 +4,13 @@ extends PanelContainer
 
 const PREVIEW_SIZE := Vector2(48, 48)
 const PIP_SIZE := Vector2(8, 5)
-const PIP_OFF := Color(0.16, 0.22, 0.32)
+const PIP_OFF_COLOR := Color(0.16, 0.22, 0.32)
 const READY_COLOR := Color(0.5, 1.0, 0.55)
 
 var _slot_label: Label
 var _name_label: Label
 var _title_label: Label
-var _preview: AnimatedSprite2D
+var _preview_sprite: AnimatedSprite2D
 var _pip_rows: Array[HBoxContainer] = []
 var _special_label: Label
 var _description_label: Label
@@ -39,17 +39,17 @@ func show_definition(definition: FighterDefinition) -> void:
 	_name_label.text = definition.display_name
 	_name_label.add_theme_color_override(&"font_color", definition.accent_color)
 	_title_label.text = definition.title
-	_preview.sprite_frames = FighterSpriteFrames.create(definition.sprite_sheet)
-	_preview.play(&"idle")
+	_preview_sprite.sprite_frames = FighterSpriteFrames.create(definition.sprite_sheet)
+	_preview_sprite.play(&"idle")
 	var ratings := [definition.compute_speed_rating(), definition.compute_power_rating(), definition.compute_weight_rating()]
 	for row_index in _pip_rows.size():
 		_paint_pips(_pip_rows[row_index], ratings[row_index], definition.accent_color)
-	_special_label.text = UiText.SPECIAL_PREFIX % definition.compute_special_name()
-	_description_label.text = definition.compute_special_description()
+	_special_label.text = UiText.SPECIAL_PREFIX % definition.get_special_name()
+	_description_label.text = definition.get_special_description()
 
 
-func show_slot(label: String) -> void:
-	_slot_text = label
+func set_slot_text(slot_text: String) -> void:
+	_slot_text = slot_text
 
 
 ## Slot and status share one line: "JOUEUR 1 · PRÊT !".
@@ -62,19 +62,19 @@ func _build_header() -> HBoxContainer:
 	var header := HBoxContainer.new()
 	var preview_box := Control.new()
 	preview_box.custom_minimum_size = PREVIEW_SIZE
-	_preview = AnimatedSprite2D.new()
-	_preview.position = PREVIEW_SIZE / 2.0
-	preview_box.add_child(_preview)
+	_preview_sprite = AnimatedSprite2D.new()
+	_preview_sprite.position = PREVIEW_SIZE / 2.0
+	preview_box.add_child(_preview_sprite)
 	header.add_child(preview_box)
-	var names := VBoxContainer.new()
-	names.alignment = BoxContainer.ALIGNMENT_CENTER
-	names.add_theme_constant_override(&"separation", 0)
+	var name_column := VBoxContainer.new()
+	name_column.alignment = BoxContainer.ALIGNMENT_CENTER
+	name_column.add_theme_constant_override(&"separation", 0)
 	_slot_label = _create_left_label(UiKit.FONT_SMALL, UiKit.TEXT_MUTED)
 	_name_label = _create_left_label(UiKit.FONT_MEDIUM, UiKit.TEXT_LIGHT)
 	_title_label = _create_left_label(UiKit.FONT_SMALL, UiKit.TEXT_GOLD)
 	for label in [_slot_label, _name_label, _title_label]:
-		names.add_child(label)
-	header.add_child(names)
+		name_column.add_child(label)
+	header.add_child(name_column)
 	return header
 
 
@@ -84,22 +84,22 @@ func _build_stat_row(stat_name: String) -> HBoxContainer:
 	label.text = stat_name
 	label.custom_minimum_size = Vector2(70, 0)
 	row.add_child(label)
-	var pips := HBoxContainer.new()
-	pips.alignment = BoxContainer.ALIGNMENT_CENTER
-	pips.add_theme_constant_override(&"separation", 2)
+	var pip_row := HBoxContainer.new()
+	pip_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	pip_row.add_theme_constant_override(&"separation", 2)
 	for _pip in FighterDefinition.MAX_RATING:
 		var pip := ColorRect.new()
 		pip.custom_minimum_size = PIP_SIZE
 		pip.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		pips.add_child(pip)
-	row.add_child(pips)
-	_pip_rows.append(pips)
+		pip_row.add_child(pip)
+	row.add_child(pip_row)
+	_pip_rows.append(pip_row)
 	return row
 
 
 func _paint_pips(row: HBoxContainer, rating: int, color: Color) -> void:
 	for index in row.get_child_count():
-		(row.get_child(index) as ColorRect).color = color if index < rating else PIP_OFF
+		(row.get_child(index) as ColorRect).color = color if index < rating else PIP_OFF_COLOR
 
 
 func _create_left_label(size: int, color: Color) -> Label:

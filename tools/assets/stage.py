@@ -45,10 +45,10 @@ def _paint_cloud(canvas: Canvas, x: int, y: int, size: int) -> None:
     shade: Color = (210, 224, 240)
     light: Color = (255, 255, 255)
     puffs = [(-size, 0, size // 2), (-size // 3, -size // 3, size // 2 + 3), (size // 3, -size // 5, size // 2), (size, 2, size // 3)]
-    for dx, dy, r in puffs:
-        canvas.fill_ellipse((x + dx - r, y + dy - r + 2, x + dx + r, y + dy + r + 2), shade)
-    for dx, dy, r in puffs:
-        canvas.fill_ellipse((x + dx - r, y + dy - r, x + dx + r, y + dy + r - 2), light)
+    for dx, dy, radius in puffs:
+        canvas.fill_ellipse((x + dx - radius, y + dy - radius + 2, x + dx + radius, y + dy + radius + 2), shade)
+    for dx, dy, radius in puffs:
+        canvas.fill_ellipse((x + dx - radius, y + dy - radius, x + dx + radius, y + dy + radius - 2), light)
     canvas.fill_rect((x - size - size // 2, y + size // 3, x + size + size // 3, y + size // 2 + 2), (0, 0, 0, 0))
 
 
@@ -118,8 +118,8 @@ def _paint_palm(canvas: Canvas, x: int, base_y: int, height: int) -> None:
     top_x, top_y = x + 5, base_y - height
     canvas.draw_line((x, base_y), (top_x, top_y), trunk, 2)
     for angle in (200, 235, 270, 305, 340, 20):
-        rad = math.radians(angle)
-        end = (round(top_x + math.cos(rad) * 14), round(top_y + math.sin(rad) * 6 + 6))
+        angle_radians = math.radians(angle)
+        end = (round(top_x + math.cos(angle_radians) * 14), round(top_y + math.sin(angle_radians) * 6 + 6))
         canvas.draw_line((top_x, top_y), end, leaf, 3)
         canvas.draw_line((top_x, top_y - 1), end, leaf_light, 1)
 
@@ -142,29 +142,29 @@ def _paint_waterfall(canvas: Canvas, x: int, top_y: int, bottom_y: int) -> None:
 
 def render_island() -> Canvas:
     """Main arena: grass top, warm cliff, a band of Precursor metal with glowing eco lights."""
-    w, h = ISLAND_SIZE
-    canvas = Canvas(w, h)
+    width, height = ISLAND_SIZE
+    canvas = Canvas(width, height)
     top = ISLAND_SURFACE_Y
-    body = [(0, top + 2), (w - 1, top + 2), (w - 18, top + 38), (w - 70, top + 66), (w // 2 + 6, h - 2), (70, top + 64), (16, top + 36)]
+    body = [(0, top + 2), (width - 1, top + 2), (width - 18, top + 38), (width - 70, top + 66), (width // 2 + 6, height - 2), (70, top + 64), (16, top + 36)]
     canvas.fill_polygon(body, palette.DIRT.base)
-    canvas.fill_polygon([(w // 2, top + 2), (w - 1, top + 2), (w - 18, top + 38), (w - 70, top + 66), (w // 2 + 6, h - 2)], palette.DIRT.shade)
+    canvas.fill_polygon([(width // 2, top + 2), (width - 1, top + 2), (width - 18, top + 38), (width - 70, top + 66), (width // 2 + 6, height - 2)], palette.DIRT.shade)
     rng = random.Random(11)
     for _ in range(90):
-        x, y = rng.randrange(10, w - 10), rng.randrange(top + 14, h - 10)
+        x, y = rng.randrange(10, width - 10), rng.randrange(top + 14, height - 10)
         end_x = x + rng.randrange(3, 9)
-        if canvas.image.getpixel((x, y))[3] and canvas.image.getpixel((min(end_x, w - 1), y))[3]:
+        if canvas.image.getpixel((x, y))[3] and canvas.image.getpixel((min(end_x, width - 1), y))[3]:
             canvas.draw_line((x, y), (end_x, y), palette.ROCK.shade if rng.random() < 0.6 else palette.DIRT.light)
-    _paint_precursor_band(canvas, top + 16, w)
-    canvas.fill_rect((0, top, w - 1, top + 5), palette.GRASS.base)
-    canvas.fill_rect((0, top + 5, w - 1, top + 7), palette.GRASS.shade)
-    canvas.fill_rect((0, top, w - 1, top), palette.GRASS.light)
-    for x in range(2, w - 2, 3):
+    _paint_precursor_band(canvas, top + 16, width)
+    canvas.fill_rect((0, top, width - 1, top + 5), palette.GRASS.base)
+    canvas.fill_rect((0, top + 5, width - 1, top + 7), palette.GRASS.shade)
+    canvas.fill_rect((0, top, width - 1, top), palette.GRASS.light)
+    for x in range(2, width - 2, 3):
         tuft = rng.randrange(1, 5)
         canvas.draw_line((x, top), (x + rng.choice((-1, 0, 1)), top - tuft), palette.GRASS.base if tuft > 2 else palette.GRASS.light)
-    for x in range(10, w - 10, 37):
+    for x in range(10, width - 10, 37):
         canvas.put_pixel(x, top - 2, (255, 120, 150))
         canvas.put_pixel(x + 17, top - 1, (255, 230, 90))
-    for x in range(30, w - 30, 23):
+    for x in range(30, width - 30, 23):
         length = rng.randrange(8, 24)
         canvas.draw_line((x, top + 8), (x + rng.choice((-2, 2)), top + 8 + length), palette.GRASS.shade)
     canvas.add_outline(palette.OUTLINE)
@@ -183,18 +183,18 @@ def _paint_precursor_band(canvas: Canvas, y: int, width: int) -> None:
 
 
 def render_platform() -> Canvas:
-    w, h = PLATFORM_SIZE
+    width, height = PLATFORM_SIZE
     metal, glow = palette.PRECURSOR_METAL, palette.PRECURSOR_GLOW
-    canvas = Canvas(w, h)
+    canvas = Canvas(width, height)
     top = PLATFORM_SURFACE_Y
-    canvas.fill_polygon([(0, top), (w - 1, top), (w - 6, top + 7), (5, top + 7)], metal.base)
-    canvas.fill_rect((0, top, w - 1, top + 1), metal.light)
-    canvas.fill_polygon([(w // 2, top + 2), (w - 1, top + 2), (w - 6, top + 7), (w // 2, top + 7)], metal.shade)
-    for x in range(8, w - 6, 12):
+    canvas.fill_polygon([(0, top), (width - 1, top), (width - 6, top + 7), (5, top + 7)], metal.base)
+    canvas.fill_rect((0, top, width - 1, top + 1), metal.light)
+    canvas.fill_polygon([(width // 2, top + 2), (width - 1, top + 2), (width - 6, top + 7), (width // 2, top + 7)], metal.shade)
+    for x in range(8, width - 6, 12):
         canvas.fill_rect((x, top + 4, x + 3, top + 5), glow.base)
     canvas.add_outline(palette.OUTLINE)
-    under = Canvas(w, h)
-    for x in range(10, w - 10, 6):
+    under = Canvas(width, height)
+    for x in range(10, width - 10, 6):
         under.fill_rect((x, top + 10, x + 2, top + 10), (*glow.light, 160))
         under.put_pixel(x + 1, top + 11, (*glow.base, 110))
     canvas.paste(under.image, (0, 0))
@@ -206,16 +206,16 @@ def render_hit_spark() -> Canvas:
     size, frames = 32, 4
     canvas = Canvas(size * frames, size)
     for frame in range(frames):
-        cx, cy = frame * size + size // 2, size // 2
+        center_x, center_y = frame * size + size // 2, size // 2
         reach = 5 + frame * 4
         fade = 255 - frame * 55
         for index in range(8):
             angle = math.radians(index * 45 + frame * 10)
-            inner = (round(cx + math.cos(angle) * reach * 0.4), round(cy + math.sin(angle) * reach * 0.4))
-            outer = (round(cx + math.cos(angle) * reach), round(cy + math.sin(angle) * reach))
+            inner = (round(center_x + math.cos(angle) * reach * 0.4), round(center_y + math.sin(angle) * reach * 0.4))
+            outer = (round(center_x + math.cos(angle) * reach), round(center_y + math.sin(angle) * reach))
             canvas.draw_line(inner, outer, (255, 255, 255, fade), 2 if index % 2 == 0 else 1)
         core = max(4 - frame, 1)
-        canvas.fill_ellipse((cx - core, cy - core, cx + core, cy + core), mix_colors((255, 236, 120), (255, 140, 60), frame / 3))
+        canvas.fill_ellipse((center_x - core, center_y - core, center_x + core, center_y + core), mix_colors((255, 236, 120), (255, 140, 60), frame / 3))
     return canvas
 
 
@@ -224,9 +224,9 @@ def render_eco_bolt(eco: Ramp) -> Canvas:
     size = 16
     canvas = Canvas(size * 2, size)
     for frame in range(2):
-        cx, cy = frame * size + 10, size // 2
-        canvas.fill_ellipse((cx - 9, cy - 2, cx - 1, cy + 2), (*eco.shade, 140))
+        center_x, center_y = frame * size + 10, size // 2
+        canvas.fill_ellipse((center_x - 9, center_y - 2, center_x - 1, center_y + 2), (*eco.shade, 140))
         radius = 4 + frame
-        canvas.fill_ellipse((cx - radius, cy - radius, cx + radius, cy + radius), (*eco.base, 200))
-        canvas.fill_ellipse((cx - 2, cy - 2, cx + 2, cy + 2), eco.light)
+        canvas.fill_ellipse((center_x - radius, center_y - radius, center_x + radius, center_y + radius), (*eco.base, 200))
+        canvas.fill_ellipse((center_x - 2, center_y - 2, center_x + 2, center_y + 2), eco.light)
     return canvas

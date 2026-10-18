@@ -22,34 +22,34 @@ func bind_fighters(fighters: Array[Fighter], config: MatchConfig) -> void:
 	for slot in fighters.size():
 		var card := FighterCard.new()
 		add_child(card)
-		card.bind(fighters[slot], config.definitions[slot], config.compute_slot_label(slot))
+		card.bind_fighter(fighters[slot], config.definitions[slot], config.format_slot_label(slot))
 		card.reset_size()
-		card.position = Vector2(CARD_CENTERS_X[slot] - card.size.x / 2.0, _screen_size().y - card.size.y - CARD_BOTTOM_MARGIN)
+		card.position = Vector2(CARD_CENTERS_X[slot] - card.size.x / 2.0, _read_screen_size().y - card.size.y - CARD_BOTTOM_MARGIN)
 
 
 func play_countdown() -> void:
-	for step: String in UiText.COUNTDOWN_STEPS:
-		_pop_banner(step)
+	for countdown_text: String in UiText.COUNTDOWN_STEPS:
+		_animate_banner(countdown_text)
 		await get_tree().create_timer(COUNTDOWN_STEP).timeout
-	_pop_banner(UiText.COUNTDOWN_GO)
-	var fade := create_tween()
-	fade.tween_interval(COUNTDOWN_STEP)
-	fade.tween_property(_banner, "modulate:a", 0.0, COUNTDOWN_STEP)
+	_animate_banner(UiText.COUNTDOWN_GO)
+	var fade_tween := create_tween()
+	fade_tween.tween_interval(COUNTDOWN_STEP)
+	fade_tween.tween_property(_banner, "modulate:a", 0.0, COUNTDOWN_STEP)
 
 
 func show_banner(text: String) -> void:
-	_pop_banner(text)
+	_animate_banner(text)
 
 
-func _pop_banner(text: String) -> void:
+func _animate_banner(text: String) -> void:
 	_banner.text = text
 	_banner.modulate.a = 1.0
 	_banner.reset_size()
-	_banner.position = (_screen_size() - _banner.size) / 2.0
+	_banner.position = (_read_screen_size() - _banner.size) / 2.0
 	_banner.pivot_offset = _banner.size / 2.0
 	_banner.scale = Vector2.ONE * POP_SCALE
 	create_tween().tween_property(_banner, "scale", Vector2.ONE, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
-func _screen_size() -> Vector2:
+func _read_screen_size() -> Vector2:
 	return get_viewport().get_visible_rect().size

@@ -29,12 +29,12 @@ var damage_percent := 0.0
 var stocks := 0
 var facing := 1
 
-var _input: InputSource = NullInputSource.new()
+var _input_source: InputSource = NullInputSource.new()
 var _world: Node2D
 var _state := State.FREE
 var _move: FighterMove
 var _move_elapsed := 0.0
-var _move_released := false
+var _move_effect_triggered := false
 var _hitstun_left := 0.0
 var _air_jumps_left := 0
 var _air_special_used := false
@@ -43,11 +43,11 @@ var _invulnerable_left := 0.0
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
 @onready var _body_shape: CollisionShape2D = $BodyShape
-@onready var _volumes: Node2D = $Volumes
+@onready var _melee_volumes: Node2D = $Volumes
 
 
 ## Call right after add_child: the fighter is inert until it knows who it is.
-func setup(fighter_definition: FighterDefinition, world: Node2D, starting_stocks: int) -> void:
+func configure(fighter_definition: FighterDefinition, world: Node2D, starting_stocks: int) -> void:
 	definition = fighter_definition
 	_world = world
 	stocks = starting_stocks
@@ -61,22 +61,22 @@ func setup(fighter_definition: FighterDefinition, world: Node2D, starting_stocks
 	_sprite.play(&"idle")
 
 
-func attach_input(source: InputSource) -> void:
-	_input = source
+func attach_input(input_source: InputSource) -> void:
+	_input_source = input_source
 
 
 func _physics_process(delta: float) -> void:
 	if _state == State.OUT:
 		return
-	var frame := _input.read_frame()
+	var frame := _input_source.read_frame()
 	_tick_timers(delta)
 	match _state:
 		State.FREE:
-			_process_free(frame, delta)
+			_update_free_state(frame, delta)
 		State.ACTING:
-			_process_acting(delta)
+			_update_acting_state(delta)
 		State.HITSTUN:
-			_process_hitstun(delta)
+			_update_hitstun_state(delta)
 	_apply_gravity(frame, delta)
 	move_and_slide()
 	if is_on_floor():
@@ -121,11 +121,11 @@ func lose_stock() -> void:
 	stocks -= 1
 	stocks_changed.emit(stocks)
 	if stocks <= 0:
-		_retire()
+		_remove_from_play()
 
 
-func respawn_at(spawn: Vector2) -> void:
-	global_position = spawn
+func respawn_at(spawn_position: Vector2) -> void:
+	global_position = spawn_position
 	velocity = Vector2.ZERO
 	damage_percent = 0.0
 	_state = State.FREE
@@ -144,13 +144,13 @@ func apply_lunge(lunge: Vector2) -> void:
 func spawn_melee_volume(attack: AttackData) -> void:
 	var volume := HitVolume.create(attack, self, attack.active)
 	volume.position = Vector2(attack.hitbox_offset.x * facing, attack.hitbox_offset.y)
-	_volumes.add_child(volume)
+	_melee_volumes.add_child(volume)
 
 
 func launch_projectile(attack: AttackData, speed: float, lifetime: float, frames: SpriteFrames) -> void:
 	var volume := HitVolume.create(attack, self, lifetime)
 	volume.position = position + Vector2(attack.hitbox_offset.x * facing, attack.hitbox_offset.y)
-	volume.make_projectile(Vector2(speed * facing, 0.0), frames)
+	volume.convert_to_projectile(Vector2(speed * facing, 0.0), frames)
 	_world.add_child(volume)
 
 
@@ -163,22 +163,22 @@ func _tick_timers(delta: float) -> void:
 		set_collision_mask_value(PLATFORM_LAYER, true)
 
 
-func _process_free(frame: InputFrame, delta: float) -> void:
-	var on_floor := is_on_floor()
-	var rate := AIR_ACCELERATION
-	if on_floor:
-		rate = GROUND_FRICTION if is_zero_approx(frame.move_x) else GROUND_ACCELERATION
-	velocity.x = move_toward(velocity.x, frame.move_x * definition.run_speed, rate * delta)
+func _update_free_state(frame: InputFrame, delta: float) -> void:
+	var is_grounded := is_on_floor()
+	var acceleration := AIR_ACCELERATION
+	if is_grounded:
+		acceleration = GROUND_FRICTION if is_zero_approx(frame.move_x) else GROUND_ACCELERATION
+	velocity.x = move_toward(velocity.x, frame.move_x * definition.run_speed, acceleration * delta)
 	if not is_zero_approx(frame.move_x):
 		facing = 1 if frame.move_x > 0.0 else -1
-	if frame.jump_pressed and frame.down and on_floor:
+	if frame.jump_pressed and frame.down and is_grounded:
 		_drop_through_platforms()
 	elif frame.jump_pressed:
 		_jump()
 	if frame.attack_pressed:
 		_start_move(definition.light_attack)
 	elif frame.special_pressed and not _air_special_used:
-		_air_special_used = not on_floor
+		_air_special_used = not is_grounded
 		_start_move(definition.special)
 
 
@@ -198,22 +198,22 @@ func _drop_through_platforms() -> void:
 func _start_move(move: FighterMove) -> void:
 	_move = move
 	_move_elapsed = 0.0
-	_move_released = false
+	_move_effect_triggered = false
 	_state = State.ACTING
 
 
-func _process_acting(delta: float) -> void:
+func _update_acting_state(delta: float) -> void:
 	_move_elapsed += delta
 	velocity.x = move_toward(velocity.x, 0.0, ACTING_FRICTION * delta)
 	var attack := _move.attack
-	if not _move_released and _move_elapsed >= attack.startup:
-		_move_released = true
-		_move.release(self)
+	if not _move_effect_triggered and _move_elapsed >= attack.startup:
+		_move_effect_triggered = true
+		_move.trigger_effect(self)
 	if _move_elapsed >= attack.compute_total_duration():
 		_state = State.FREE
 
 
-func _process_hitstun(delta: float) -> void:
+func _update_hitstun_state(delta: float) -> void:
 	_hitstun_left -= delta
 	velocity.x = move_toward(velocity.x, 0.0, HITSTUN_DRAG * delta)
 	if _hitstun_left <= 0.0:
@@ -221,14 +221,14 @@ func _process_hitstun(delta: float) -> void:
 
 
 func _apply_gravity(frame: InputFrame, delta: float) -> void:
-	var fast_falling := _state == State.FREE and frame.down and velocity.y > 0.0
-	var max_fall := FAST_FALL_SPEED if fast_falling else MAX_FALL_SPEED
+	var is_fast_falling := _state == State.FREE and frame.down and velocity.y > 0.0
+	var fall_speed_cap := FAST_FALL_SPEED if is_fast_falling else MAX_FALL_SPEED
 	# A spike can launch faster than terminal speed: gravity never slows it down.
-	if velocity.y < max_fall:
-		velocity.y = minf(velocity.y + GRAVITY * delta, max_fall)
+	if velocity.y < fall_speed_cap:
+		velocity.y = minf(velocity.y + GRAVITY * delta, fall_speed_cap)
 
 
-func _retire() -> void:
+func _remove_from_play() -> void:
 	_state = State.OUT
 	velocity = Vector2.ZERO
 	_clear_melee_volumes()
@@ -236,7 +236,7 @@ func _retire() -> void:
 
 
 func _clear_melee_volumes() -> void:
-	for volume in _volumes.get_children():
+	for volume in _melee_volumes.get_children():
 		volume.queue_free()
 
 

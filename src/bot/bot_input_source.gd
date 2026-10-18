@@ -5,7 +5,7 @@ extends InputSource
 const DECISION_INTERVAL_TICKS := 6
 
 var _brain: BotBrain
-var _body: Fighter
+var _controlled_fighter: Fighter
 var _target: Fighter
 var _stage: Stage
 var _held_move_x := 0.0
@@ -13,9 +13,9 @@ var _held_down := false
 var _ticks_until_decision := 0
 
 
-func _init(brain: BotBrain, body: Fighter, target: Fighter, stage: Stage) -> void:
+func _init(brain: BotBrain, controlled_fighter: Fighter, target: Fighter, stage: Stage) -> void:
 	_brain = brain
-	_body = body
+	_controlled_fighter = controlled_fighter
 	_target = target
 	_stage = stage
 
@@ -25,7 +25,7 @@ func read_frame() -> InputFrame:
 	if _ticks_until_decision > 0:
 		return _repeat_held_movement()
 	_ticks_until_decision = DECISION_INTERVAL_TICKS
-	var decision := _brain.decide(_perceive())
+	var decision := _brain.decide_input(_build_perception())
 	_held_move_x = decision.move_x
 	_held_down = decision.down
 	return decision
@@ -39,12 +39,12 @@ func _repeat_held_movement() -> InputFrame:
 	return frame
 
 
-func _perceive() -> BotPerception:
+func _build_perception() -> BotPerception:
 	var perception := BotPerception.new()
-	perception.self_position = _body.global_position
-	perception.self_velocity = _body.velocity
-	perception.self_on_floor = _body.is_on_floor()
-	perception.self_has_air_jump = _body.has_air_jump()
+	perception.self_position = _controlled_fighter.global_position
+	perception.self_velocity = _controlled_fighter.velocity
+	perception.self_on_floor = _controlled_fighter.is_on_floor()
+	perception.self_has_air_jump = _controlled_fighter.has_air_jump()
 	perception.target_position = _target.global_position
 	perception.target_in_play = _target.is_in_play()
 	perception.ground = _stage.compute_ground_surface()

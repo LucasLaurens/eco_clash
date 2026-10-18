@@ -4,17 +4,17 @@ extends RefCounted
 
 var index: int
 var confirmed := false
-var _count: int
+var _option_count: int
 
 
-func _init(count: int, start_index: int) -> void:
-	_count = count
-	index = posmod(start_index, count)
+func _init(option_count: int, start_index: int) -> void:
+	_option_count = option_count
+	index = posmod(start_index, option_count)
 
 
 func move_by(step: int) -> void:
 	if not confirmed:
-		index = posmod(index + step, _count)
+		index = posmod(index + step, _option_count)
 
 
 func confirm() -> void:

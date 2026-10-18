@@ -3,19 +3,19 @@ extends RefCounted
 ## Cuts a horizontal strip of square frames into AtlasTextures.
 
 
-static func create_frame(sheet: Texture2D, index: int, size: Vector2i) -> AtlasTexture:
+static func create_frame(sheet: Texture2D, index: int, frame_size: Vector2i) -> AtlasTexture:
 	var frame := AtlasTexture.new()
 	frame.atlas = sheet
-	frame.region = Rect2(index * size.x, 0, size.x, size.y)
+	frame.region = Rect2(index * frame_size.x, 0, frame_size.x, frame_size.y)
 	return frame
 
 
 ## Square frames: the strip height is the frame size.
 static func create_frames(sheet: Texture2D, fps: float, loop: bool) -> SpriteFrames:
-	var size := Vector2i(sheet.get_height(), sheet.get_height())
+	var frame_size := Vector2i(sheet.get_height(), sheet.get_height())
 	var frames := SpriteFrames.new()
 	frames.set_animation_speed(&"default", fps)
 	frames.set_animation_loop(&"default", loop)
-	for index in sheet.get_width() / size.x:
-		frames.add_frame(&"default", create_frame(sheet, index, size))
+	for index in sheet.get_width() / frame_size.x:
+		frames.add_frame(&"default", create_frame(sheet, index, frame_size))
 	return frames

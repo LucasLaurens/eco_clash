@@ -4,17 +4,17 @@ extends PanelContainer
 
 const PORTRAIT_SIZE := Vector2(32, 32)
 const DANGER_PERCENT := 150.0
-const WARM := Color(1.0, 0.72, 0.24)
-const DANGER := Color(0.92, 0.18, 0.16)
+const WARM_COLOR := Color(1.0, 0.72, 0.24)
+const DANGER_COLOR := Color(0.92, 0.18, 0.16)
 const POP_SCALE := 1.35
 const POP_TIME := 0.15
 
-var _percent: Label
+var _percent_label: Label
 var _stocks_row: HBoxContainer
 var _stock_icon: Texture2D
 
 
-func bind(fighter: Fighter, definition: FighterDefinition, slot_label: String) -> void:
+func bind_fighter(fighter: Fighter, definition: FighterDefinition, slot_label: String) -> void:
 	_stock_icon = definition.stock_icon
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override(&"separation", 4)
@@ -30,9 +30,9 @@ func bind(fighter: Fighter, definition: FighterDefinition, slot_label: String) -
 	var name_label := UiKit.create_label("%s · %s" % [slot_label, definition.display_name], UiKit.FONT_SMALL, definition.accent_color)
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	column.add_child(name_label)
-	_percent = UiKit.create_label("", UiKit.FONT_MEDIUM)
-	_percent.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	column.add_child(_percent)
+	_percent_label = UiKit.create_label("", UiKit.FONT_MEDIUM)
+	_percent_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	column.add_child(_percent_label)
 	_stocks_row = HBoxContainer.new()
 	_stocks_row.add_theme_constant_override(&"separation", 1)
 	row.add_child(_stocks_row)
@@ -44,16 +44,16 @@ func bind(fighter: Fighter, definition: FighterDefinition, slot_label: String) -
 
 func _on_damage_changed(percent: float) -> void:
 	_show_percent(percent)
-	_percent.pivot_offset = _percent.size / 2.0
-	_percent.scale = Vector2.ONE * POP_SCALE
-	create_tween().tween_property(_percent, "scale", Vector2.ONE, POP_TIME)
+	_percent_label.pivot_offset = _percent_label.size / 2.0
+	_percent_label.scale = Vector2.ONE * POP_SCALE
+	create_tween().tween_property(_percent_label, "scale", Vector2.ONE, POP_TIME)
 
 
 func _show_percent(percent: float) -> void:
-	_percent.text = UiText.PERCENT % roundi(percent)
-	var heat := clampf(percent / DANGER_PERCENT, 0.0, 1.0)
-	var color := Color.WHITE.lerp(WARM, heat * 2.0) if heat < 0.5 else WARM.lerp(DANGER, (heat - 0.5) * 2.0)
-	_percent.add_theme_color_override(&"font_color", color)
+	_percent_label.text = UiText.PERCENT % roundi(percent)
+	var danger_ratio := clampf(percent / DANGER_PERCENT, 0.0, 1.0)
+	var color := Color.WHITE.lerp(WARM_COLOR, danger_ratio * 2.0) if danger_ratio < 0.5 else WARM_COLOR.lerp(DANGER_COLOR, (danger_ratio - 0.5) * 2.0)
+	_percent_label.add_theme_color_override(&"font_color", color)
 
 
 func _on_stocks_changed(stocks: int) -> void:

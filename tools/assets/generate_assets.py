@@ -40,9 +40,9 @@ def generate_stage() -> None:
     stage.render_mid().save(target / "mid.png")
     stage.render_island().save(target / "island.png")
     stage.render_platform().save(target / "platform.png")
-    fx = ensure_dir(ASSETS / "fx")
-    stage.render_hit_spark().save(fx / "hit_spark.png")
-    stage.render_eco_bolt(palette.ECO_YELLOW).save(fx / "eco_bolt.png")
+    fx_target = ensure_dir(ASSETS / "fx")
+    stage.render_hit_spark().save(fx_target / "hit_spark.png")
+    stage.render_eco_bolt(palette.ECO_YELLOW).save(fx_target / "eco_bolt.png")
 
 
 def generate_ui() -> None:
@@ -53,10 +53,10 @@ def generate_ui() -> None:
     ui.render_selector((236, 70, 70), "1P").save(target / "selector_p1.png")
     ui.render_selector((70, 140, 240), "2P").save(target / "selector_p2.png")
     ui.render_selector((150, 150, 160), "BOT").save(target / "selector_bot.png")
-    fonts = ensure_dir(ASSETS / "fonts")
+    fonts_target = ensure_dir(ASSETS / "fonts")
     atlas, descriptor = font.render_font("eco_pixel.png")
-    atlas.save(fonts / "eco_pixel.png")
-    (fonts / "eco_pixel.fnt").write_text(descriptor, encoding="utf-8")
+    atlas.save(fonts_target / "eco_pixel.png")
+    (fonts_target / "eco_pixel.fnt").write_text(descriptor, encoding="utf-8")
     ui.render_portrait(fighters.build_artists()["kael"]).resize((128, 128)).save(ROOT / "icon.png")
 
 

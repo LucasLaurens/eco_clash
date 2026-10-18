@@ -14,12 +14,12 @@ func _ready() -> void:
 	column.add_child(logo)
 	column.add_child(UiKit.create_label(UiText.MENU_TAGLINE, UiKit.FONT_SMALL, UiKit.TEXT_GOLD))
 	column.add_child(Control.new())
-	var vs_bot := UiKit.create_button(UiText.MENU_VS_BOT, _open_select.bind(MatchConfig.Mode.VS_BOT))
-	column.add_child(vs_bot)
-	column.add_child(UiKit.create_button(UiText.MENU_VERSUS, _open_select.bind(MatchConfig.Mode.VERSUS)))
+	var vs_bot_button := UiKit.create_button(UiText.MENU_VS_BOT, _open_character_select.bind(MatchConfig.Mode.VS_BOT))
+	column.add_child(vs_bot_button)
+	column.add_child(UiKit.create_button(UiText.MENU_VERSUS, _open_character_select.bind(MatchConfig.Mode.VERSUS)))
 	column.add_child(UiKit.create_button(UiText.MENU_QUIT, get_tree().quit))
 	_add_footer()
-	vs_bot.grab_focus()
+	vs_bot_button.grab_focus()
 
 
 func _add_footer() -> void:
@@ -34,6 +34,6 @@ func _add_footer() -> void:
 	add_child(footer)
 
 
-func _open_select(mode: MatchConfig.Mode) -> void:
+func _open_character_select(mode: MatchConfig.Mode) -> void:
 	MatchSettings.pending_mode = mode
 	get_tree().change_scene_to_file(ScenePaths.CHARACTER_SELECT)

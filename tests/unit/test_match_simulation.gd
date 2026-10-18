@@ -14,31 +14,31 @@ func run_scenarios(host: Node) -> void:
 
 
 func _melee_hit_lands_exactly_once(host: Node) -> void:
-	var name := "melee_hit_lands_exactly_once"
+	var scenario_name := "melee_hit_lands_exactly_once"
 	# Arrange
 	var world := Node2D.new()
 	host.add_child(world)
 	var resolver := CombatResolver.new()
 	world.add_child(resolver)
-	var attacker := _spawn(world, resolver, FighterRoster.find_at(0), Vector2(100, 100))
-	var target := _spawn(world, resolver, FighterRoster.find_at(2), Vector2(114, 100))
+	var attacker := _spawn_fighter(world, resolver, FighterRoster.find_at(0), Vector2(100, 100))
+	var target := _spawn_fighter(world, resolver, FighterRoster.find_at(2), Vector2(114, 100))
 	var attack: AttackData = FighterRoster.find_at(0).light_attack.attack
 	# Act
 	attacker.spawn_melee_volume(attack)
 	for _tick in 4:
 		await host.get_tree().physics_frame
 	# Assert
-	assert_true(is_equal_approx(target.damage_percent, attack.damage), "%s: damage %.1f once" % [name, target.damage_percent])
-	assert_true(target.velocity.x > 0.0, "%s: target pushed away from attacker" % name)
+	assert_true(is_equal_approx(target.damage_percent, attack.damage), "%s: damage %.1f once" % [scenario_name, target.damage_percent])
+	assert_true(target.velocity.x > 0.0, "%s: target pushed away from attacker" % scenario_name)
 	world.queue_free()
 
 
 func _two_bots_fight_without_errors(host: Node) -> void:
-	var name := "two_bots_fight_without_errors"
+	var scenario_name := "two_bots_fight_without_errors"
 	# Arrange
 	var config := MatchConfig.create(MatchConfig.Mode.DEMO, FighterRoster.find_at(1), FighterRoster.find_at(3))
 	config.stocks = UNLIMITED_STOCKS
-	MatchSettings.current = config
+	MatchSettings.current_config = config
 	var fight := FIGHT_SCENE.instantiate()
 	host.add_child(fight)
 	# Act
@@ -46,22 +46,22 @@ func _two_bots_fight_without_errors(host: Node) -> void:
 		await host.get_tree().physics_frame
 	# Assert
 	var fighters: Array[Fighter] = []
-	fighters.assign(fight.get_node("World").get_children().filter(func(n: Node) -> bool: return n is Fighter))
-	assert_equal(fighters.size(), 2, "%s: two fighters" % name)
+	fighters.assign(fight.get_node("World").get_children().filter(func(node: Node) -> bool: return node is Fighter))
+	assert_equal(fighters.size(), 2, "%s: two fighters" % scenario_name)
 	var action_happened := fighters.any(
-		func(f: Fighter) -> bool: return f.damage_percent > 0.0 or f.stocks < UNLIMITED_STOCKS
+		func(candidate: Fighter) -> bool: return candidate.damage_percent > 0.0 or candidate.stocks < UNLIMITED_STOCKS
 	)
-	assert_true(action_happened, "%s: bots actually hit each other" % name)
+	assert_true(action_happened, "%s: bots actually hit each other" % scenario_name)
 	for fighter in fighters:
-		assert_true(fighter.global_position.is_finite(), "%s: finite position" % name)
+		assert_true(fighter.global_position.is_finite(), "%s: finite position" % scenario_name)
 	fight.queue_free()
 	Engine.time_scale = 1.0
 
 
-func _spawn(world: Node2D, resolver: CombatResolver, definition: FighterDefinition, at: Vector2) -> Fighter:
+func _spawn_fighter(world: Node2D, resolver: CombatResolver, definition: FighterDefinition, spawn_position: Vector2) -> Fighter:
 	var fighter: Fighter = FIGHTER_SCENE.instantiate()
 	world.add_child(fighter)
-	fighter.setup(definition, world, 1)
-	fighter.global_position = at
+	fighter.configure(definition, world, 1)
+	fighter.global_position = spawn_position
 	resolver.register_fighter(fighter)
 	return fighter

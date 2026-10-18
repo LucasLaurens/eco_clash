@@ -6,6 +6,6 @@ extends FighterMove
 @export var lunge := Vector2.ZERO
 
 
-func release(user: Fighter) -> void:
+func trigger_effect(user: Fighter) -> void:
 	user.apply_lunge(lunge)
 	user.spawn_melee_volume(attack)
