@@ -3,7 +3,9 @@ extends Control
 
 const CARD_SIZE := 48
 const CARD_GAP := 12
-const ROW_Y := 32.0
+const ROW_Y := 28.0
+## Right under the selector tags: the panels need every pixel for the 64px preview.
+const PANEL_Y := 90.0
 const SELECTOR_INSET := 2.0
 const SELECTOR_SHARED_OFFSET := Vector2(3, 3)
 const START_DELAY := 0.7
@@ -140,7 +142,7 @@ func _build_selector(slot: int) -> TextureRect:
 
 func _build_info_panel(slot: int) -> FighterInfoPanel:
 	var panel := FighterInfoPanel.new()
-	panel.position = Vector2(16.0 + slot * 236.0, 98.0)
+	panel.position = Vector2(16.0 + slot * 236.0, PANEL_Y)
 	panel.set_slot_text(_slot_rules.format_slot_label(slot))
 	add_child(panel)
 	return panel
